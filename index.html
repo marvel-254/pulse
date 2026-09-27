@@ -1,15 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#0a0c12" />
-  <meta name="description" content="Pulse — a personal, mobile-first developer operations command center powered by GitHub." />
+  <meta name="theme-color" content="#07090e" id="metaThemeColor" />
+  <meta name="description" content="Pulse — personal, mobile-first developer operations command center powered by GitHub." />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="icons/icon.svg" />
   <title>Pulse — Developer Command Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/styles.css" />
+  <script>
+    // Prevent theme flash
+    try {
+      const saved = localStorage.getItem("pulse-theme") || (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+      document.documentElement.setAttribute("data-theme", saved);
+    } catch (e) {}
+  </script>
 </head>
 <body>
   <div class="grid-bg" aria-hidden="true"></div>
@@ -21,9 +31,6 @@
   <div class="app">
     <aside class="sidebar" id="sidebar"></aside>
 
-    <!-- Mobile nav -->
-    <nav class="mobilenav" id="mobilenav"></nav>
-
     <main class="stage" id="stage">
       <div class="loading" id="loading">
         <div class="pulse-ring"></div>
@@ -32,9 +39,27 @@
     </main>
   </div>
 
+  <!-- Mobile nav -->
+  <nav class="mobilenav" id="mobilenav"></nav>
+
   <!-- Repo selector overlay -->
   <div class="overlay" id="repoOverlay" aria-hidden="true">
     <div class="sheet" id="repoSheet"></div>
+  </div>
+
+  <!-- Command Palette overlay -->
+  <div class="overlay" id="paletteOverlay" aria-hidden="true">
+    <div class="palette" id="paletteSheet"></div>
+  </div>
+
+  <!-- Inspector / Repo Detail overlay -->
+  <div class="overlay" id="inspectorOverlay" aria-hidden="true">
+    <div class="sheet" id="inspectorSheet"></div>
+  </div>
+
+  <!-- Widget Customizer overlay -->
+  <div class="overlay" id="widgetOverlay" aria-hidden="true">
+    <div class="sheet" id="widgetSheet"></div>
   </div>
 
   <!-- Toast -->
