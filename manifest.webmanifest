@@ -1,0 +1,18 @@
+{
+  "name": "Pulse — Developer Command Center",
+  "short_name": "Pulse",
+  "description": "Personal, mobile-first developer operations cockpit powered by GitHub.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0a0c12",
+  "theme_color": "#0a0c12",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

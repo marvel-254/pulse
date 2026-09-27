@@ -1,0 +1,14 @@
+{
+  "name": "pulse",
+  "version": "1.0.0",
+  "description": "Pulse — personal, mobile-first developer operations command center powered by GitHub.",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "start": "npx serve .",
+    "preview": "node build.mjs && npx serve ."
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
