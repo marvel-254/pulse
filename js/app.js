@@ -466,6 +466,53 @@
     $('#repoOverlay').setAttribute("aria-hidden", "true");
   }
 
+  /* ---- GITHUB OAUTH (one-click connect) ---- */
+  function oauthConfig() {
+    return (window.PULSE_CONFIG && window.PULSE_CONFIG.oauth) || {};
+  }
+  function startOAuth() {
+    const c = oauthConfig();
+    if (!c.enabled || !c.clientId || !c.workerUrl) {
+      toast("GitHub OAuth isn't configured yet. Add Client ID + Worker URL in js/config.js, or paste a PAT below.");
+      return;
+    }
+    const redirectUri = location.origin + location.pathname;
+    const params = new URLSearchParams({
+      client_id: c.clientId,
+      scope: c.scope,
+      redirect_uri: redirectUri,
+    });
+    location.href = c.authorizeUrl + "?" + params.toString();
+  }
+  async function handleOAuthCallback() {
+    const c = oauthConfig();
+    if (!c.enabled) return;
+    const params = new URLSearchParams(location.search);
+    const code = params.get("code");
+    if (!code) return;
+    try {
+      const res = await fetch(c.workerUrl + "/exchange", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
+      });
+      const data = await res.json();
+      history.replaceState({}, "", location.pathname + location.hash);
+      if (data && data.access_token) {
+        state.token = data.access_token;
+        localStorage.setItem(c.tokenKey || "pulse-gh-token", state.token);
+        state.api.rateLimit = 5000;
+        toast("Connected via GitHub OAuth");
+        fetchLive();
+      } else {
+        toast("OAuth exchange failed: " + (data && data.error ? data.error : "unknown error"));
+      }
+    } catch (e) {
+      history.replaceState({}, "", location.pathname + location.hash);
+      toast("OAuth exchange error: " + e.message);
+    }
+  }
+
   /* ---- GITHUB TOKEN SETTINGS MODAL ---- */
   function openTokenModal() {
     const overlay = $('#tokenOverlay');
@@ -485,6 +532,11 @@
             <div class="sheet-sub">Client-side authentication & rate limit expansion</div>
           </div>
           <button class="sheet-close" id="closeTokenModalBtn">✕</button>
+        </div>
+
+        <div class="oauth-connect-row" style="margin-bottom:14px">
+          <button class="btn btn-primary" id="oauthConnectBtn" style="width:100%">${ICONS.key} Connect GitHub (OAuth)</button>
+          <div style="font-size:11.5px;color:var(--faint);margin-top:6px;text-align:center">One-click login · unlocks private repos &amp; 5,000 req/hr. PAT below still works.</div>
         </div>
 
         <div class="token-card">
@@ -537,6 +589,7 @@
         </div>`;
 
       $('#closeTokenModalBtn')?.addEventListener("click", closeTokenModal);
+      $('#oauthConnectBtn')?.addEventListener("click", startOAuth);
       $('#cancelTokenBtn')?.addEventListener("click", closeTokenModal);
 
       $('#toggleTokenEyeBtn')?.addEventListener("click", () => {
@@ -2440,4 +2493,5 @@
 
   boot();
   applyHash();
+  handleOAuthCallback();
 })();
