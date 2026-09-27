@@ -38,6 +38,8 @@
     award: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>`,
     gitCommit: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="1.05" y1="12" x2="7" y2="12"/><line x1="17.01" y1="12" x2="22.96" y2="12"/></svg>`,
     pulse: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg>`,
+    user: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+    readme: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M8 7h8"/><path d="M8 11h6"/></svg>`,
     sun: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
     moon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
     filter: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>`,
@@ -156,6 +158,7 @@
     { id: "community", label: "COMMUNITY", ic: ICONS.community, badge: () => state.snapshot?.totalStars || null },
     { id: "health", label: "HEALTH", ic: ICONS.health, badge: () => null },
     { id: "xp", label: "XP & REWARDS", ic: ICONS.xp, badge: () => "LVL" },
+    { id: "profile", label: "PROFILE", ic: ICONS.user, badge: () => null },
   ];
 
   /* ---- THEME HANDLING ---- */
@@ -990,6 +993,223 @@
     toast("Copied markdown summary to clipboard");
   }
 
+  /* ---- PROFILE README VIEW ---- */
+  async function loadProfileLive() {
+    const u = state.snapshot?.user?.login;
+    if (!u) {
+      toast("Unknown GitHub profile");
+      return;
+    }
+    const badge = toast;
+    try {
+      const res = await fetch(`https://raw.githubusercontent.com/${u}/${u}/HEAD/README.md`);
+      if (!res.ok) {
+        toast("No profile README found for @" + u);
+        return;
+      }
+      const raw = await res.text();
+      state.snapshot = state.snapshot || {};
+      state.snapshot.profile = {
+        owner: u,
+        raw,
+        url: `https://github.com/${u}/${u}`,
+        rawUrl: `https://raw.githubusercontent.com/${u}/${u}/HEAD/README.md`,
+        fetchedAt: new Date().toISOString(),
+      };
+      render();
+      toast("Profile README loaded");
+    } catch (e) {
+      toast("Failed to load profile README");
+    }
+  }
+
+  /* ---- LIGHTWEIGHT MARKDOWN → HTML RENDERER ---- */
+  function inlineMd(s) {
+    s = esc(s == null ? "" : String(s));
+    // images first
+    s = s.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g, '<img src="$2" alt="$1" loading="lazy" class="md-img" />');
+    // links
+    s = s.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    // bold
+    s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+    // italic
+    s = s.replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, "$1<em>$2</em>");
+    // inline code
+    s = s.replace(/`([^`]+)`/g, "<code>$1</code>");
+    return s;
+  }
+
+  function parseMdRow(r) {
+    return r.replace(/^\s*\|/, "").replace(/\|\s*$/, "").split("|").map((c) => c.trim());
+  }
+
+  function mdTable(rows) {
+    const head = parseMdRow(rows[0]);
+    const delim = rows[1] ? parseMdRow(rows[1]) : [];
+    const isDelim = delim.length && delim.every((c) => /^:?-{2,}:?$/.test(c.replace(/\s/g, "")));
+    let html = `<table class="md-table"><thead><tr>${head.map((c) => `<th>${inlineMd(c)}</th>`).join("")}</tr></thead><tbody>`;
+    const dataRows = isDelim ? rows.slice(2) : rows.slice(1);
+    html += dataRows.map((r) => `<tr>${parseMdRow(r).map((c) => `<td>${inlineMd(c)}</td>`).join("")}</tr>`).join("");
+    return html + "</tbody></table>";
+  }
+
+  function renderMarkdown(md) {
+    if (!md) return "";
+    const lines = String(md).replace(/\r\n/g, "\n").split("\n");
+    let html = "";
+    let i = 0;
+    let listType = null;
+    const closeList = () => { if (listType) { html += `</${listType}>`; listType = null; } };
+    const openList = (t) => { if (listType !== t) { closeList(); html += `<${t}>`; listType = t; } };
+
+    while (i < lines.length) {
+      const line = lines[i];
+
+      if (/^```/.test(line.trim())) {
+        closeList();
+        const lang = line.trim().replace(/^```/, "").trim();
+        i++;
+        const code = [];
+        while (i < lines.length && !/^```/.test(lines[i].trim())) { code.push(lines[i]); i++; }
+        i++;
+        html += `<pre class="md-pre"><code class="md-code${lang ? " language-" + lang : ""}">${esc(code.join("\n"))}</code></pre>`;
+        continue;
+      }
+
+      const h = line.match(/^(#{1,6})\s+(.*)$/);
+      if (h) {
+        closeList();
+        const lvl = h[1].length;
+        html += `<h${lvl} class="md-h md-h${lvl}">${inlineMd(h[2])}</h${lvl}>`;
+        i++;
+        continue;
+      }
+
+      if (/^\s*([-*_])\1{2,}\s*$/.test(line)) {
+        closeList();
+        html += `<hr class="md-hr" />`;
+        i++;
+        continue;
+      }
+
+      if (/^ {4}/.test(line)) {
+        const code = [];
+        while (i < lines.length && /^ {4}/.test(lines[i])) { code.push(lines[i].replace(/^ {4}/, "")); i++; }
+        closeList();
+        html += `<pre class="md-pre"><code class="md-code">${esc(code.join("\n"))}</code></pre>`;
+        continue;
+      }
+
+      if (/^>\s?/.test(line)) {
+        closeList();
+        const q = [];
+        while (i < lines.length && /^>\s?/.test(lines[i])) { q.push(lines[i].replace(/^>\s?/, "")); i++; }
+        html += `<blockquote class="md-quote">${renderMarkdown(q.join("\n"))}</blockquote>`;
+        continue;
+      }
+
+      if (/^\s*[-*+]\s+/.test(line)) {
+        openList("ul");
+        html += `<li>${inlineMd(line.replace(/^\s*[-*+]\s+/, ""))}</li>`;
+        i++;
+        continue;
+      }
+
+      if (/^\s*\d+[.)]\s+/.test(line)) {
+        openList("ol");
+        html += `<li>${inlineMd(line.replace(/^\s*\d+[.)]\s+/, ""))}</li>`;
+        i++;
+        continue;
+      }
+
+      if (/^\s*\|/.test(line)) {
+        closeList();
+        const rows = [];
+        while (i < lines.length && /^\s*\|/.test(lines[i])) { rows.push(lines[i]); i++; }
+        html += mdTable(rows);
+        continue;
+      }
+
+      if (line.trim() === "") {
+        closeList();
+        i++;
+        continue;
+      }
+
+      closeList();
+      const para = [];
+      while (
+        i < lines.length &&
+        lines[i].trim() !== "" &&
+        !/^```/.test(lines[i]) &&
+        !/^ {4}/.test(lines[i]) &&
+        !/^#{1,6}\s/.test(lines[i]) &&
+        !/^>\s?/.test(lines[i]) &&
+        !/^\s*[-*+]\s+/.test(lines[i]) &&
+        !/^\s*\d+[.)]\s+/.test(lines[i])
+      ) {
+        para.push(lines[i].trim());
+        i++;
+      }
+      html += `<p class="md-p">${inlineMd(para.join(" "))}</p>`;
+    }
+    closeList();
+    return html;
+  }
+
+  function renderProfile() {
+    const s = state.snapshot || {};
+    const u = s.user || {};
+    const p = s.profile;
+    const has = p && p.raw;
+
+    if (!has) {
+      const editPath = `${u.login || "yourname"}/${u.login || "yourname"}`;
+      return section(
+        "Profile",
+        "Your GitHub profile README",
+        pill(),
+        `<div class="bento">
+          <div class="card col2">
+            <div class="card-head">
+              <div class="card-title"><span class="stat-icon" style="color:var(--cyan)">${ICONS.readme}</span> No Profile README Yet</div>
+            </div>
+            <div style="font-size:14px;color:var(--text);line-height:1.7">
+              <p><b>@${esc(u.login || "you")}</b> doesn't have a profile README yet. Create a repository named <code>${esc(editPath)}</code> with a <code>README.md</code> to customize your GitHub profile.</p>
+              <p>Once it exists, Pulse will render it here — including shields.io badges, github-readme-stats cards and Capsule Render banners.</p>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
+              <a class="btn btn-primary" href="https://github.com/new" target="_blank" rel="noopener noreferrer">${ICONS.externalLink} Create Profile Repo</a>
+              <button class="btn" id="refreshProfileBtn">${ICONS.refresh} Sync README</button>
+            </div>
+          </div>
+        </div>`
+      );
+    }
+
+    return section(
+      "Profile",
+      `${esc(u.login || "")} · GitHub profile README`,
+      pill(),
+      `<div class="bento">
+        <div class="card col2 profile-card">
+          <div class="profile-head">
+            ${u.avatar ? `<img class="profile-avatar" src="${esc(u.avatar)}" alt="" />` : ""}
+            <div>
+              <div class="profile-name">${esc(u.name || u.login || "")}</div>
+              <div class="profile-login">@${esc(u.login || "")} · ${fmtNum(u.followers || 0)} followers</div>
+            </div>
+            <div style="margin-left:auto;display:flex;gap:8px">
+              <button class="btn btn-sm" id="refreshProfileBtn">${ICONS.refresh} Sync</button>
+              <a class="btn btn-sm" href="${esc(p.url || "")}" target="_blank" rel="noopener noreferrer">${ICONS.repos} Repo</a>
+            </div>
+          </div>
+          <div class="md-body">${renderMarkdown(p.raw)}</div>
+        </div>
+      </div>`
+    );
+  }
+
   /* ---- RENDER DISPATCH ---- */
   function render() {
     renderTopbar();
@@ -1005,6 +1225,7 @@
       community: renderCommunity,
       health: renderHealth,
       xp: renderXP,
+      profile: renderProfile,
     };
 
     const fn = views[state.view] || renderCommand;
@@ -1034,6 +1255,7 @@
     $('#exportSummaryTrigger')?.addEventListener("click", copyMarkdownSummary);
 
     $('#createIssueBtn')?.addEventListener("click", () => openIssueModal());
+    $('#refreshProfileBtn')?.addEventListener("click", () => loadProfileLive());
 
     // Repositories view events
     $('#repoSearchInput')?.addEventListener("input", (e) => {
@@ -2209,5 +2431,13 @@
     });
   }
 
+  // Deep-link support: #/view-name
+  const applyHash = () => {
+    const h = (location.hash || "").replace(/^#/, "").split("/")[0].toLowerCase();
+    if (h && NAV.some((n) => n.id === h)) go(h);
+  };
+  window.addEventListener("hashchange", applyHash);
+
   boot();
+  applyHash();
 })();

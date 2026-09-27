@@ -131,6 +131,26 @@ const events = (gh(["/users/" + login + "/events/public?per_page=40"]) || [])
 
 const now = new Date().toISOString();
 
+// profile README from the special owner/owner repo
+let profile = null;
+if (login) {
+  try {
+    const pr = gh([`/repos/${login}/${login}/readme`]);
+    if (pr && pr.content) {
+      profile = {
+        owner: login,
+        name: pr.name,
+        raw: Buffer.from(pr.content, "base64").toString("utf8"),
+        url: `https://github.com/${login}/${login}`,
+        rawUrl: `https://raw.githubusercontent.com/${login}/${login}/HEAD/README.md`,
+        fetchedAt: now,
+      };
+    }
+  } catch (e) {
+    profile = null;
+  }
+}
+
 const snapshot = {
   generatedAt: now,
   user: {
@@ -147,6 +167,7 @@ const snapshot = {
   repos: repos.map(enrichRepo),
   events,
   extras,
+  profile,
 };
 
 mkdirSync(dirname(OUT), { recursive: true });
