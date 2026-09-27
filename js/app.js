@@ -21,7 +21,7 @@
     issue: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
     eye: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`,
     zap: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
-    lock: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
+    lock: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
     globe: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
     branch: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>`,
     code: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>`,
@@ -41,6 +41,7 @@
     sun: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
     moon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
     filter: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>`,
+    key: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/></svg>`,
   };
 
   // Default widget configuration for Command Center
@@ -71,7 +72,8 @@
     snapshot: null,
     selectedRepo: "all",
     view: "command",
-    api: { rateRemaining: null },
+    token: localStorage.getItem("pulse-gh-token") || "",
+    api: { rateLimit: 60, rateRemaining: null },
     theme: localStorage.getItem("pulse-theme") || "dark",
     repoSearchQuery: "",
     repoLangFilter: "all",
@@ -204,6 +206,13 @@
           ${state.api.rateRemaining != null ? `${state.api.rateRemaining} reqs` : ""}
         </span>
 
+        <button class="topbar-btn" id="tokenSettingsBtn" title="${state.token ? "GitHub Token Connected (5,000 req/hr)" : "Connect GitHub Token (Public 60 req/hr)"}">
+          <span style="position:relative;display:flex;align-items:center;justify-content:center">
+            ${ICONS.key}
+            ${state.token ? '<span style="position:absolute;top:-3px;right:-3px;width:7px;height:7px;background:var(--green);border-radius:50%;box-shadow:0 0 6px var(--green)"></span>' : ""}
+          </span>
+        </button>
+
         <button class="topbar-btn" id="themeToggleBtn" title="Toggle Dark/Light Mode">
           ${isDark ? ICONS.sun : ICONS.moon}
         </button>
@@ -220,6 +229,7 @@
       go("command");
     });
     $('#topbarSearchTrigger')?.addEventListener("click", openCommandPalette);
+    $('#tokenSettingsBtn')?.addEventListener("click", openTokenModal);
     $('#themeToggleBtn')?.addEventListener("click", toggleTheme);
   }
 
@@ -245,6 +255,11 @@
         <span class="ic">${ICONS.terminal}</span>
         <span>Command Palette</span>
         <span class="nav-badge">⌘K</span>
+      </button>
+      <button class="nav-item" id="sidebarTokenBtn">
+        <span class="ic">${ICONS.key}</span>
+        <span>Access Token</span>
+        ${state.token ? `<span class="nav-badge" style="color:var(--green);border-color:var(--green)">ACTIVE</span>` : `<span class="nav-badge">CONNECT</span>`}
       </button>
       <button class="nav-item" id="sidebarRefreshBtn">
         <span class="ic">${ICONS.refresh}</span>
@@ -277,6 +292,7 @@
       b.addEventListener("click", () => go(b.dataset.nav));
     });
     $('#sidebarCmdPaletteBtn')?.addEventListener("click", openCommandPalette);
+    $('#sidebarTokenBtn')?.addEventListener("click", openTokenModal);
     $('#sidebarRefreshBtn')?.addEventListener("click", fetchLive);
     $('#sidebarWidgetsBtn')?.addEventListener("click", openWidgetModal);
   }
@@ -334,9 +350,22 @@
             </span>
           </button>`
         ).join("")}
+      </div>
+      <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--stroke)">
+        <button class="sheet-row" id="moreSheetTokenBtn" style="width:100%">
+          <span class="ic" style="color:var(--cyan)">${ICONS.key}</span>
+          <span class="rmeta">
+            <span class="rt">GitHub Access Token</span>
+            <span class="rs">${state.token ? "Connected" : "Unlock 5,000 req/hr rate limit"}</span>
+          </span>
+        </button>
       </div>`;
 
     $('#closeMoreSheet')?.addEventListener("click", closeOverlay);
+    $('#moreSheetTokenBtn')?.addEventListener("click", () => {
+      closeOverlay();
+      openTokenModal();
+    });
     $$('[data-jump]', sheet).forEach((b) =>
       b.addEventListener("click", () => {
         closeOverlay();
@@ -432,6 +461,151 @@
   function closeOverlay() {
     $('#repoOverlay').classList.remove("open");
     $('#repoOverlay').setAttribute("aria-hidden", "true");
+  }
+
+  /* ---- GITHUB TOKEN SETTINGS MODAL ---- */
+  function openTokenModal() {
+    const overlay = $('#tokenOverlay');
+    const sheet = $('#tokenSheet');
+    let showPassword = false;
+
+    const renderSheet = () => {
+      const isConnected = Boolean(state.token);
+      const remaining = state.api.rateRemaining != null ? state.api.rateRemaining : (isConnected ? 5000 : 60);
+      const limit = state.api.rateLimit || (isConnected ? 5000 : 60);
+      const pct = Math.round((remaining / limit) * 100);
+
+      sheet.innerHTML = `
+        <div class="sheet-head">
+          <div>
+            <div class="sheet-title">GitHub Access Token</div>
+            <div class="sheet-sub">Client-side authentication & rate limit expansion</div>
+          </div>
+          <button class="sheet-close" id="closeTokenModalBtn">✕</button>
+        </div>
+
+        <div class="token-card">
+          <div class="token-status-row">
+            <span style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted)">Connection Status</span>
+            <span class="status ${isConnected ? "ok" : "warn"}">
+              <span class="sdot"></span>
+              ${isConnected ? "CONNECTED (PAT ACTIVE)" : "PUBLIC ONLY (60 REQ/HR)"}
+            </span>
+          </div>
+
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--faint);margin:12px 0 6px">
+            Personal Access Token (Classic or Fine-Grained)
+          </div>
+
+          <div class="token-input-group">
+            <input type="${showPassword ? "text" : "password"}" id="tokenInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx or github_pat_xxxx" value="${esc(state.token)}" autocomplete="off" spellcheck="false" />
+            <button class="token-eye-btn" id="toggleTokenEyeBtn" type="button" title="${showPassword ? "Hide token" : "Show token"}">
+              ${showPassword ? ICONS.eye : ICONS.lock}
+            </button>
+          </div>
+
+          <div class="token-rate-bar">
+            <div style="display:flex;justify-content:space-between;font-size:11.5px;font-family:var(--mono);color:var(--muted)">
+              <span>API Rate Quota</span>
+              <span><b>${fmtNum(remaining)}</b> / ${fmtNum(limit)} reqs (${pct}%)</span>
+            </div>
+            <div class="rate-bar-track">
+              <div class="rate-bar-fill" style="width:${pct}%;background:${pct < 20 ? "var(--red)" : pct < 50 ? "var(--amber)" : "var(--cyan)"}"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout-box">
+          <div style="display:flex;align-items:center;gap:6px;font-weight:700;color:var(--text);margin-bottom:4px">
+            <span class="stat-icon" style="color:var(--green)">${ICONS.shield}</span>
+            <span>Zero-Knowledge Browser Storage</span>
+          </div>
+          Your token stays strictly on this device in <code>localStorage</code>. It is sent exclusively to GitHub's official HTTPS REST API.
+          <br /><br />
+          Need a token? <a href="https://github.com/settings/tokens/new?scopes=repo,read:user&description=Pulse+Dashboard" target="_blank" rel="noopener noreferrer">Generate a Personal Access Token ↗</a> with <b>repo</b> &amp; <b>read:user</b> permissions.
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:10px;flex-wrap:wrap">
+          ${isConnected ? `<button class="btn btn-sm" id="disconnectTokenBtn" style="color:var(--red)"><span class="stat-icon" style="color:var(--red)">${ICONS.issue}</span> Disconnect</button>` : `<div></div>`}
+          <div style="display:flex;gap:10px">
+            <button class="btn btn-sm" id="cancelTokenBtn">Cancel</button>
+            <button class="btn btn-primary btn-sm" id="saveTokenBtn">${ICONS.check} Verify &amp; Save</button>
+          </div>
+        </div>`;
+
+      $('#closeTokenModalBtn')?.addEventListener("click", closeTokenModal);
+      $('#cancelTokenBtn')?.addEventListener("click", closeTokenModal);
+
+      $('#toggleTokenEyeBtn')?.addEventListener("click", () => {
+        showPassword = !showPassword;
+        const input = $('#tokenInput');
+        if (input) input.type = showPassword ? "text" : "password";
+      });
+
+      $('#disconnectTokenBtn')?.addEventListener("click", () => {
+        state.token = "";
+        localStorage.removeItem("pulse-gh-token");
+        state.api.rateLimit = 60;
+        closeTokenModal();
+        fetchLive();
+        toast("Disconnected GitHub token");
+      });
+
+      $('#saveTokenBtn')?.addEventListener("click", async () => {
+        const input = $('#tokenInput');
+        const val = input ? input.value.trim() : "";
+        if (!val) {
+          toast("Please enter a token");
+          return;
+        }
+
+        const saveBtn = $('#saveTokenBtn');
+        if (saveBtn) {
+          saveBtn.disabled = true;
+          saveBtn.innerHTML = `Verifying...`;
+        }
+
+        try {
+          const res = await fetch("https://api.github.com/user", {
+            headers: {
+              Accept: "application/vnd.github+json",
+              Authorization: `Bearer ${val}`,
+            },
+          });
+
+          if (!res.ok) throw new Error(`HTTP ${res.status}: Invalid token or unauthorized`);
+          const user = await res.json();
+
+          state.token = val;
+          localStorage.setItem("pulse-gh-token", val);
+
+          const limit = res.headers.get("X-RateLimit-Limit");
+          const remaining = res.headers.get("X-RateLimit-Remaining");
+          if (limit) state.api.rateLimit = Number(limit);
+          if (remaining) state.api.rateRemaining = Number(remaining);
+
+          toast(`Authenticated as @${user.login}! Full rate limit unlocked.`);
+          closeTokenModal();
+          fetchLive();
+        } catch (err) {
+          toast(`Verification failed: ${err.message}`);
+          if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = `${ICONS.check} Verify &amp; Save`;
+          }
+        }
+      });
+    };
+
+    renderSheet();
+    overlay.classList.add("open");
+    overlay.setAttribute("aria-hidden", "false");
+  }
+
+  function closeTokenModal() {
+    const overlay = $('#tokenOverlay');
+    overlay.classList.remove("open");
+    overlay.setAttribute("aria-hidden", "true");
   }
 
   /* ---- REPO INSPECTOR MODAL ---- */
@@ -583,6 +757,12 @@
       // Actions group
       const actions = [
         {
+          title: state.token ? "GitHub Access Token (Connected · 5,000 req/hr)" : "Connect GitHub Access Token (Unlock Private Repos)",
+          sub: "Auth",
+          icon: ICONS.key,
+          action: openTokenModal,
+        },
+        {
           title: `Switch to ${state.theme === "dark" ? "Light" : "Dark"} Theme`,
           sub: "Theme",
           icon: state.theme === "dark" ? ICONS.sun : ICONS.moon,
@@ -635,8 +815,8 @@
           items.push({
             type: "REPO",
             title: r.name,
-            sub: `${r.language || "code"} · ★${r.stars}`,
-            icon: ICONS.repos,
+            sub: `${r.language || "code"} · ★${r.stars}${r.isPrivate ? " · Private" : ""}`,
+            icon: r.isPrivate ? ICONS.lock : ICONS.repos,
             action: () => openInspector(r.name),
           });
         }
@@ -852,6 +1032,8 @@
 
     $('#customizeWidgetsTrigger')?.addEventListener("click", openWidgetModal);
     $('#exportSummaryTrigger')?.addEventListener("click", copyMarkdownSummary);
+
+    $('#createIssueBtn')?.addEventListener("click", () => openIssueModal());
 
     // Repositories view events
     $('#repoSearchInput')?.addEventListener("input", (e) => {
@@ -1348,44 +1530,250 @@
 
   /* ---- 3. ACTIVITY VIEW ---- */
   function renderActivity() {
-    const repos = filteredRepos().slice(0, 12);
-    const feed = repos
-      .map((r, i) => {
+    const s = state.snapshot || {};
+    const extras = s.extras || [];
+
+    // Real cross-repo events, filtered by global repo selection
+    const events = (s.events || []).filter(
+      (e) =>
+        state.selectedRepo === "all" ||
+        e.repo.split("/").pop() === state.selectedRepo.split("/").pop()
+    );
+
+    const eventFeed = events
+      .slice(0, 25)
+      .map((e, i) => {
         const col = ["var(--cyan)", "var(--violet)", "var(--green)", "var(--blue)", "var(--amber)"][i % 5];
-        const iconSvg = i % 3 === 0 ? ICONS.gitCommit : i % 3 === 1 ? ICONS.branch : ICONS.refresh;
+        const iconSvg =
+          e.type === "PushEvent"
+            ? ICONS.gitCommit
+            : e.type === "PullRequestEvent"
+            ? ICONS.branch
+            : e.type === "IssuesEvent"
+            ? ICONS.issue
+            : e.type === "ReleaseEvent"
+            ? ICONS.award
+            : e.type === "WatchEvent"
+            ? ICONS.starOutline
+            : e.type === "ForkEvent"
+            ? ICONS.fork
+            : ICONS.activity;
         return `
-        <div class="feed-item" data-inspect="${esc(r.name)}" style="cursor:pointer" title="Inspect repository">
+        <div class="feed-item">
           <div class="fdot" style="background:${col}22;color:${col}">
             ${iconSvg}
           </div>
           <div>
-            <div class="ft">
-              <b>${esc(r.name)}</b> ${i % 3 === 0 ? "pushed latest commit" : i % 3 === 1 ? "updated default branch" : "synchronized repository"}
-            </div>
-            <div class="fs">${fmtAgo(r.pushedAt)} · ${esc(r.language || "stack")} · ${esc(r.defaultBranch || "main")}</div>
+            <div class="ft"><b>${esc(e.repo)}</b> ${esc(e.action)}</div>
+            <div class="fs">${fmtAgo(e.createdAt)}</div>
           </div>
         </div>`;
       })
       .join("");
 
+    // Real workflow runs across repos
+    const allRuns = extras
+      .flatMap((x) => (x.runs || []).map((r) => ({ ...r, repo: x.fullName })))
+      .filter((r) => state.selectedRepo === "all" || r.repo === state.selectedRepo);
+
+    const runningCount = allRuns.filter(
+      (r) => r.status === "in_progress" || r.status === "queued"
+    ).length;
+
+    const rankRun = (r) =>
+      r.status === "in_progress" ? 0 : r.status === "queued" ? 1 : 2;
+
+    const workflowRows = allRuns
+      .slice()
+      .sort((a, b) => rankRun(a) - rankRun(b))
+      .slice(0, 12)
+      .map((r) => {
+        const cls =
+          r.status === "in_progress" || r.status === "queued"
+            ? "run"
+            : r.status === "completed" && r.conclusion === "success"
+            ? "ok"
+            : r.status === "completed" && r.conclusion === "failure"
+            ? "bad"
+            : r.status === "completed"
+            ? "warn"
+            : "run";
+        const label =
+          r.status === "in_progress"
+            ? "RUNNING"
+            : r.status === "queued"
+            ? "QUEUED"
+            : r.status === "completed"
+            ? r.conclusion === "success"
+              ? "PASSING"
+              : r.conclusion === "failure"
+              ? "FAILED"
+              : "OTHER"
+            : r.status;
+        return `
+        <div class="mini-row">
+          <div class="av" style="background:linear-gradient(135deg,var(--blue),var(--green))">${initials(r.repo.split("/").pop())}</div>
+          <div class="meta">
+            <div class="t">${esc(r.name || "workflow")}</div>
+            <div class="s">${esc(r.repo)} · ${fmtAgo(r.updatedAt || r.createdAt)}</div>
+          </div>
+          <div><span class="status ${cls}"><span class="sdot"></span>${label}</span></div>
+        </div>`;
+      })
+      .join("");
+
+    // Real releases across repos
+    const allReleases = extras
+      .flatMap((x) => (x.releases || []).map((r) => ({ ...r, repo: x.fullName })))
+      .filter((r) => state.selectedRepo === "all" || r.repo === state.selectedRepo)
+      .slice()
+      .sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+
+    const releaseRows = allReleases.slice(0, 10).map((r) => `
+        <div class="mini-row">
+          <div class="av" style="background:linear-gradient(135deg,var(--amber),var(--violet))">${ICONS.award}</div>
+          <div class="meta">
+            <div class="t">${esc(r.tag)}${r.prerelease ? ' <span class="priv-tag" style="font-size:10px">PRE</span>' : ""}</div>
+            <div class="s">${esc(r.repo)} · ${fmtAgo(r.publishedAt)}</div>
+          </div>
+          <div><a class="btn btn-sm" href="${esc(r.htmlUrl)}" target="_blank" rel="noopener noreferrer">${ICONS.externalLink}</a></div>
+        </div>`)
+      .join("");
+
+    const createIssueBtn = `
+      <button class="btn btn-primary" id="createIssueBtn" style="margin-right:10px">${ICONS.issue} New Issue</button>`;
+
     return section(
       "Activity Stream",
-      "Real-time commit signals and repository updates",
-      pill(),
+      "Real-time activity, running workflows and releases",
+      `${createIssueBtn}${pill()}`,
       `<div class="bento">
         <div class="card col2">
           <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--green)">${ICONS.activity}</span>
-              Live Event Stream
-            </div>
-            <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">Auto-synced</span>
+            <div class="card-title"><span class="stat-icon" style="color:var(--green)">${ICONS.activity}</span> Live Event Stream</div>
+            <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">${events.length} events · real</span>
           </div>
-          <div class="feed">${feed || '<div style="color:var(--faint);font-size:13px;padding:8px 0">No activity</div>'}</div>
+          <div class="feed">${eventFeed || '<div style="color:var(--faint);font-size:13px;padding:8px 0">No activity yet</div>'}</div>
         </div>
-        ${commitHeatmapWidget()}
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title"><span class="stat-icon" style="color:var(--blue)">${ICONS.pipeline}</span> Running Workflows</div>
+          </div>
+          <div class="metric" style="color:var(--blue)">${fmtNum(runningCount)}</div>
+          <div class="metric-sub">currently in progress / queued</div>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title"><span class="stat-icon" style="color:var(--amber)">${ICONS.award}</span> Releases</div>
+          </div>
+          <div class="metric" style="color:var(--amber)">${fmtNum(allReleases.length)}</div>
+          <div class="metric-sub">published across repos</div>
+        </div>
+        <div class="card col2">
+          <div class="card-head">
+            <div class="card-title"><span class="stat-icon" style="color:var(--blue)">${ICONS.ci}</span> Workflow Runs</div>
+            <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">GitHub Actions</span>
+          </div>
+          <div class="mini-list">${workflowRows || '<div style="color:var(--faint);font-size:13px;padding:8px 0">No workflows yet</div>'}</div>
+        </div>
+        <div class="card col2">
+          <div class="card-head">
+            <div class="card-title"><span class="stat-icon" style="color:var(--amber)">${ICONS.share}</span> Latest Releases</div>
+            <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">Tags</span>
+          </div>
+          <div class="mini-list">${releaseRows || '<div style="color:var(--faint);font-size:13px;padding:8px 0">No releases yet</div>'}</div>
+        </div>
       </div>`
     );
+  }
+
+  /* ---- CREATE ISSUE MODAL ---- */
+  function openIssueModal(preRepo) {
+    const overlay = $("#issueOverlay");
+    const sheet = $("#issueSheet");
+    const repos = repoList().filter((r) => !r.isPrivate);
+    const pre = preRepo || state.selectedRepo !== "all" ? state.selectedRepo : "";
+    const token = state.token;
+
+    sheet.innerHTML = `
+      <div class="sheet-head">
+        <div>
+          <div class="inspector-title">New Issue</div>
+          <div class="sheet-sub">Create an issue directly from Pulse</div>
+        </div>
+        <button class="sheet-close" id="closeIssueBtn">✕</button>
+      </div>
+
+      ${token ? "" : `
+      <div class="status warn" style="margin-bottom:16px;display:flex;gap:8px;align-items:center">
+        <span class="sdot"></span> Creating issues requires a GitHub token.
+        <button class="btn btn-sm" id="issueGotToken" style="margin-left:auto">Connect →</button>
+      </div>`}
+
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--faint);margin-bottom:8px">Repository</div>
+      <select id="issueRepo" class="form-input" style="width:100%;margin-bottom:14px">
+        ${repos.map((r) => `<option value="${esc(r.fullName)}" ${r.fullName === pre ? "selected" : ""}>${esc(r.fullName)}</option>`).join("")}
+      </select>
+
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--faint);margin-bottom:8px">Title</div>
+      <input id="issueTitle" class="form-input" placeholder="Summarize the issue" style="width:100%;margin-bottom:14px" />
+
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--faint);margin-bottom:8px">Body (Markdown)</div>
+      <textarea id="issueBody" class="form-input" rows="6" placeholder="Describe the problem, steps to reproduce, expected vs actual…" style="width:100%;margin-bottom:18px"></textarea>
+
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button class="btn" id="cancelIssueBtn">Cancel</button>
+        <button class="btn btn-primary" id="submitIssueBtn" ${token ? "" : "disabled"}>${ICONS.issue} Create Issue</button>
+      </div>`;
+
+    overlay.classList.add("open");
+    overlay.setAttribute("aria-hidden", "false");
+
+    const close = () => {
+      overlay.classList.remove("open");
+      overlay.setAttribute("aria-hidden", "true");
+    };
+    $("#closeIssueBtn")?.addEventListener("click", close);
+    $("#cancelIssueBtn")?.addEventListener("click", close);
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) close();
+    });
+    $("#issueGotToken")?.addEventListener("click", () => {
+      close();
+      openTokenModal();
+    });
+
+    $("#submitIssueBtn")?.addEventListener("click", async () => {
+      const full = $("#issueRepo").value;
+      const title = $("#issueTitle").value.trim();
+      const body = $("#issueBody").value.trim();
+      if (!full || !title) {
+        toast("Please provide a repository and issue title");
+        return;
+      }
+      const btn = $("#submitIssueBtn");
+      btn.disabled = true;
+      btn.textContent = "Creating…";
+      try {
+        const res = await fetch(`https://api.github.com/repos/${full}/issues`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${state.token}`,
+          },
+          body: JSON.stringify({ title, body }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Request failed");
+        toast(`Issue created: ${data.html_url}`);
+        close();
+        fetchLive();
+      } catch (err) {
+        toast(`Failed to create issue: ${err.message}`);
+        btn.disabled = false;
+        btn.textContent = "Create Issue";
+      }
+    });
   }
 
   /* ---- 4. CI VIEW ---- */
@@ -1665,21 +2053,33 @@
   }
 
   async function fetchLive() {
-    toast("Syncing with GitHub API...");
+    toast(state.token ? "Syncing authenticated GitHub data..." : "Syncing public GitHub data...");
     try {
       const chip = $('#rateChip');
-      const res = await fetch("https://api.github.com/user/repos?per_page=100&sort=updated", {
-        headers: { Accept: "application/vnd.github+json" },
-      });
+      const headers = { Accept: "application/vnd.github+json" };
+      if (state.token) {
+        headers["Authorization"] = `Bearer ${state.token}`;
+      }
+
+      // If token present, fetch both public and private repos (owner and collaborator)
+      const url = state.token
+        ? "https://api.github.com/user/repos?per_page=100&sort=updated&affiliation=owner,collaborator"
+        : "https://api.github.com/user/repos?per_page=100&sort=updated";
+
+      const res = await fetch(url, { headers });
+
       if (res.headers) {
+        const limit = res.headers.get("X-RateLimit-Limit");
         const remain = res.headers.get("X-RateLimit-Remaining");
-        state.api.rateRemaining = remain;
+        if (limit) state.api.rateLimit = Number(limit);
+        if (remain) state.api.rateRemaining = Number(remain);
         if (chip) {
           chip.style.display = "inline";
-          chip.textContent = `${remain} reqs`;
+          chip.textContent = `${remain} / ${state.api.rateLimit} reqs`;
         }
       }
-      if (!res.ok) throw new Error(res.status);
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const repos = await res.json();
       if (Array.isArray(repos) && repos.length) {
         const enriched = repos
@@ -1704,19 +2104,39 @@
             pushedAt: r.pushed_at,
           }));
 
+        // Fetch user info if token is connected
+        let userInfo = state.snapshot?.user;
+        if (state.token) {
+          try {
+            const userRes = await fetch("https://api.github.com/user", { headers });
+            if (userRes.ok) {
+              const u = await userRes.json();
+              userInfo = {
+                login: u.login,
+                name: u.name,
+                avatar: u.avatar_url,
+                publicRepos: u.public_repos,
+                followers: u.followers,
+                following: u.following,
+              };
+            }
+          } catch (e) {}
+        }
+
         state.snapshot = {
           ...(state.snapshot || {}),
           generatedAt: new Date().toISOString(),
+          user: userInfo,
           repos: enriched,
           totalStars: enriched.reduce((a, r) => a + r.stars, 0),
           totalForks: enriched.reduce((a, r) => a + r.forks, 0),
           totalOpenIssues: enriched.reduce((a, r) => a + r.openIssues, 0),
         };
         render();
-        toast("Live GitHub data synchronized");
+        toast(state.token ? "Synced private & public repos with full API quota" : "Live GitHub data synchronized");
       }
     } catch (e) {
-      console.warn("Live sync warning (expected if rate-limited without auth token):", e);
+      console.warn("Live sync warning:", e);
       toast("Showing latest snapshot data");
     }
   }
@@ -1765,6 +2185,9 @@
         $('#widgetOverlay').setAttribute("aria-hidden", "true");
       }
     });
+    $('#tokenOverlay')?.addEventListener("click", (e) => {
+      if (e.target.id === "tokenOverlay") closeTokenModal();
+    });
 
     // Global keyboard shortcuts
     window.addEventListener("keydown", (e) => {
@@ -1778,8 +2201,10 @@
       } else if (e.key === "Escape") {
         closeOverlay();
         closeCommandPalette();
+        closeTokenModal();
         $('#inspectorOverlay')?.classList.remove("open");
         $('#widgetOverlay')?.classList.remove("open");
+        $('#issueOverlay')?.classList.remove("open");
       }
     });
   }
