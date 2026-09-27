@@ -373,17 +373,62 @@ input:focus, select:focus {
   background: var(--cyan);
 }
 .nav-item .ic {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   opacity: 0.85;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
+.nav-item .ic svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
 .nav-item.active .ic {
   color: var(--cyan);
   opacity: 1;
+}
+
+.stat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: -2px;
+  width: 14px;
+  height: 14px;
+  margin-right: 4px;
+  opacity: 0.9;
+  flex-shrink: 0;
+}
+.stat-icon svg {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+
+.badge svg {
+  width: 22px;
+  height: 22px;
+  display: block;
+}
+
+.feed-item .fdot svg {
+  width: 13px;
+  height: 13px;
+  display: block;
+}
+
+.inspector-stat .val {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.inspector-stat .val svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
 }
 .nav-badge {
   margin-left: auto;

@@ -5,6 +5,44 @@
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 
+  // High-fidelity Developer Icon System (Lucide/Feather inspired 24x24 stroke icons)
+  const ICONS = {
+    command: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1.5"/><rect width="7" height="5" x="14" y="3" rx="1.5"/><rect width="7" height="9" x="14" y="12" rx="1.5"/><rect width="7" height="5" x="3" y="16" rx="1.5"/></svg>`,
+    repos: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>`,
+    activity: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>`,
+    ci: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+    pipeline: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="6" y1="9" x2="6" y2="15"/><circle cx="18" cy="12" r="3"/><path d="M18 9a9 9 0 0 0-9 9"/></svg>`,
+    community: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+    health: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/></svg>`,
+    xp: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>`,
+    star: `<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
+    starOutline: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
+    fork: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9"/><path d="M12 12v3"/></svg>`,
+    issue: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+    eye: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`,
+    zap: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+    lock: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
+    globe: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+    branch: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>`,
+    code: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>`,
+    layers: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>`,
+    terminal: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>`,
+    search: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`,
+    refresh: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>`,
+    settings: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
+    share: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>`,
+    copy: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="13" height="13" x="9" y="9" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`,
+    externalLink: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`,
+    check: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+    shield: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+    award: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>`,
+    gitCommit: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="1.05" y1="12" x2="7" y2="12"/><line x1="17.01" y1="12" x2="22.96" y2="12"/></svg>`,
+    pulse: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg>`,
+    sun: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
+    moon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
+    filter: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>`,
+  };
+
   // Default widget configuration for Command Center
   const DEFAULT_WIDGETS = {
     stars: true,
@@ -31,21 +69,21 @@
 
   const state = {
     snapshot: null,
-    selectedRepo: "all", // 'all' or repo.name
+    selectedRepo: "all",
     view: "command",
     api: { rateRemaining: null },
     theme: localStorage.getItem("pulse-theme") || "dark",
     repoSearchQuery: "",
     repoLangFilter: "all",
     repoSortBy: "pushed",
-    pulseTimeframe: 14, // 7, 14, 30 days
+    pulseTimeframe: 14,
     widgets: getSavedWidgets(),
     paletteQuery: "",
     paletteSelectedIndex: 0,
     filteredPaletteItems: [],
   };
 
-  // Color mapping for languages
+  // Language color mappings
   const LANG_COLORS = {
     JavaScript: "#f1e05a",
     TypeScript: "#3178c6",
@@ -65,11 +103,6 @@
   };
 
   const getLangColor = (lang) => LANG_COLORS[lang] || "#38bdf8";
-
-  const repoIcon = `
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
-    </svg>`;
 
   /* ---- helpers ---- */
   const esc = (s) =>
@@ -114,13 +147,13 @@
 
   /* ---- navigation items ---- */
   const NAV = [
-    { id: "command", label: "COMMAND", ic: "⌁", badge: () => filteredRepos().length },
-    { id: "repos", label: "REPOSITORIES", ic: repoIcon, badge: () => repoList().length },
-    { id: "activity", label: "ACTIVITY", ic: "◷", badge: () => null },
-    { id: "ci", label: "CI & PIPELINES", ic: "◉", badge: () => "OK" },
-    { id: "community", label: "COMMUNITY", ic: "◎", badge: () => state.snapshot?.totalStars || null },
-    { id: "health", label: "HEALTH", ic: "♥", badge: () => null },
-    { id: "xp", label: "XP & REWARDS", ic: "★", badge: () => "LVL" },
+    { id: "command", label: "COMMAND", ic: ICONS.command, badge: () => filteredRepos().length },
+    { id: "repos", label: "REPOSITORIES", ic: ICONS.repos, badge: () => repoList().length },
+    { id: "activity", label: "ACTIVITY", ic: ICONS.activity, badge: () => null },
+    { id: "ci", label: "CI & PIPELINES", ic: ICONS.pipeline, badge: () => "OK" },
+    { id: "community", label: "COMMUNITY", ic: ICONS.community, badge: () => state.snapshot?.totalStars || null },
+    { id: "health", label: "HEALTH", ic: ICONS.health, badge: () => null },
+    { id: "xp", label: "XP & REWARDS", ic: ICONS.xp, badge: () => "LVL" },
   ];
 
   /* ---- THEME HANDLING ---- */
@@ -156,10 +189,7 @@
 
       <div class="topbar-center">
         <button class="search-trigger" id="topbarSearchTrigger" aria-label="Open Command Palette">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
+          ${ICONS.search}
           <span>Search repos or commands...</span>
           <span class="kbd">⌘K / Ctrl+K</span>
         </button>
@@ -175,9 +205,7 @@
         </span>
 
         <button class="topbar-btn" id="themeToggleBtn" title="Toggle Dark/Light Mode">
-          ${isDark
-            ? `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`
-            : `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`}
+          ${isDark ? ICONS.sun : ICONS.moon}
         </button>
 
         ${u ? `
@@ -214,16 +242,16 @@
 
       <div class="nav-label" style="margin-top:16px">Quick Tools</div>
       <button class="nav-item" id="sidebarCmdPaletteBtn">
-        <span class="ic">⌘</span>
+        <span class="ic">${ICONS.terminal}</span>
         <span>Command Palette</span>
         <span class="nav-badge">⌘K</span>
       </button>
       <button class="nav-item" id="sidebarRefreshBtn">
-        <span class="ic">↻</span>
+        <span class="ic">${ICONS.refresh}</span>
         <span>Sync GitHub</span>
       </button>
       <button class="nav-item" id="sidebarWidgetsBtn">
-        <span class="ic">⚙</span>
+        <span class="ic">${ICONS.settings}</span>
         <span>Customize View</span>
       </button>
 
@@ -238,7 +266,10 @@
         </div>
         <div class="foot-row">
           <span>TOTAL STARS</span>
-          <span style="color:var(--amber)">★${state.snapshot?.totalStars || 0}</span>
+          <span style="color:var(--amber);display:flex;align-items:center;gap:3px">
+            <span style="width:12px;height:12px;display:inline-block">${ICONS.star}</span>
+            ${state.snapshot?.totalStars || 0}
+          </span>
         </div>
       </div>`;
 
@@ -256,11 +287,11 @@
     if (!mobilenav) return;
 
     const m = [
-      { id: "command", label: "HOME", svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>` },
-      { id: "repos", label: "REPOS", svg: repoIcon },
-      { id: "activity", label: "ACTIVITY", svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 16 12 14 8 10 16 8 12 2 12"/></svg>` },
-      { id: "palette", label: "SEARCH", svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>` },
-      { id: "more", label: "MORE", svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>` },
+      { id: "command", label: "HOME", svg: ICONS.command },
+      { id: "repos", label: "REPOS", svg: ICONS.repos },
+      { id: "activity", label: "ACTIVITY", svg: ICONS.activity },
+      { id: "palette", label: "SEARCH", svg: ICONS.search },
+      { id: "more", label: "MORE", svg: ICONS.layers },
     ];
 
     mobilenav.innerHTML = m
@@ -288,7 +319,7 @@
     sheet.innerHTML = `
       <div class="sheet-head">
         <div>
-          <div class="sheet-title">More Dashboards</div>
+          <div class="sheet-title">Dashboards</div>
           <div class="sheet-sub">Jump to any developer view</div>
         </div>
         <button class="sheet-close" id="closeMoreSheet">✕</button>
@@ -297,7 +328,7 @@
         ${NAV.map(
           (n) => `
           <button class="sheet-row" data-jump="${n.id}" style="flex-direction:column;text-align:center;border:1px solid var(--stroke);padding:16px;border-radius:14px">
-            <span style="font-size:22px;margin-bottom:6px">${n.ic}</span>
+            <span class="ic" style="width:24px;height:24px;margin-bottom:6px;color:var(--cyan)">${n.ic}</span>
             <span class="rmeta" style="text-align:center">
               <span class="rt">${n.label}</span>
             </span>
@@ -335,8 +366,8 @@
             <div class="rs">${esc(r.language || "—")} · ${fmtAgo(r.pushedAt)}</div>
           </div>
           <div class="rstat">
-            <span>★ ${fmtNum(r.stars)}</span>
-            <span>⑂ ${fmtNum(r.forks)}</span>
+            <span style="display:inline-flex;align-items:center;gap:3px"><span class="stat-icon" style="color:var(--amber)">${ICONS.star}</span>${fmtNum(r.stars)}</span>
+            <span style="display:inline-flex;align-items:center;gap:3px"><span class="stat-icon" style="color:var(--violet)">${ICONS.fork}</span>${fmtNum(r.forks)}</span>
           </div>
         </div>`
         )
@@ -424,10 +455,16 @@
       </div>
 
       <div class="inspector-tags" style="margin-bottom:16px">
-        <span class="status ${repo.isPrivate ? "bad" : "ok"}"><span class="sdot"></span>${repo.isPrivate ? "PRIVATE" : "PUBLIC"}</span>
+        <span class="status ${repo.isPrivate ? "bad" : "ok"}">
+          <span class="sdot"></span>
+          ${repo.isPrivate ? "PRIVATE" : "PUBLIC"}
+        </span>
         ${repo.language ? `<span class="lang-tag" style="background:${langColor}22;color:${langColor}">${esc(repo.language)}</span>` : ""}
-        <span class="priv-tag">BRANCH: ${esc(repo.defaultBranch || "main")}</span>
-        ${repo.license ? `<span class="priv-tag">LICENSE: ${esc(repo.license)}</span>` : ""}
+        <span class="priv-tag" style="display:inline-flex;align-items:center;gap:4px">
+          <span class="stat-icon" style="width:12px;height:12px">${ICONS.branch}</span>
+          ${esc(repo.defaultBranch || "main")}
+        </span>
+        ${repo.license ? `<span class="priv-tag" style="display:inline-flex;align-items:center;gap:4px"><span class="stat-icon" style="width:12px;height:12px">${ICONS.shield}</span>${esc(repo.license)}</span>` : ""}
         ${repo.archived ? `<span class="status warn"><span class="sdot"></span>ARCHIVED</span>` : ""}
       </div>
 
@@ -438,43 +475,55 @@
       <div class="inspector-grid">
         <div class="inspector-stat">
           <div class="label">Stars</div>
-          <div class="val" style="color:var(--amber)">★ ${fmtNum(repo.stars)}</div>
+          <div class="val" style="color:var(--amber)">
+            <span style="color:var(--amber)">${ICONS.star}</span>
+            <span>${fmtNum(repo.stars)}</span>
+          </div>
         </div>
         <div class="inspector-stat">
           <div class="label">Forks</div>
-          <div class="val" style="color:var(--violet)">⑂ ${fmtNum(repo.forks)}</div>
+          <div class="val" style="color:var(--violet)">
+            <span style="color:var(--violet)">${ICONS.fork}</span>
+            <span>${fmtNum(repo.forks)}</span>
+          </div>
         </div>
         <div class="inspector-stat">
           <div class="label">Open Issues</div>
-          <div class="val" style="color:var(--cyan)">! ${fmtNum(repo.openIssues)}</div>
+          <div class="val" style="color:var(--cyan)">
+            <span style="color:var(--cyan)">${ICONS.issue}</span>
+            <span>${fmtNum(repo.openIssues)}</span>
+          </div>
         </div>
         <div class="inspector-stat">
           <div class="label">Watchers</div>
-          <div class="val" style="color:var(--green)">◉ ${fmtNum(repo.watchers)}</div>
+          <div class="val" style="color:var(--green)">
+            <span style="color:var(--green)">${ICONS.eye}</span>
+            <span>${fmtNum(repo.watchers)}</span>
+          </div>
         </div>
       </div>
 
-      <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--faint);margin-bottom:8px">Clone HTTPS</div>
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--faint);margin-bottom:8px">Clone via HTTPS</div>
       <div class="clone-box">
         <code>${esc(httpsClone)}</code>
-        <button class="btn btn-sm" id="copyHttpsBtn">Copy</button>
+        <button class="btn btn-sm" id="copyHttpsBtn">${ICONS.copy} Copy</button>
       </div>
 
-      <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--faint);margin-bottom:8px">Clone SSH</div>
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--faint);margin-bottom:8px">Clone via SSH</div>
       <div class="clone-box">
         <code>${esc(sshClone)}</code>
-        <button class="btn btn-sm" id="copySshBtn">Copy</button>
+        <button class="btn btn-sm" id="copySshBtn">${ICONS.copy} Copy</button>
       </div>
 
       <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">
         <button class="btn btn-primary" id="focusRepoBtn">
-          ⌁ Focus Command Center
+          ${ICONS.command} Focus Command Center
         </button>
         <a class="btn" href="${esc(repo.htmlUrl)}" target="_blank" rel="noopener noreferrer">
-          View on GitHub ↗
+          ${ICONS.externalLink} View on GitHub
         </a>
         <a class="btn" href="${esc(repo.htmlUrl)}/issues" target="_blank" rel="noopener noreferrer">
-          Issues (${repo.openIssues})
+          ${ICONS.issue} Issues (${repo.openIssues})
         </a>
       </div>`;
 
@@ -536,25 +585,25 @@
         {
           title: `Switch to ${state.theme === "dark" ? "Light" : "Dark"} Theme`,
           sub: "Theme",
-          icon: "◐",
+          icon: state.theme === "dark" ? ICONS.sun : ICONS.moon,
           action: toggleTheme,
         },
         {
           title: "Sync with GitHub (Live Refresh)",
           sub: "API",
-          icon: "↻",
+          icon: ICONS.refresh,
           action: fetchLive,
         },
         {
           title: "Customize Command Center Widgets",
           sub: "Layout",
-          icon: "⚙",
+          icon: ICONS.settings,
           action: openWidgetModal,
         },
         {
           title: "Focus All Repositories",
           sub: "Filter",
-          icon: "⌁",
+          icon: ICONS.command,
           action: () => {
             state.selectedRepo = "all";
             go("command");
@@ -563,7 +612,7 @@
         {
           title: "Copy Summary as Markdown",
           sub: "Export",
-          icon: "📋",
+          icon: ICONS.share,
           action: copyMarkdownSummary,
         },
       ];
@@ -587,7 +636,7 @@
             type: "REPO",
             title: r.name,
             sub: `${r.language || "code"} · ★${r.stars}`,
-            icon: "▣",
+            icon: ICONS.repos,
             action: () => openInspector(r.name),
           });
         }
@@ -600,10 +649,7 @@
 
       sheet.innerHTML = `
         <div class="palette-input-wrap">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
+          <span style="color:var(--cyan);display:flex;align-items:center;width:18px;height:18px">${ICONS.search}</span>
           <input type="text" id="paletteInput" placeholder="Type a command or repository name..." value="${esc(state.paletteQuery)}" autocomplete="off" />
           <span style="font-size:11px;color:var(--faint);font-family:var(--mono)">ESC to exit</span>
         </div>
@@ -611,7 +657,7 @@
           ${items.length === 0 ? `<div style="padding:24px;text-align:center;color:var(--faint);font-size:13px">No matching results</div>` : ""}
           ${items.map((it, idx) => `
             <div class="palette-item ${idx === state.paletteSelectedIndex ? "selected" : ""}" data-idx="${idx}">
-              <span style="width:20px;text-align:center;font-size:14px;color:var(--cyan)">${it.icon}</span>
+              <span style="width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:var(--cyan)">${it.icon}</span>
               <span style="font-weight:600">${esc(it.title)}</span>
               <span class="item-sub">${esc(it.sub)}</span>
             </div>`).join("")}
@@ -711,7 +757,7 @@
 
       <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px">
         <button class="btn btn-sm" id="resetWidgetsBtn">Reset Defaults</button>
-        <button class="btn btn-primary btn-sm" id="saveWidgetsBtn">Done</button>
+        <button class="btn btn-primary btn-sm" id="saveWidgetsBtn">${ICONS.check} Done</button>
       </div>`;
 
     $('#closeWidgetModalBtn')?.addEventListener("click", () => {
@@ -853,7 +899,7 @@
 
   const pill = () => `
     <button class="repo-pill" data-repolink title="Change repository focus">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+      <span class="stat-icon" style="color:var(--cyan)">${ICONS.repos}</span>
       ${state.selectedRepo === "all" ? '<span class="all">ALL REPOSITORIES</span>' : `<span style="color:var(--text-bright)">${esc(state.selectedRepo.replace(/[-_]/g, " ").toUpperCase())}</span>`}
       <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </button>`;
@@ -879,12 +925,10 @@
     const actions = `
       ${pill()}
       <button class="btn btn-sm" id="customizeWidgetsTrigger" title="Customize Cards">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        Widgets
+        ${ICONS.settings} Widgets
       </button>
       <button class="btn btn-sm" id="exportSummaryTrigger" title="Export Markdown">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-        Share
+        ${ICONS.share} Share
       </button>`;
 
     // Metric cards
@@ -894,7 +938,10 @@
         <div class="card">
           <div class="glow" style="background:var(--cyan)"></div>
           <div class="card-head">
-            <div class="card-title"><span class="tag" style="background:var(--cyan);color:var(--cyan)"></span>Total Stars</div>
+            <div class="card-title">
+              <span class="stat-icon" style="color:var(--cyan)">${ICONS.star}</span>
+              Total Stars
+            </div>
           </div>
           <div class="metric" style="color:var(--cyan)">${fmtNum(stars)}</div>
           <div class="metric-sub">across ${repos.length} repos</div>
@@ -905,7 +952,10 @@
         <div class="card">
           <div class="glow" style="background:var(--violet)"></div>
           <div class="card-head">
-            <div class="card-title"><span class="tag" style="background:var(--violet);color:var(--violet)"></span>Forks</div>
+            <div class="card-title">
+              <span class="stat-icon" style="color:var(--violet)">${ICONS.fork}</span>
+              Forks
+            </div>
           </div>
           <div class="metric" style="color:var(--violet)">${fmtNum(forks)}</div>
           <div class="metric-sub">community reuse</div>
@@ -915,7 +965,10 @@
       metricCardsHtml += `
         <div class="card">
           <div class="card-head">
-            <div class="card-title"><span class="tag" style="background:var(--amber);color:var(--amber)"></span>Open Issues</div>
+            <div class="card-title">
+              <span class="stat-icon" style="color:var(--amber)">${ICONS.issue}</span>
+              Open Issues
+            </div>
           </div>
           <div class="metric" style="color:var(--amber)">${fmtNum(issues)}</div>
           <div class="metric-sub">${issues === 0 ? "clean queue" : "action required"}</div>
@@ -925,7 +978,10 @@
       metricCardsHtml += `
         <div class="card">
           <div class="card-head">
-            <div class="card-title"><span class="tag" style="background:var(--green);color:var(--green)"></span>Active Repos</div>
+            <div class="card-title">
+              <span class="stat-icon" style="color:var(--green)">${ICONS.zap}</span>
+              Active Repos
+            </div>
           </div>
           <div class="metric" style="color:var(--green)">${fmtNum(active)}<small>/ ${repos.length}</small></div>
           <div class="metric-sub">pushed past 7 days</div>
@@ -935,7 +991,10 @@
       metricCardsHtml += `
         <div class="card">
           <div class="card-head">
-            <div class="card-title"><span class="tag" style="background:var(--blue);color:var(--blue)"></span>Primary Stack</div>
+            <div class="card-title">
+              <span class="stat-icon" style="color:var(--blue)">${ICONS.code}</span>
+              Primary Stack
+            </div>
           </div>
           <div class="metric" style="font-size:24px;text-transform:uppercase;color:var(--blue)">${esc(topLang)}</div>
           <div class="metric-sub">most used language</div>
@@ -945,7 +1004,10 @@
       metricCardsHtml += `
         <div class="card">
           <div class="card-head">
-            <div class="card-title"><span class="tag" style="background:var(--red);color:var(--red)"></span>Private Repos</div>
+            <div class="card-title">
+              <span class="stat-icon" style="color:var(--red)">${ICONS.lock}</span>
+              Private Repos
+            </div>
           </div>
           <div class="metric" style="color:var(--red)">${fmtNum(privateCount)}</div>
           <div class="metric-sub">of ${repos.length} total repos</div>
@@ -1000,7 +1062,7 @@
       <div class="card col2">
         <div class="card-head">
           <div class="card-title">
-            <span class="tag" style="background:var(--cyan);color:var(--cyan)"></span>
+            <span class="stat-icon" style="color:var(--cyan)">${ICONS.activity}</span>
             Commit Pulse
           </div>
           <div style="display:flex;gap:4px">
@@ -1022,7 +1084,7 @@
   /* ---- 12-WEEK COMMIT HEATMAP WIDGET ---- */
   function commitHeatmapWidget() {
     const repos = filteredRepos();
-    const totalDays = 7 * 12; // 12 weeks
+    const totalDays = 7 * 12;
     const counts = Array.from({ length: totalDays }, () => 0);
 
     repos.forEach((r) => {
@@ -1044,7 +1106,7 @@
       <div class="card col2">
         <div class="card-head">
           <div class="card-title">
-            <span class="tag" style="background:var(--green);color:var(--green)"></span>
+            <span class="stat-icon" style="color:var(--green)">${ICONS.pulse}</span>
             Activity Matrix (12 Weeks)
           </div>
           <div style="display:flex;align-items:center;gap:4px;font-size:10px;font-family:var(--mono);color:var(--faint)">
@@ -1103,7 +1165,7 @@
       <div class="card col2">
         <div class="card-head">
           <div class="card-title">
-            <span class="tag" style="background:var(--violet);color:var(--violet)"></span>
+            <span class="stat-icon" style="color:var(--violet)">${ICONS.layers}</span>
             Language Stack Distribution
           </div>
           <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">${sorted.length} languages</span>
@@ -1130,7 +1192,7 @@
       <div class="card col2">
         <div class="card-head">
           <div class="card-title">
-            <span class="tag" style="background:var(--cyan);color:var(--cyan)"></span>
+            <span class="stat-icon" style="color:var(--cyan)">${ICONS.activity}</span>
             Recent Signal
           </div>
           <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">Click to inspect</span>
@@ -1149,14 +1211,17 @@
           <div class="t">${esc(r.name)}</div>
           <div class="s">${fmtNum(r.forks)} forks · ${fmtNum(r.openIssues)} issues</div>
         </div>
-        <div class="r" style="color:var(--amber)">★ ${fmtNum(r.stars)}</div>
+        <div class="r" style="color:var(--amber);display:flex;align-items:center;gap:3px">
+          <span class="stat-icon" style="color:var(--amber)">${ICONS.star}</span>
+          <span>${fmtNum(r.stars)}</span>
+        </div>
       </div>`).join("");
 
     return `
       <div class="card col2">
         <div class="card-head">
           <div class="card-title">
-            <span class="tag" style="background:var(--amber);color:var(--amber)"></span>
+            <span class="stat-icon" style="color:var(--amber)">${ICONS.award}</span>
             Top Repositories
           </div>
           <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">Ranked by stars</span>
@@ -1176,10 +1241,7 @@
       pill(),
       `<div class="control-bar">
         <div class="search-box">
-          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
+          <span class="search-icon">${ICONS.search}</span>
           <input type="text" id="repoSearchInput" placeholder="Search repos by name or description..." value="${esc(state.repoSearchQuery)}" />
         </div>
 
@@ -1230,7 +1292,7 @@
 
     if (repos.length === 0) {
       return `<div class="card col4" style="text-align:center;padding:48px 24px;color:var(--faint)">
-        <div style="font-size:28px;margin-bottom:8px">🔍</div>
+        <div style="font-size:28px;margin-bottom:8px">${ICONS.search}</div>
         <div style="font-size:16px;font-weight:700;color:var(--text)">No repositories matched your filters</div>
         <div style="font-size:13px;margin-top:4px">Try adjusting search terms or language selections.</div>
       </div>`;
@@ -1246,13 +1308,25 @@
               <span class="dot" style="background:${r.isPrivate ? "var(--red)" : "var(--green)"}"></span>
               ${esc(r.name)}
             </div>
-            <span class="priv-tag">${r.isPrivate ? "PRIV" : "PUB"}</span>
+            <span class="priv-tag" style="display:inline-flex;align-items:center;gap:3px">
+              <span class="stat-icon" style="width:11px;height:11px">${r.isPrivate ? ICONS.lock : ICONS.globe}</span>
+              ${r.isPrivate ? "PRIV" : "PUB"}
+            </span>
           </div>
           <div class="desc">${esc(r.description || "No description provided.")}</div>
           <div class="stats">
-            <span>★ <b>${fmtNum(r.stars)}</b></span>
-            <span>⑂ <b>${fmtNum(r.forks)}</b></span>
-            <span>! <b>${fmtNum(r.openIssues)}</b></span>
+            <span style="display:inline-flex;align-items:center;gap:3px">
+              <span class="stat-icon" style="color:var(--amber)">${ICONS.star}</span>
+              <b>${fmtNum(r.stars)}</b>
+            </span>
+            <span style="display:inline-flex;align-items:center;gap:3px">
+              <span class="stat-icon" style="color:var(--violet)">${ICONS.fork}</span>
+              <b>${fmtNum(r.forks)}</b>
+            </span>
+            <span style="display:inline-flex;align-items:center;gap:3px">
+              <span class="stat-icon" style="color:var(--cyan)">${ICONS.issue}</span>
+              <b>${fmtNum(r.openIssues)}</b>
+            </span>
           </div>
           <div class="foot">
             <span class="lang-tag" style="background:${langCol}22;color:${langCol}">${esc(r.language || "—")}</span>
@@ -1278,14 +1352,15 @@
     const feed = repos
       .map((r, i) => {
         const col = ["var(--cyan)", "var(--violet)", "var(--green)", "var(--blue)", "var(--amber)"][i % 5];
+        const iconSvg = i % 3 === 0 ? ICONS.gitCommit : i % 3 === 1 ? ICONS.branch : ICONS.refresh;
         return `
         <div class="feed-item" data-inspect="${esc(r.name)}" style="cursor:pointer" title="Inspect repository">
           <div class="fdot" style="background:${col}22;color:${col}">
-            ${i % 3 === 0 ? "▲" : i % 3 === 1 ? "⊞" : "●"}
+            ${iconSvg}
           </div>
           <div>
             <div class="ft">
-              <b>${esc(r.name)}</b> ${i % 3 === 0 ? "pushed latest commit" : i % 3 === 1 ? "updated default branch" : "synchronized"}
+              <b>${esc(r.name)}</b> ${i % 3 === 0 ? "pushed latest commit" : i % 3 === 1 ? "updated default branch" : "synchronized repository"}
             </div>
             <div class="fs">${fmtAgo(r.pushedAt)} · ${esc(r.language || "stack")} · ${esc(r.defaultBranch || "main")}</div>
           </div>
@@ -1300,7 +1375,10 @@
       `<div class="bento">
         <div class="card col2">
           <div class="card-head">
-            <div class="card-title"><span class="tag" style="background:var(--green)"></span>Live Event Stream</div>
+            <div class="card-title">
+              <span class="stat-icon" style="color:var(--green)">${ICONS.activity}</span>
+              Live Event Stream
+            </div>
             <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">Auto-synced</span>
           </div>
           <div class="feed">${feed || '<div style="color:var(--faint);font-size:13px;padding:8px 0">No activity</div>'}</div>
@@ -1340,21 +1418,30 @@
       `<div class="bento">
         <div class="card">
           <div class="card-head">
-            <div class="card-title"><span class="tag" style="background:var(--blue)"></span>Total Workflows</div>
+            <div class="card-title">
+              <span class="stat-icon" style="color:var(--blue)">${ICONS.pipeline}</span>
+              Total Workflows
+            </div>
           </div>
           <div class="metric" style="color:var(--blue)">${fmtNum(repos.length * 4)}</div>
           <div class="metric-sub">tracked workflows</div>
         </div>
         <div class="card">
           <div class="card-head">
-            <div class="card-title"><span class="tag" style="background:var(--green)"></span>Pipeline Pass Rate</div>
+            <div class="card-title">
+              <span class="stat-icon" style="color:var(--green)">${ICONS.check}</span>
+              Pipeline Pass Rate
+            </div>
           </div>
           <div class="metric" style="color:var(--green)">96<small>%</small></div>
           <div class="metric-sub"><span class="delta up">▲ 4%</span> 30-day reliability</div>
         </div>
         <div class="card col2">
           <div class="card-head">
-            <div class="card-title"><span class="tag" style="background:var(--blue)"></span>Workflow Status</div>
+            <div class="card-title">
+              <span class="stat-icon" style="color:var(--blue)">${ICONS.ci}</span>
+              Workflow Status
+            </div>
             <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">GitHub Actions</span>
           </div>
           <div class="mini-list">${traffic || '<div style="color:var(--faint);font-size:13px;padding:8px 0">No workflows</div>'}</div>
@@ -1375,7 +1462,10 @@
           <div class="t">${esc(r.name)}</div>
           <div class="s">${esc(r.language || "stack")} · ${fmtNum(r.forks)} forks</div>
         </div>
-        <div class="r"><span style="color:var(--amber)">★ ${fmtNum(r.stars)}</span></div>
+        <div class="r" style="display:flex;align-items:center;gap:3px;color:var(--amber)">
+          <span class="stat-icon" style="color:var(--amber)">${ICONS.star}</span>
+          <span>${fmtNum(r.stars)}</span>
+        </div>
       </div>`
       )
       .join("");
@@ -1390,21 +1480,30 @@
       `<div class="bento">
         <div class="card">
           <div class="card-head">
-            <div class="card-title"><span class="tag" style="background:var(--amber)"></span>Total Stars</div>
+            <div class="card-title">
+              <span class="stat-icon" style="color:var(--amber)">${ICONS.star}</span>
+              Total Stars
+            </div>
           </div>
           <div class="metric" style="color:var(--amber)">${fmtNum(totalStars)}</div>
           <div class="metric-sub">developer appreciation</div>
         </div>
         <div class="card">
           <div class="card-head">
-            <div class="card-title"><span class="tag" style="background:var(--violet)"></span>Total Forks</div>
+            <div class="card-title">
+              <span class="stat-icon" style="color:var(--violet)">${ICONS.fork}</span>
+              Total Forks
+            </div>
           </div>
           <div class="metric" style="color:var(--violet)">${fmtNum(totalForks)}</div>
           <div class="metric-sub">community derivations</div>
         </div>
         <div class="card col2">
           <div class="card-head">
-            <div class="card-title"><span class="tag" style="background:var(--amber)"></span>Star Leaderboard</div>
+            <div class="card-title">
+              <span class="stat-icon" style="color:var(--amber)">${ICONS.award}</span>
+              Star Leaderboard
+            </div>
             <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">Top repositories</span>
           </div>
           <div class="mini-list">${rows || '<div style="color:var(--faint);font-size:13px;padding:8px 0">No community data</div>'}</div>
@@ -1439,14 +1538,20 @@
       `<div class="bento">
         <div class="card">
           <div class="card-head">
-            <div class="card-title"><span class="tag" style="background:var(--green)"></span>Maintained Repos</div>
+            <div class="card-title">
+              <span class="stat-icon" style="color:var(--green)">${ICONS.shield}</span>
+              Maintained Repos
+            </div>
           </div>
           <div class="metric" style="color:var(--green)">${fmtNum(recent)}<small>/ ${repos.length}</small></div>
           <div class="metric-sub">updated within 30 days</div>
         </div>
         <div class="card">
           <div class="card-head">
-            <div class="card-title"><span class="tag" style="background:var(--cyan)"></span>Freshness Ratio</div>
+            <div class="card-title">
+              <span class="stat-icon" style="color:var(--cyan)">${ICONS.activity}</span>
+              Freshness Ratio
+            </div>
           </div>
           <div class="ring-row">
             <div class="ring" style="--p:${pct}"><div class="inner">${pct}%</div></div>
@@ -1458,7 +1563,10 @@
         </div>
         <div class="card col2">
           <div class="card-head">
-            <div class="card-title"><span class="tag" style="background:var(--green)"></span>Repository Health Audit</div>
+            <div class="card-title">
+              <span class="stat-icon" style="color:var(--green)">${ICONS.health}</span>
+              Repository Health Audit
+            </div>
             <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">Inspection audit</span>
           </div>
           <div class="mini-list">${rows || '<div style="color:var(--faint);font-size:13px;padding:8px 0">No repositories</div>'}</div>
@@ -1480,12 +1588,12 @@
     const pct = next ? Math.min(100, ((xp - levelIdx * 500) / 500) * 100) : 100;
 
     const achievements = [
-      { n: "FIRST CODEBASE", x: 100, got: repos.length >= 1, icon: "⚡" },
-      { n: "STAR COLLECTOR", x: 150, got: stars > 0, icon: "★" },
-      { n: "COMMUNITY FORK", x: 120, got: forks > 0, icon: "⑂" },
-      { n: "PORTFOLIO EXPANSION", x: 250, got: repos.length >= 5, icon: "▤" },
-      { n: "COMMAND SHIPPER", x: 200, got: repos.length >= 8, icon: "▲" },
-      { n: "FULL STACK POLYGLOT", x: 300, got: new Set(repos.map((r) => r.language).filter(Boolean)).size >= 3, icon: "♜" },
+      { n: "FIRST CODEBASE", x: 100, got: repos.length >= 1, icon: ICONS.zap },
+      { n: "STAR COLLECTOR", x: 150, got: stars > 0, icon: ICONS.star },
+      { n: "COMMUNITY FORK", x: 120, got: forks > 0, icon: ICONS.fork },
+      { n: "PORTFOLIO EXPANSION", x: 250, got: repos.length >= 5, icon: ICONS.repos },
+      { n: "COMMAND SHIPPER", x: 200, got: repos.length >= 8, icon: ICONS.award },
+      { n: "FULL STACK POLYGLOT", x: 300, got: new Set(repos.map((r) => r.language).filter(Boolean)).size >= 3, icon: ICONS.layers },
     ]
       .map(
         (a) => `
@@ -1507,7 +1615,10 @@
       `<div class="bento">
         <div class="card col2">
           <div class="card-head">
-            <div class="card-title"><span class="tag" style="background:var(--violet)"></span>Rank · Tier ${levelIdx + 1}</div>
+            <div class="card-title">
+              <span class="stat-icon" style="color:var(--violet)">${ICONS.xp}</span>
+              Rank · Tier ${levelIdx + 1}
+            </div>
             <span class="priv-tag">${level}</span>
           </div>
           <div class="metric" style="font-size:48px;color:var(--violet)">${fmtNum(xp)}<small>XP</small></div>
@@ -1525,7 +1636,10 @@
 
         <div class="card col2">
           <div class="card-head">
-            <div class="card-title"><span class="tag" style="background:var(--cyan)"></span>Milestones & Badges</div>
+            <div class="card-title">
+              <span class="stat-icon" style="color:var(--cyan)">${ICONS.award}</span>
+              Milestones & Badges
+            </div>
             <span style="font-family:var(--mono);font-size:11px;color:var(--cyan)">Progression</span>
           </div>
           <div style="margin-top:8px">${achievements}</div>
@@ -1611,7 +1725,7 @@
   function toast(msg) {
     const t = $('#toast');
     if (!t) return;
-    t.innerHTML = `<span>⌁</span> <span>${esc(msg)}</span>`;
+    t.innerHTML = `<span style="width:16px;height:16px;display:flex;align-items:center;color:var(--cyan)">${ICONS.pulse}</span> <span>${esc(msg)}</span>`;
     t.classList.add("show");
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
