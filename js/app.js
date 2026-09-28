@@ -40,6 +40,7 @@
     pulse: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg>`,
     user: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
     readme: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M8 7h8"/><path d="M8 11h6"/></svg>`,
+    power: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>`,
     sun: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
     moon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
     filter: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>`,
@@ -85,6 +86,9 @@
     paletteQuery: "",
     paletteSelectedIndex: 0,
     filteredPaletteItems: [],
+    ciFilter: "all",
+    live: { lastFetchAt: null, isPolling: false, error: null },
+    _pollTimer: null,
   };
 
   // Language color mappings
@@ -272,6 +276,10 @@
         <span class="ic">${ICONS.settings}</span>
         <span>Customize View</span>
       </button>
+      <button class="nav-item" id="sidebarSignOutBtn" style="color:var(--red)">
+        <span class="ic">${ICONS.power}</span>
+        <span>Sign Out</span>
+      </button>
 
       <div class="sidebar-foot" id="footMeta">
         <div class="foot-row">
@@ -298,6 +306,7 @@
     $('#sidebarTokenBtn')?.addEventListener("click", openTokenModal);
     $('#sidebarRefreshBtn')?.addEventListener("click", fetchLive);
     $('#sidebarWidgetsBtn')?.addEventListener("click", openWidgetModal);
+    $('#sidebarSignOutBtn')?.addEventListener("click", logout);
   }
 
   /* ---- MOBILE BOTTOM NAV ---- */
@@ -599,12 +608,8 @@
       });
 
       $('#disconnectTokenBtn')?.addEventListener("click", () => {
-        state.token = "";
-        localStorage.removeItem("pulse-gh-token");
-        state.api.rateLimit = 60;
         closeTokenModal();
-        fetchLive();
-        toast("Disconnected GitHub token");
+        logout();
       });
 
       $('#saveTokenBtn')?.addEventListener("click", async () => {
@@ -1336,10 +1341,31 @@
         render();
       });
     });
+
+    // CI realtime controls
+    $('#wfRefreshBtn')?.addEventListener("click", async () => {
+      const headers = { Accept: "application/vnd.github+json" };
+      if (state.token) headers["Authorization"] = `Bearer ${state.token}`;
+      toast("Refreshing workflows…");
+      await fetchWorkflowLive(headers, { manual: true });
+      toast("Workflows refreshed");
+    });
+    $('#wfPollToggleBtn')?.addEventListener("click", () => toggleWorkflowPoll());
+    $$('#stage [data-ci-filter]').forEach((b) => {
+      b.addEventListener("click", () => {
+        state.ciFilter = b.dataset.ciFilter;
+        render();
+      });
+    });
   }
 
   function go(view) {
     state.view = view;
+    if (view === "ci") {
+      if (!state._pollTimer) scheduleWorkflowPoll();
+    } else {
+      if (state._pollTimer) stopWorkflowPoll();
+    }
     render();
   }
 
@@ -1849,7 +1875,7 @@
     // Real workflow runs across repos
     const allRuns = extras
       .flatMap((x) => (x.runs || []).map((r) => ({ ...r, repo: x.fullName })))
-      .filter((r) => state.selectedRepo === "all" || r.repo === state.selectedRepo);
+      .filter((r) => state.selectedRepo === "all" || r.repo.split("/").pop() === String(state.selectedRepo).split("/").pop());
 
     const runningCount = allRuns.filter(
       (r) => r.status === "in_progress" || r.status === "queued"
@@ -1900,7 +1926,7 @@
     // Real releases across repos
     const allReleases = extras
       .flatMap((x) => (x.releases || []).map((r) => ({ ...r, repo: x.fullName })))
-      .filter((r) => state.selectedRepo === "all" || r.repo === state.selectedRepo)
+      .filter((r) => state.selectedRepo === "all" || r.repo.split("/").pop() === String(state.selectedRepo).split("/").pop())
       .slice()
       .sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
 
@@ -2051,63 +2077,123 @@
     });
   }
 
-  /* ---- 4. CI VIEW ---- */
+  /* ---- 4. CI VIEW (LIVE) ---- */
+  function getAllLiveRuns() {
+    const s = state.snapshot || {};
+    const extras = s.extras || [];
+    return extras
+      .flatMap((x) => (x.runs || []).map((r) => ({ ...r, repo: x.fullName })))
+      .filter((r) => state.selectedRepo === "all" || r.repo.split("/").pop() === String(state.selectedRepo).split("/").pop())
+      .slice()
+      .sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt));
+  }
+  function runStatusClass(r) {
+    if (r.status === "in_progress" || r.status === "queued" || r.status === "waiting" || r.status === "requested") return "run";
+    if (r.status === "completed") {
+      if (r.conclusion === "success") return "ok";
+      if (r.conclusion === "failure" || r.conclusion === "timed_out") return "bad";
+      return "warn";
+    }
+    return "run";
+  }
+  function runStatusLabel(r) {
+    if (r.status === "in_progress") return "RUNNING";
+    if (r.status === "queued") return "QUEUED";
+    if (r.status === "waiting") return "WAITING";
+    if (r.status === "requested") return "REQUESTED";
+    if (r.status === "completed") {
+      if (r.conclusion === "success") return "PASSING";
+      if (r.conclusion === "failure") return "FAILED";
+      if (r.conclusion === "cancelled") return "CANCELLED";
+      if (r.conclusion === "skipped") return "SKIPPED";
+      if (r.conclusion === "timed_out") return "TIMED OUT";
+      return (r.conclusion || "DONE").toUpperCase();
+    }
+    return String(r.status || "").toUpperCase();
+  }
+  function runDuration(r) {
+    if (!r.createdAt) return "—";
+    const end = r.updatedAt || new Date().toISOString();
+    const ms = new Date(end) - new Date(r.createdAt);
+    if (ms < 0) return "—";
+    const s = Math.floor(ms / 1000);
+    if (s < 60) return s + "s";
+    const m = Math.floor(s / 60);
+    if (m < 60) return m + "m " + (s % 60) + "s";
+    const h = Math.floor(m / 60);
+    return h + "h " + (m % 60) + "m";
+  }
   function renderCI() {
-    const repos = filteredRepos().slice(0, 8);
-    const traffic = repos
-      .map((r, i) => {
-        const statuses = ["run", "ok", "warn", "bad"];
-        const statusIdx = i % 4;
-        const statusClass = statuses[statusIdx];
-        const statusLabel = ["RUNNING", "PASSING", "QUEUED", "FAILED"][statusIdx];
-        return `
-        <div class="mini-row" data-inspect="${esc(r.name)}">
-          <div class="av" style="background:linear-gradient(135deg,var(--blue),var(--green))">${initials(r.name)}</div>
+    const allRuns = getAllLiveRuns();
+    const live = state.live || {};
+    const running = allRuns.filter((r) => ["in_progress", "queued", "waiting", "requested"].includes(r.status));
+    const failed = allRuns.filter((r) => r.status === "completed" && (r.conclusion === "failure" || r.conclusion === "timed_out"));
+    const passed = allRuns.filter((r) => r.status === "completed" && r.conclusion === "success");
+    const completed = allRuns.filter((r) => r.status === "completed");
+    const passRate = completed.length ? Math.round((passed.length / completed.length) * 100) : 100;
+    const f = state.ciFilter || "all";
+    const filtered = allRuns.filter((r) => {
+      if (f === "all") return true;
+      if (f === "running") return ["in_progress", "queued", "waiting", "requested"].includes(r.status);
+      if (f === "failed") return r.status === "completed" && (r.conclusion === "failure" || r.conclusion === "timed_out");
+      if (f === "success") return r.status === "completed" && r.conclusion === "success";
+      return true;
+    }).slice(0, 30);
+    const lastSync = live.lastFetchAt ? fmtAgo(live.lastFetchAt) : (state.snapshot?.generatedAt ? fmtAgo(state.snapshot.generatedAt) + " (snapshot)" : "—");
+    const liveDot = live.isPolling ? '<span class="status run"><span class="sdot"></span>POLLING</span>' : (live.error ? `<span class="status bad"><span class="sdot"></span>STALE</span>` : '<span class="status ok"><span class="sdot"></span>LIVE</span>');
+    const staleHint = (!state.token && !live.lastFetchAt) ? `<div class="callout-box" style="margin-top:12px">Showing build-time snapshot. <b>Connect a token</b> for continuous realtime polling. Public API: 60 req/hr.</div>` : "";
+    const rows = filtered.map((r) => {
+      const cls = runStatusClass(r);
+      const label = runStatusLabel(r);
+      const isLive = ["in_progress", "queued", "waiting", "requested"].includes(r.status);
+      return `
+        <div class="mini-row${isLive ? " wf-live" : ""}">
+          <div class="av" style="background:linear-gradient(135deg,var(--blue),var(--green))">${initials(r.repo.split("/").pop())}</div>
           <div class="meta">
-            <div class="t">${esc(r.name)}</div>
-            <div class="s">deploy-pages · ${fmtAgo(r.updatedAt)}</div>
+            <div class="t">${esc(r.displayTitle || r.name || "workflow")} <span style="font-family:var(--mono);font-size:10.5px;color:var(--faint)">#${esc(String(r.runNumber ?? ""))}</span></div>
+            <div class="s">${esc(r.repo)} · ${esc(r.headBranch || "")}${r.headSha ? " · " + esc(r.headSha) : ""} · ${esc(r.event || "")} · ${isLive ? "started " + fmtAgo(r.createdAt) : fmtAgo(r.updatedAt || r.createdAt)} · ⏱ ${runDuration(r)}${r.actor ? " · @" + esc(r.actor) : ""}</div>
           </div>
-          <div>
-            <span class="status ${statusClass}"><span class="sdot"></span>${statusLabel}</span>
+          <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
+            <span class="status ${cls}"><span class="sdot"></span>${label}</span>
+            <a class="btn btn-sm btn-icon" href="${esc(r.htmlUrl)}" target="_blank" rel="noopener noreferrer" title="Open run on GitHub">${ICONS.externalLink}</a>
           </div>
         </div>`;
-      })
-      .join("");
-
+    }).join("");
+    const filterPills = ["all", "running", "failed", "success"].map((k) => `
+      <button class="filter-pill${f === k ? " active" : ""}" data-ci-filter="${k}">${k === "all" ? "All" : k === "running" ? `Running (${running.length})` : k === "failed" ? `Failed (${failed.length})` : `Passed (${passed.length})`}</button>
+    `).join("");
     return section(
       "CI & Workflows",
-      "Deployment pipeline health and action execution",
-      pill(),
+      `Realtime pipeline health · last sync ${lastSync}`,
+      `${pill()}`,
       `<div class="bento">
         <div class="card">
           <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--blue)">${ICONS.pipeline}</span>
-              Total Workflows
-            </div>
+            <div class="card-title"><span class="stat-icon" style="color:var(--blue)">${ICONS.pipeline}</span> Live Status</div>
+            ${liveDot}
           </div>
-          <div class="metric" style="color:var(--blue)">${fmtNum(repos.length * 4)}</div>
-          <div class="metric-sub">tracked workflows</div>
+          <div class="metric" style="color:var(--blue)">${fmtNum(running.length)}<small>/ ${fmtNum(allRuns.length)}</small></div>
+          <div class="metric-sub">running / tracked runs ${live.isPolling ? "· polling…" : ""}</div>
+          <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+            <button class="btn btn-sm" id="wfRefreshBtn">${ICONS.refresh} Refresh now</button>
+            <button class="btn btn-sm" id="wfPollToggleBtn">${live.isPolling ? "Pause live" : "Resume live"}</button>
+          </div>
+          ${staleHint}
         </div>
         <div class="card">
           <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--green)">${ICONS.check}</span>
-              Pipeline Pass Rate
-            </div>
+            <div class="card-title"><span class="stat-icon" style="color:var(--green)">${ICONS.check}</span> Pass Rate</div>
           </div>
-          <div class="metric" style="color:var(--green)">96<small>%</small></div>
-          <div class="metric-sub"><span class="delta up">▲ 4%</span> 30-day reliability</div>
+          <div class="metric" style="color:${passRate >= 80 ? "var(--green)" : passRate >= 50 ? "var(--amber)" : "var(--red)"}">${passRate}<small>%</small></div>
+          <div class="metric-sub">${fmtNum(passed.length)} passed · ${fmtNum(failed.length)} failed · ${fmtNum(completed.length)} completed</div>
         </div>
         <div class="card col2">
           <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--blue)">${ICONS.ci}</span>
-              Workflow Status
-            </div>
-            <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">GitHub Actions</span>
+            <div class="card-title"><span class="stat-icon" style="color:var(--blue)">${ICONS.ci}</span> Workflow Runs</div>
+            <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">newest first · realtime</span>
           </div>
-          <div class="mini-list">${traffic || '<div style="color:var(--faint);font-size:13px;padding:8px 0">No workflows</div>'}</div>
+          <div class="filter-pills" style="margin-top:12px">${filterPills}</div>
+          <div class="mini-list">${rows || '<div style="color:var(--faint);font-size:13px;padding:8px 0">No workflow runs yet — connect a token or push to trigger Actions.</div>'}</div>
         </div>
       </div>`
     );
@@ -2407,13 +2493,112 @@
           totalForks: enriched.reduce((a, r) => a + r.forks, 0),
           totalOpenIssues: enriched.reduce((a, r) => a + r.openIssues, 0),
         };
+        state.live.lastFetchAt = new Date().toISOString();
         render();
+        // Kick off workflow live data in background (respects throttling + rate-low guard)
+        const _hdr = { Accept: "application/vnd.github+json" };
+        if (state.token) _hdr["Authorization"] = `Bearer ${state.token}`;
+        fetchWorkflowLive(_hdr).catch(() => {});
         toast(state.token ? "Synced private & public repos with full API quota" : "Live GitHub data synchronized");
       }
     } catch (e) {
       console.warn("Live sync warning:", e);
       toast("Showing latest snapshot data");
     }
+  }
+
+  async function fetchWorkflowLive(headers, opts = {}) {
+    const s = state.snapshot || {};
+    const all = (s.repos || []).slice(0, 12);
+    if (!all.length) return null;
+    const remaining = state.api.rateRemaining;
+    const limit = state.api.rateLimit || (state.token ? 5000 : 60);
+    if (!opts.manual && remaining != null && remaining < Math.min(15, Math.ceil(limit * 0.08))) {
+      state.live.error = "rate-low";
+      return null;
+    }
+    try {
+      const sel = state.selectedRepo;
+      const targetRepos = sel !== "all"
+        ? all.filter((r) => (r.fullName || "").split("/").pop() === String(sel).split("/").pop() || r.name === sel).slice(0, 1)
+        : all.slice(0, state.token ? 8 : 3);
+      if (!targetRepos.length) return null;
+      const results = await Promise.all(targetRepos.map(async (r) => {
+        try {
+          const url = `https://api.github.com/repos/${r.fullName}/actions/runs?per_page=10`;
+          const res = await fetch(url, { headers });
+          if (res.headers) {
+            const lim = res.headers.get("X-RateLimit-Limit");
+            const rem = res.headers.get("X-RateLimit-Remaining");
+            if (lim) state.api.rateLimit = Number(lim);
+            if (rem) state.api.rateRemaining = Number(rem);
+            const chip = document.getElementById("rateChip");
+            if (chip && rem) { chip.style.display = "inline"; chip.textContent = `${rem} / ${state.api.rateLimit} reqs`; }
+          }
+          if (!res.ok) return null;
+          const data = await res.json();
+          const raw = Array.isArray(data) ? data : (data.workflow_runs || []);
+          const runs = raw.slice(0, 10).map((run) => ({
+            id: run.id, runNumber: run.run_number, name: run.name, displayTitle: run.display_title || run.name,
+            headBranch: run.head_branch, headSha: (run.head_sha || "").slice(0, 7), event: run.event,
+            status: run.status, conclusion: run.conclusion, workflowId: run.workflow_id,
+            actor: run.actor?.login || run.triggering_actor?.login || null,
+            actorAvatar: run.actor?.avatar_url || null,
+            createdAt: run.created_at, updatedAt: run.updated_at, htmlUrl: run.html_url,
+          }));
+          return { fullName: r.fullName, runs };
+        } catch { return null; }
+      }));
+      const extrasMap = new Map((s.extras || []).map((x) => [x.fullName, x]));
+      let changed = false;
+      for (const item of results) {
+        if (!item) continue;
+        const prev = extrasMap.get(item.fullName);
+        if (!prev) { extrasMap.set(item.fullName, { fullName: item.fullName, runs: item.runs, releases: [], workflows: [] }); changed = true; continue; }
+        const prevSig = JSON.stringify((prev.runs || []).slice(0, 3).map((r) => r.id + "|" + r.status + "|" + r.conclusion));
+        const nextSig = JSON.stringify(item.runs.slice(0, 3).map((r) => r.id + "|" + r.status + "|" + r.conclusion));
+        if (prevSig !== nextSig) changed = true;
+        extrasMap.set(item.fullName, { ...prev, runs: item.runs });
+      }
+      if (changed || !s.extras?.length) {
+        state.snapshot = { ...s, extras: [...extrasMap.values()], generatedAt: new Date().toISOString() };
+        state.live.lastFetchAt = new Date().toISOString();
+        state.live.error = null;
+        if (state.view === "ci" || state.view === "activity") render();
+        return true;
+      }
+      state.live.lastFetchAt = new Date().toISOString();
+      state.live.error = null;
+      if (state.view === "ci") render();
+      return false;
+    } catch (e) {
+      console.warn("Workflow live fetch failed", e);
+      state.live.error = String(e.message || e);
+      return null;
+    }
+  }
+  function stopWorkflowPoll() {
+    if (state._pollTimer) { clearInterval(state._pollTimer); state._pollTimer = null; }
+    state.live.isPolling = false;
+  }
+  function scheduleWorkflowPoll() {
+    if (state._pollTimer) { clearInterval(state._pollTimer); state._pollTimer = null; }
+    const base = state.token ? 30000 : 120000;
+    const jitter = Math.floor(Math.random() * 8000);
+    const intervalMs = base + jitter;
+    state.live.isPolling = true;
+    const tick = async () => {
+      if (document.hidden) return;
+      const headers = { Accept: "application/vnd.github+json" };
+      if (state.token) headers["Authorization"] = `Bearer ${state.token}`;
+      await fetchWorkflowLive(headers);
+    };
+    setTimeout(tick, 4000);
+    state._pollTimer = setInterval(tick, intervalMs);
+  }
+  function toggleWorkflowPoll() {
+    if (state._pollTimer) { stopWorkflowPoll(); toast("Live workflow polling paused"); render(); }
+    else { scheduleWorkflowPoll(); toast("Live workflow polling resumed"); }
   }
 
   let toastTimer;
@@ -2427,18 +2612,90 @@
   }
 
   /* ---- BOOT ---- */
+  /* ---- LOGIN GATE (mandatory GitHub OAuth) ---- */
+  function authRequired() {
+    const c = oauthConfig();
+    return !!(c && c.requiredLogin);
+  }
+  function renderLoginGate() {
+    const gate = $('#loginGate');
+    if (!gate) return;
+    gate.hidden = false;
+    gate.setAttribute("aria-hidden", "false");
+    const c = oauthConfig();
+    const configured = c && c.enabled && c.clientId && c.workerUrl;
+    gate.innerHTML = `
+      <div class="login-card">
+        <div class="login-logo">${ICONS.pulse}</div>
+        <h1>Welcome to <span class="login-brand">Pulse</span></h1>
+        <p>Your GitHub developer command center.<br/>Sign in with GitHub to access your repositories, CI, activity &amp; more.</p>
+        <button class="btn btn-primary btn-lg" id="loginBtn">${ICONS.key} Continue with GitHub</button>
+        ${configured ? "" : '<div class="login-err">OAuth not configured — add clientId + workerUrl in js/config.js.</div>'}
+        <p class="login-note">Secure OAuth &middot; your token never leaves this browser.</p>
+      </div>`;
+    $('#loginBtn')?.addEventListener("click", () => {
+      if (configured) startOAuth();
+      else toast("OAuth isn't configured yet.");
+    });
+  }
+  function hideLoginGate() {
+    const gate = $('#loginGate');
+    if (!gate) return;
+    gate.hidden = true;
+    gate.setAttribute("aria-hidden", "true");
+  }
+  function checkAuth() {
+    const required = authRequired();
+    if (required && !state.token) {
+      document.body.classList.add("locked");
+      renderLoginGate();
+      return false;
+    }
+    document.body.classList.remove("locked");
+    hideLoginGate();
+    return true;
+  }
+  function logout() {
+    state.token = "";
+    localStorage.removeItem("pulse-gh-token");
+    state.api.rateLimit = 60;
+    state.api.rateRemaining = null;
+    // clear cached snapshot so a new user never sees stale data
+    state.snapshot = null;
+    checkAuth();
+  }
+
+  let _wfVisibilityWired = false;
   async function boot() {
     applyTheme(state.theme);
+
+    // Resolve any pending OAuth callback (code) BEFORE deciding auth state
+    await handleOAuthCallback();
+
     const ok = await loadSnapshot();
-    render();
+    const authed = checkAuth();
+    if (authed) render();
 
     // Register Service Worker on supported http(s) protocols
     if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
       navigator.serviceWorker.register("sw.js").catch((e) => console.warn("SW not registered", e));
     }
 
-    if (ok) {
+    if (ok && authed) {
       setTimeout(fetchLive, 900);
+      scheduleWorkflowPoll();
+    }
+
+    if (!_wfVisibilityWired) {
+      _wfVisibilityWired = true;
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) return;
+        if (state.view === "ci") {
+          const headers = { Accept: "application/vnd.github+json" };
+          if (state.token) headers["Authorization"] = `Bearer ${state.token}`;
+          fetchWorkflowLive(headers).catch(() => {});
+        }
+      });
     }
 
     // Modal background close triggers
@@ -2493,5 +2750,4 @@
 
   boot();
   applyHash();
-  handleOAuthCallback();
 })();

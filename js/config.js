@@ -12,5 +12,6 @@ window.PULSE_CONFIG = {
     workerUrl: "https://pulse-oauth.twistedoliver211fs.workers.dev",
     authorizeUrl: "https://github.com/login/oauth/authorize",
     tokenKey: "pulse-gh-token", // reuse existing token key so live API/private repos work
+    requiredLogin: true, // gate the app behind GitHub OAuth (normal-site login for any user)
   },
 };
