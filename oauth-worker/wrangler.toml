@@ -1,0 +1,8 @@
+name = "pulse-oauth"
+main = "worker.js"
+compatibility_date = "2024-12-01"
+
+# Public values only. The client_secret is NOT stored here —
+# it's set as a bound secret: `wrangler secret put GH_CLIENT_SECRET`.
+[vars]
+GH_CLIENT_ID = "Ov23liWXKxq2qtzNEuvV"
