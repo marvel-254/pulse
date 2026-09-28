@@ -2624,21 +2624,53 @@
     gate.setAttribute("aria-hidden", "false");
     const c = oauthConfig();
     const configured = c && c.enabled && c.clientId && c.workerUrl;
+    const doLogin = () => { if (configured) startOAuth(); else toast("OAuth isn't configured yet."); };
+    const lfCard = (ic, t, d) => `<div class="lf-card"><div class="lf-card-ic">${ic}</div><div class="lf-card-t">${t}</div><div class="lf-card-d">${d}</div></div>`;
+    const step = (n, t, d) => `<div class="how-step"><div class="how-num">${n}</div><div class="how-t">${t}</div><div class="how-d">${d}</div></div>`;
     gate.innerHTML = `
-      <div class="login-card">
-        <div class="login-logo">${ICONS.pulse}</div>
-        <h1>Welcome to <span class="login-brand">Pulse</span></h1>
-        <p>Your GitHub developer command center.<br/>Sign in with GitHub to access your repositories, CI, activity &amp; more.</p>
-        <button class="btn btn-primary btn-lg" id="loginBtn">${ICONS.key} Continue with GitHub</button>
-        ${configured ? "" : '<div class="login-err">OAuth not configured — add clientId + workerUrl in js/config.js.</div>'}
-        <p class="login-note">Secure OAuth &middot; your token never leaves this browser.</p>
+      <div class="landing">
+        <header class="landing-nav">
+          <div class="landing-brand"><span class="brand-icon">${ICONS.pulse}</span><span class="brand-name">PULSE</span></div>
+          <button class="btn btn-primary btn-sm" id="loginBtn">${ICONS.key} Continue with GitHub</button>
+        </header>
+        <main class="landing-main">
+          <section class="landing-hero">
+            <div class="hero-chip">&#9889; Developer operations cockpit</div>
+            <h1>Your GitHub <span>command center</span></h1>
+            <p class="hero-sub">Repositories, pull requests, issues, CI, releases &amp; activity — live in one dark-first cockpit. Sign in to build a focused workspace around your repos.</p>
+            <button class="btn btn-primary btn-lg" id="loginBtnHero">${ICONS.key} Continue with GitHub</button>
+            <div class="hero-meta">Private repos &middot; 5,000 req/hr &middot; PWA &middot; Zero-knowledge browser auth</div>
+            ${configured ? "" : '<div class="login-err">OAuth not configured — add clientId + workerUrl in js/config.js.</div>'}
+          </section>
+
+          <section class="landing-features">
+            <div class="lf-head"><h2>One cockpit for your whole dev life</h2><p>Everything Pulse reads from GitHub, visualized instantly.</p></div>
+            <div class="lf-grid">
+              ${lfCard(ICONS.command, "Command Center", "A live overview of every project, star and signal at a glance.")}
+              ${lfCard(ICONS.activity, "Activity Stream", "Real-time commits, PRs, issues and releases across your repos.")}
+              ${lfCard(ICONS.pipeline, "CI & Workflows", "Track GitHub Actions runs and pipeline health in real time.")}
+              ${lfCard(ICONS.repos, "Private Repos", "OAuth access to your private repositories, fully authenticated.")}
+              ${lfCard(ICONS.issue, "Ship Faster", "Create issues and triage work right from Pulse.")}
+              ${lfCard(ICONS.xp, "XP & Rewards", "Your shipping turned into momentum, levels and badges.")}
+            </div>
+          </section>
+
+          <section class="landing-how">
+            <div class="lf-head"><h2>How it works</h2></div>
+            <div class="how-steps">
+              ${step(1, "Sign in", "Continue with GitHub — secure OAuth, no passwords to remember.")}
+              ${step(2, "Connect", "Pulse reads your public and private repositories.")}
+              ${step(3, "Command", "Monitor CI, activity, releases and issues from one place.")}
+            </div>
+          </section>
+        </main>
+        <footer class="landing-foot">Pulse &mdash; your developer operations cockpit &middot; your token never leaves this browser.</footer>
       </div>`;
-    $('#loginBtn')?.addEventListener("click", () => {
-      if (configured) startOAuth();
-      else toast("OAuth isn't configured yet.");
-    });
+    $('#loginBtn')?.addEventListener("click", doLogin);
+    $('#loginBtnHero')?.addEventListener("click", doLogin);
   }
-  function hideLoginGate() {
+
+function hideLoginGate() {
     const gate = $('#loginGate');
     if (!gate) return;
     gate.hidden = true;

@@ -75,7 +75,7 @@ function enrichRepo(r) {
   return base;
 }
 
-// per-repo real extras (releases, workflow runs) for the deep set
+// per-repo real extras (releases, workflow runs + workflow definitions) for the deep set
 const extras = deepRepos
   .map((r) => {
     const full = r.full_name;
@@ -94,17 +94,39 @@ const extras = deepRepos
     const rawRuns = Array.isArray(runsData) ? runsData : runsData?.workflow_runs || [];
     const runs = rawRuns.map(
       (run) => ({
+        id: run.id,
+        runNumber: run.run_number,
         name: run.name,
+        displayTitle: run.display_title || run.name,
         headBranch: run.head_branch,
+        headSha: (run.head_sha || "").slice(0, 7),
+        event: run.event,
         status: run.status,
         conclusion: run.conclusion,
+        workflowId: run.workflow_id,
+        actor: run.actor?.login || run.triggering_actor?.login || null,
+        actorAvatar: run.actor?.avatar_url || null,
         createdAt: run.created_at,
         updatedAt: run.updated_at,
         htmlUrl: run.html_url,
       })
     );
 
-    return { fullName: full, releases, runs };
+    // Workflow definitions for richer UI (best-effort)
+    let workflows = [];
+    try {
+      const wfData = gh([`/repos/${full}/actions/workflows?per_page=20`]);
+      const rawWfs = Array.isArray(wfData?.workflows) ? wfData.workflows : Array.isArray(wfData) ? wfData : [];
+      workflows = rawWfs.map((wf) => ({
+        id: wf.id,
+        name: wf.name,
+        path: wf.path,
+        state: wf.state,
+        htmlUrl: wf.html_url,
+      }));
+    } catch {}
+
+    return { fullName: full, releases, runs, workflows };
   })
   .filter(Boolean);
 
