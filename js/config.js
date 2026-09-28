@@ -6,10 +6,10 @@
  */
 window.PULSE_CONFIG = {
   oauth: {
-    enabled: false, // flip to true once the Worker URL is set below
+    enabled: true,
     clientId: "Ov23liWXKxq2qtzNEuvV", // GitHub OAuth App Client ID (public)
     scope: "repo,read:user,user:email",
-    workerUrl: "", // TODO: set to your deployed Cloudflare Worker URL, e.g. https://pulse-oauth.<subdomain>.workers.dev
+    workerUrl: "https://pulse-oauth.twistedoliver211fs.workers.dev",
     authorizeUrl: "https://github.com/login/oauth/authorize",
     tokenKey: "pulse-gh-token", // reuse existing token key so live API/private repos work
   },
