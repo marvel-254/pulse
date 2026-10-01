@@ -29,6 +29,18 @@ window.PULSE_CONFIG = {
     email: "",
   },
 
+  // Background soundtrack. Pulse ships NO audio files — the music is
+  // synthesised in the browser (Web Audio), so there is nothing to license and
+  // nothing to download. Never autoplays: it starts from a visitor's click.
+  audio: {
+    enabled: false,        // default off; visitors (and you) opt in
+    mood: "cinematic",     // "cinematic" | "phonk"
+    volume: 0.35,
+    // Optional: play your OWN licensed track instead of the synth engine.
+    // e.g. track: "audio/mytrack.mp3"  (only files you have rights to use)
+    track: "",
+  },
+
   // Live public GitHub API reads. No credential is ever sent.
   live: {
     enabled: true,

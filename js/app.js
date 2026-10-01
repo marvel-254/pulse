@@ -45,6 +45,9 @@
     sun: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
     moon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
     filter: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>`,
+    music: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
+    musicOff: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="2" x2="22" y2="22"/><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
+    volume: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>`,
     key: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/></svg>`,
   };
 
@@ -91,6 +94,7 @@
     ciFilter: "all",
     selectedProject: null,
     readmeCache: {},
+    history: [],
     live: { lastFetchAt: null, isPolling: false, error: null },
     _pollTimer: null,
   };
@@ -393,6 +397,10 @@
 
         <span id="questChip" class="quest-chip-host"></span>
 
+        <button class="topbar-btn sound-btn" id="soundToggleBtn" title="Background soundtrack" aria-pressed="false">
+          ${ICONS.music}
+        </button>
+
         <button class="topbar-btn depth-btn" id="depthToggleBtn" title="Toggle the 3D depth layer">
           ${ICONS.layers}
         </button>
@@ -418,6 +426,14 @@
     });
     $('#topbarSearchTrigger')?.addEventListener("click", openCommandPalette);
     $('#themeToggleBtn')?.addEventListener("click", toggleTheme);
+    $('#soundToggleBtn')?.addEventListener("click", (e) => {
+      if (e.shiftKey) return openSoundSheet();
+      toggleSoundtrack();
+    });
+    $('#soundToggleBtn')?.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+      openSoundSheet();
+    });
     $('#depthToggleBtn')?.addEventListener("click", () => {
       const next = !(window.PulseDepth?.isEnabled?.() ?? true);
       window.PulseDepth?.setEnabled(next);
@@ -459,6 +475,11 @@
         <span class="ic">${ICONS.refresh}</span>
         <span>Refresh Data</span>
       </button>
+      <button class="nav-item" id="sidebarSoundBtn">
+        <span class="ic">${ICONS.music}</span>
+        <span>Soundtrack</span>
+        <span class="nav-badge">${window.PulseMusic?.isPlaying?.() ? "ON" : "OFF"}</span>
+      </button>
       <button class="nav-item" id="sidebarWidgetsBtn">
         <span class="ic">${ICONS.settings}</span>
         <span>Customize View</span>
@@ -488,6 +509,7 @@
     $('#sidebarCmdPaletteBtn')?.addEventListener("click", openCommandPalette);
     $('#sidebarGithubBtn')?.addEventListener("click", openGithubProfile);
     $('#sidebarRefreshBtn')?.addEventListener("click", fetchLive);
+    $('#sidebarSoundBtn')?.addEventListener("click", openSoundSheet);
     $('#sidebarWidgetsBtn')?.addEventListener("click", openWidgetModal);
   }
 
@@ -553,6 +575,13 @@
             <span class="rs">Open @${esc(ghAccount() || "github")} on github.com</span>
           </span>
         </button>
+        <button class="sheet-row" id="moreSheetSoundBtn" style="width:100%">
+          <span class="ic" style="color:var(--cyan)">${ICONS.music}</span>
+          <span class="rmeta">
+            <span class="rt">Soundtrack</span>
+            <span class="rs">${window.PulseMusic?.isPlaying?.() ? "Playing — tap for mood & volume" : "Background music, generated live"}</span>
+          </span>
+        </button>
         <button class="sheet-row" id="moreSheetQuestsBtn" style="width:100%">
           <span class="ic" style="color:var(--violet)">${ICONS.award}</span>
           <span class="rmeta">
@@ -573,6 +602,10 @@
     $('#moreSheetGithubBtn')?.addEventListener("click", () => {
       closeOverlay();
       openGithubProfile();
+    });
+    $('#moreSheetSoundBtn')?.addEventListener("click", () => {
+      closeOverlay();
+      openSoundSheet();
     });
     $('#moreSheetQuestsBtn')?.addEventListener("click", () => {
       closeOverlay();
@@ -679,6 +712,166 @@
     $('#repoOverlay').setAttribute("aria-hidden", "true");
   }
 
+  /* ---- SOUNDTRACK (background music) ----
+     All audio is synthesised in the browser — see js/music.js. Nothing is
+     bundled, nothing is downloaded, and it never autoplays. */
+  function syncSoundUI() {
+    const btn = $('#soundToggleBtn');
+    if (!btn) return;
+    const playing = window.PulseMusic?.isPlaying?.() ?? false;
+    btn.innerHTML = playing ? ICONS.music : ICONS.musicOff;
+    btn.classList.toggle("playing", playing);
+    btn.setAttribute("aria-pressed", playing ? "true" : "false");
+    btn.title = playing
+      ? `Soundtrack playing (${window.PulseMusic?.mood?.() || "cinematic"}) — click to mute`
+      : "Play background soundtrack";
+    $('#soundHint')?.classList.toggle("hidden", playing || soundHintDismissed());
+    window.PulseQuests?.mount();
+  }
+
+  const soundHintDismissed = () => {
+    try {
+      return JSON.parse(localStorage.getItem("pulse-audio") || "{}").hintDismissed === true;
+    } catch {
+      return false;
+    }
+  };
+
+  function dismissSoundHint() {
+    try {
+      const s = JSON.parse(localStorage.getItem("pulse-audio") || "{}");
+      s.hintDismissed = true;
+      localStorage.setItem("pulse-audio", JSON.stringify(s));
+    } catch {}
+    $('#soundHint')?.classList.add("hidden");
+  }
+
+  function toggleSoundtrack() {
+    const music = window.PulseMusic;
+    if (!music) return;
+    const btn = $('#soundToggleBtn');
+    if (btn && !music.isPlaying()) {
+      // brief "starting" affordance while the context resumes
+      btn.classList.add("starting");
+      setTimeout(() => btn.classList.remove("starting"), 900);
+    }
+    const playing = music.toggle();
+    toast(playing ? "Soundtrack on — enjoy" : "Soundtrack muted");
+    if (playing) {
+      window.PulseQuests?.action("music");
+      if ((music.triedMoods?.() || []).length >= 2) window.PulseQuests?.unlock("action:moods");
+    }
+    syncSoundUI();
+  }
+
+  function openSoundSheet() {
+    const overlay = $('#audioOverlay');
+    const sheet = $('#audioSheet');
+    if (!overlay || !sheet) return;
+    const music = window.PulseMusic;
+    const playing = music?.isPlaying?.() ?? false;
+    const mood = music?.mood?.() || "cinematic";
+    const volume = Math.round((music?.volume?.() ?? 0.35) * 100);
+    const custom = music?.hasCustomTrack?.() ?? false;
+    const owner = displayConfig().owner || "this site";
+
+    const moodBtn = (id, label, desc) => `
+      <button class="mood-card ${mood === id ? "active" : ""}" data-mood="${id}" ${custom && id !== "custom" ? "disabled" : ""}>
+        <span class="mood-label">${label}</span>
+        <span class="mood-desc">${desc}</span>
+      </button>`;
+
+    sheet.innerHTML = `
+      <div class="sheet-head">
+        <div>
+          <div class="sheet-title">Soundtrack</div>
+          <div class="sheet-sub">Background music for the showcase · ${playing ? "playing" : "paused"}</div>
+        </div>
+        <button class="sheet-close" id="closeSoundSheet">✕</button>
+      </div>
+
+      <div class="sound-moods">
+        ${moodBtn("cinematic", "Cinematic", "Piano & strings ostinato that builds")}
+        ${moodBtn("phonk", "Phonk", "Half-time drums, 808s, cowbell, vinyl")}
+        ${custom ? moodBtn("custom", "Your track", "Playing the file configured in js/config.js") : ""}
+      </div>
+
+      <div class="sound-controls">
+        <button class="btn ${playing ? "" : "btn-primary"}" id="soundPlayBtn">
+          ${playing ? ICONS.musicOff + " Pause" : ICONS.music + " Play"}
+        </button>
+        <div class="sound-volume">
+          <span class="stat-icon" style="color:var(--cyan)">${ICONS.volume}</span>
+          <input type="range" id="soundVolume" min="0" max="100" value="${volume}" aria-label="Volume" />
+          <span class="sound-vol-value">${volume}%</span>
+        </div>
+      </div>
+
+      <div class="callout-box" style="margin-top:14px">
+        <b>Every note is generated in your browser.</b> Pulse ships no audio files,
+        so there is no third-party music to license and nothing extra to download —
+        the Web Audio API builds the chords, drums and reverb live.
+        <br /><br />
+        Owner note: to use your own licensed track instead, set
+        <code>audio.track</code> in <code>js/config.js</code>.
+      </div>
+
+      <div class="quest-note">Muted by default, pauses when this tab is hidden, and your
+      choice + volume are remembered only in this browser.</div>`;
+
+    overlay.classList.add("open");
+    overlay.setAttribute("aria-hidden", "false");
+
+    $('#closeSoundSheet')?.addEventListener("click", () => {
+      overlay.classList.remove("open");
+      overlay.setAttribute("aria-hidden", "true");
+    });
+    $('#soundPlayBtn')?.addEventListener("click", () => {
+      toggleSoundtrack();
+      openSoundSheet();
+    });
+    $$('[data-mood]', sheet).forEach((b) =>
+      b.addEventListener("click", () => {
+        music?.setMood(b.dataset.mood);
+        window.PulseQuests?.unlock("action:sound");
+        if ((music?.triedMoods?.() || []).length >= 2) window.PulseQuests?.unlock("action:moods");
+        if (!music?.isPlaying?.()) music?.play();
+        window.PulseQuests?.action("music");
+        toast(`Soundtrack: ${b.dataset.mood === "custom" ? "your track" : b.dataset.mood}`);
+        syncSoundUI();
+        openSoundSheet();
+      })
+    );
+    $('#soundVolume')?.addEventListener("input", (e) => {
+      const v = Number(e.target.value) / 100;
+      music?.setVolume(v);
+      const label = $(".sound-vol-value", sheet);
+      if (label) label.textContent = `${e.target.value}%`;
+    });
+  }
+
+  function renderSoundHint() {
+    if (window.PulseMusic?.isPlaying?.() || soundHintDismissed()) return;
+    if (navigator.connection?.saveData) return; // respect data saver
+    const hint = document.createElement("div");
+    hint.id = "soundHint";
+    hint.className = "sound-hint";
+    hint.innerHTML = `
+      <button class="sh-play" id="soundHintPlay" aria-label="Play background soundtrack">
+        ${ICONS.music}
+      </button>
+      <span class="sh-text">Tap for a soundtrack</span>
+      <button class="sh-close" id="soundHintClose" aria-label="Dismiss">✕</button>`;
+    document.body.appendChild(hint);
+    requestAnimationFrame(() => hint.classList.add("show"));
+    $('#soundHintPlay')?.addEventListener("click", () => {
+      window.PulseMusic?.play();
+      window.PulseQuests?.action("music");
+      syncSoundUI();
+    });
+    $('#soundHintClose')?.addEventListener("click", dismissSoundHint);
+  }
+
   /* ---- PUBLIC PROFILE HELPERS ---- */
   function openGithubProfile() {
     const login = ghAccount();
@@ -718,6 +911,18 @@
 
       // Actions group
       const actions = [
+        {
+          title: window.PulseMusic?.isPlaying?.() ? "Pause soundtrack" : "Play soundtrack",
+          sub: "Audio",
+          icon: ICONS.music,
+          action: toggleSoundtrack,
+        },
+        {
+          title: "Soundtrack settings — mood & volume",
+          sub: "Audio",
+          icon: ICONS.volume,
+          action: openSoundSheet,
+        },
         {
           title: "Pulse Quests — levels, badges & XP",
           sub: "Progress",
@@ -1672,7 +1877,7 @@
          </div>
          ${w.recentActivity ? recentActivityWidget() : ""}
          ${w.pulseChart ? commitPulseWidget() : ""}
-         ${w.langDistribution ? languageDistributionWidget() : ""}
+         ${w.heatmap ? contributionHeatmapWidget() : ""}
          ${w.topRepos ? topRepositoriesWidget() : ""}
        </div>`
     );
@@ -1736,6 +1941,7 @@
   /* ---- 3. NUMBERS ---- */
   function renderNumbers() {
     const repos = repoList();
+    const m = state.snapshot?.metrics || {};
     const u = state.snapshot?.user || {};
     const releases = allReleases();
     const runs = allWorkflowRuns();
@@ -1783,6 +1989,21 @@
       `${accountPills()}${pill()}`,
       `${accountComparisonCard()}
       <div class="bento">
+        ${statCard("Contributions", fmtNum(m.contributionsLastYear), "last 12 months (public)", "var(--green)", ICONS.pulse)}
+        ${statCard("Active Days", fmtNum(m.activeDays), `${plural(m.currentStreak || 0, "day")} current streak`, "var(--cyan)", ICONS.activity)}
+        ${statCard("PRs Merged", fmtNum(m.prsMerged), `${fmtNum(m.prsOpened)} opened`, "var(--violet)", ICONS.branch)}
+        ${statCard("Issues Opened", fmtNum(m.issuesOpened), "authored issues", "var(--amber)", ICONS.issue)}
+        ${statCard("Code Written", formatBytes(m.codeBytes), "across public repos", "var(--blue)", ICONS.layers)}
+        ${statCard("Best Streak", `${fmtNum(m.longestStreak)}d`, "consecutive active days", "var(--red)", ICONS.zap)}
+      </div>
+      <div style="height:18px"></div>
+      <div class="bento">
+        ${trendCard("stars", "Stars", "var(--amber)", ICONS.star)}
+        ${trendCard("followers", "Followers", "var(--red)", ICONS.community)}
+        ${trendCard("repos", "Repos", "var(--cyan)", ICONS.repos)}
+      </div>
+      <div style="height:18px"></div>
+      <div class="bento">
         ${statCard("Public Repos", fmtNum(repos.length), "on GitHub", "var(--cyan)", ICONS.repos)}
         ${statCard("Stars", fmtNum(stars), "across all repos", "var(--amber)", ICONS.star)}
         ${statCard("Forks", fmtNum(forks), "community copies", "var(--violet)", ICONS.fork)}
@@ -1794,6 +2015,7 @@
       </div>
       <div style="height:18px"></div>
       <div class="bento">
+        ${contributionHeatmapWidget()}
         <div class="card col2">
           <div class="card-head">
             <div class="card-title"><span class="stat-icon" style="color:var(--amber)">${ICONS.award}</span> Most Starred</div>
@@ -1871,6 +2093,204 @@
         </div>
       </div>`;
   }
+
+  /* ---- PUBLIC CONTRIBUTION CALENDAR (real data, build-time scrape) ----
+     Merges every featured account (or just the filtered one) into a 53-week
+     grid with exact counts, streaks and totals. Falls back to a derived view
+     when the calendar is unavailable. */
+  function contributionDays() {
+    const all = state.snapshot?.contributions || {};
+    const logins = state.accountFilter === "all" ? Object.keys(all) : [state.accountFilter];
+    const counts = new Map();
+    let covered = false;
+    for (const login of logins) {
+      const cal = all[login];
+      if (!cal?.days) continue;
+      covered = true;
+      for (const [date, count] of cal.days) counts.set(date, (counts.get(date) || 0) + count);
+    }
+    if (!covered) return null;
+    const days = [...counts.entries()].sort((a, b) => a[0].localeCompare(b[0])).map(([date, count]) => ({ date, count }));
+    const total = days.reduce((a, d) => a + d.count, 0);
+    const active = days.filter((d) => d.count > 0).length;
+    const best = days.reduce((a, d) => (d.count > a.count ? d : a), days[0] || { count: 0 });
+    let longest = 0;
+    let run = 0;
+    for (const d of days) {
+      run = d.count > 0 ? run + 1 : 0;
+      longest = Math.max(longest, run);
+    }
+    let current = 0;
+    for (let i = days.length - 1; i >= 0; i--) {
+      if (days[i].count > 0) current++;
+      else if (i === days.length - 1) continue;
+      else break;
+    }
+    return { days, total, active, best, current, longest, accounts: logins.length };
+  }
+
+  const levelFor = (count) => (count <= 0 ? 0 : count <= 1 ? 1 : count <= 4 ? 2 : count <= 9 ? 3 : 4);
+
+  function contributionHeatmapWidget() {
+    const data = contributionDays();
+    if (!data) return commitHeatmapWidget(); // graceful fallback
+    const cells = data.days
+      .map(
+        (d) =>
+          `<div class="contrib-cell" data-level="${levelFor(d.count)}" title="${d.count} contribution${d.count === 1 ? "" : "s"} on ${new Date(d.date + "T00:00:00").toDateString()}"></div>`
+      )
+      .join("");
+
+    const months = (() => {
+      const out = [];
+      let last = "";
+      data.days.forEach((d, i) => {
+        const m = new Date(d.date + "T00:00:00").toLocaleString(undefined, { month: "short" });
+        if (m !== last) {
+          out.push(`<span style="grid-column: ${Math.floor(i / 7) + 1}">${m}</span>`);
+          last = m;
+        }
+      });
+      return out.join("");
+    })();
+
+    return `
+      <div class="card col2">
+        <div class="card-head">
+          <div class="card-title"><span class="stat-icon" style="color:var(--green)">${ICONS.pulse}</span> Contribution Calendar</div>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">last 12 months · public</span>
+        </div>
+        <div class="contrib-stats">
+          <span><b>${fmtNum(data.total)}</b> contributions</span>
+          <span><b>${fmtNum(data.active)}</b> active days</span>
+          <span><b>${fmtNum(data.current)}</b> day streak</span>
+          <span><b>${fmtNum(data.longest)}</b> best streak</span>
+        </div>
+        <div class="contrib-wrap">
+          <div class="contrib-months" style="grid-template-columns: repeat(${Math.ceil(data.days.length / 7)}, 12px)">${months}</div>
+          <div class="contrib-grid">${cells}</div>
+        </div>
+        <div class="contrib-foot">
+          <span>${data.accounts > 1 ? `merged across ${data.accounts} accounts` : "single account"} · public contribution graph only</span>
+          <span class="contrib-legend">Less
+            <i data-level="0"></i><i data-level="1"></i><i data-level="2"></i><i data-level="3"></i><i data-level="4"></i>
+          More</span>
+        </div>
+      </div>`;
+  }
+
+  /* ---- CODE COMPOSITION BY BYTES (real language statistics) ---- */
+  function languageBytesWidget() {
+    const totals = state.snapshot?.languageBytes || {};
+    const entries = Object.entries(totals).filter(([, bytes]) => bytes > 0);
+    const sum = entries.reduce((a, [, b]) => a + b, 0);
+    if (!entries.length) return languageDistributionWidget();
+
+    const segments = entries
+      .map(([lang, bytes]) => {
+        const pct = (bytes / sum) * 100;
+        return `<div class="lang-seg" style="width:${pct.toFixed(2)}%;background:${getLangColor(lang)}" title="${esc(lang)}: ${pct.toFixed(1)}% (${formatBytes(bytes)})"></div>`;
+      })
+      .join("");
+
+    const legend = entries
+      .slice(0, 8)
+      .map(([lang, bytes]) => {
+        const pct = (bytes / sum) * 100;
+        return `
+          <div class="lang-item">
+            <span class="ldot" style="background:${getLangColor(lang)}"></span>
+            <span>${esc(lang)} <b>${pct.toFixed(1)}%</b> <em>${formatBytes(bytes)}</em></span>
+          </div>`;
+      })
+      .join("");
+
+    return `
+      <div class="card col2" data-tilt>
+        <div class="card-head">
+          <div class="card-title"><span class="stat-icon" style="color:var(--violet)">${ICONS.layers}</span> Code by Language</div>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">${formatBytes(sum)} · ${entries.length} languages</span>
+        </div>
+        <div class="lang-bar">${segments}</div>
+        <div class="lang-legend">${legend}</div>
+        <div class="metric-sub" style="margin-top:10px">Measured in bytes of code across every public repository</div>
+      </div>`;
+  }
+
+  /* ---- 52-WEEK COMMIT SPARKLINE (per repo, from GitHub stats) ---- */
+  function activitySparkline(weeks, { label = "52-week commit activity" } = {}) {
+    if (!Array.isArray(weeks) || !weeks.length) return "";
+    const max = Math.max(1, ...weeks);
+    const w = weeks.length * 4;
+    const h = 34;
+    const points = weeks
+      .map((v, i) => `${i * 4 + 2},${h - Math.round((v / max) * (h - 4))}`)
+      .join(" ");
+    const area = `2,${h} ${points} ${weeks.length * 4 - 2},${h}`;
+    const total = weeks.reduce((a, b) => a + b, 0);
+    return `
+      <div class="spark">
+        <svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="${esc(label)}: ${total} commits over 52 weeks">
+          <polygon points="${area}" fill="color-mix(in srgb, var(--cyan) 18%, transparent)"></polygon>
+          <polyline points="${points}" fill="none" stroke="var(--cyan)" stroke-width="1.6" stroke-linejoin="round"></polyline>
+        </svg>
+        <div class="spark-meta">${fmtNum(total)} commits · 52 weeks</div>
+      </div>`;
+  }
+
+  /* ---- TREND DELTAS / GROWTH SPARKLINE (from committed history) ---- */
+  function historySeries(field, scope = "totals") {
+    const entries = state.history || [];
+    if (entries.length < 2) return [];
+    const pick = (e) => (scope === "totals" ? e.totals?.[field] : e.accounts?.find((a) => a.login === scope)?.[field]);
+    return entries.map((e) => ({ date: e.date, value: pick(e) })).filter((p) => typeof p.value === "number");
+  }
+
+  function trendCard(field, label, color, icon, scope = "totals") {
+    const series = historySeries(field, scope);
+    const current = series.length ? series[series.length - 1].value : null;
+    const delta = (days) => {
+      if (!series.length) return null;
+      const cutoff = Date.now() - days * 864e5;
+      const past = [...series].reverse().find((p) => new Date(p.date).getTime() <= cutoff);
+      const base = past ? past.value : series[0].value;
+      return current != null ? current - base : null;
+    };
+    const d7 = delta(7);
+    const d30 = delta(30);
+    const arrow = (d) =>
+      d == null ? "—" : d > 0 ? `▲ ${fmtNum(d)}` : d < 0 ? `▼ ${fmtNum(Math.abs(d))}` : "no change";
+    const points = series.map((p) => p.value);
+    const spark = points.length > 1 ? (() => {
+      const max = Math.max(...points);
+      const min = Math.min(...points);
+      const span = Math.max(1, max - min);
+      return points
+        .map((v, i) => `${(i / (points.length - 1)) * 100},${28 - ((v - min) / span) * 24}`)
+        .join(" ");
+    })() : "";
+
+    return `
+      <div class="card" data-tilt>
+        <div class="card-head">
+          <div class="card-title"><span class="stat-icon" style="color:${color}">${icon}</span> ${label}</div>
+          <span style="font-family:var(--mono);font-size:10.5px;color:var(--muted)">${series.length}d tracked</span>
+        </div>
+        <div class="metric" style="color:${color}">${current != null ? fmtNum(current) : "—"}</div>
+        <div class="trend-deltas">
+          <span>7d <b>${arrow(d7)}</b></span>
+          <span>30d <b>${arrow(d30)}</b></span>
+        </div>
+        ${spark ? `<svg class="trend-spark" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"><polyline points="${spark}" fill="none" stroke="${color}" stroke-width="1.4" vector-effect="non-scaling-stroke"></polyline></svg>` : ""}
+      </div>`;
+  }
+
+  const formatBytes = (bytes) => {
+    if (!bytes) return "0 B";
+    const units = ["B", "KB", "MB", "GB"];
+    const i = Math.min(units.length - 1, Math.floor(Math.log(bytes) / Math.log(1024)));
+    return `${(bytes / Math.pow(1024, i)).toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
+  };
 
   /* ---- 12-WEEK COMMIT HEATMAP WIDGET ---- */
   function commitHeatmapWidget() {
@@ -2253,6 +2673,30 @@
         ${statCard("Open Issues", fmtNum(repo.openIssues), "tracked work", "var(--cyan)", ICONS.issue)}
         ${statCard("Size", repo.size ? `${fmtNum(Math.round((repo.size || 0) / 1024 * 10) / 10)} MB` : "—", "repository size", "var(--blue)", ICONS.layers)}
       </div>
+
+      ${repo.activity ? `<div class="card" data-tilt>${activitySparkline(repo.activity, { label: `${repo.name} commit activity` })}</div>` : ""}
+      ${repo.languages ? `
+        <div class="card col2" data-tilt>
+          <div class="card-head">
+            <div class="card-title"><span class="stat-icon" style="color:var(--violet)">${ICONS.code}</span> Code Composition</div>
+            <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">${formatBytes(repo.languageBytes || 0)} · by bytes</span>
+          </div>
+          <div class="lang-bar">
+            ${Object.entries(repo.languages)
+              .map(([lang, bytes]) => `<div class="lang-seg" style="width:${((bytes / (repo.languageBytes || 1)) * 100).toFixed(2)}%;background:${getLangColor(lang)}" title="${esc(lang)}: ${formatBytes(bytes)}"></div>`)
+              .join("")}
+          </div>
+          <div class="lang-legend">
+            ${Object.entries(repo.languages)
+              .slice(0, 6)
+              .map(([lang, bytes]) => `
+                <div class="lang-item">
+                  <span class="ldot" style="background:${getLangColor(lang)}"></span>
+                  <span>${esc(lang)} <b>${((bytes / (repo.languageBytes || 1)) * 100).toFixed(1)}%</b> <em>${formatBytes(bytes)}</em></span>
+                </div>`)
+              .join("")}
+          </div>
+        </div>` : ""}
 
       <div style="height:18px"></div>
       <div class="bento">
@@ -2655,7 +3099,7 @@
           <div class="filter-pills" style="margin-top:12px">${filterPills}</div>
           <div class="mini-list">${rows || '<div style="color:var(--faint);font-size:13px;padding:8px 0">No workflow runs yet — GitHub Actions activity will appear here once a run is triggered.</div>'}</div>
         </div>
-        ${languageDistributionWidget()}
+        ${languageBytesWidget()}
         <div class="card col2">
           <div class="card-head">
             <div class="card-title"><span class="stat-icon" style="color:var(--amber)">${ICONS.award}</span> Release Cadence</div>
@@ -2686,6 +3130,16 @@
   }
 
   /* ---- DATA LOADING & SYNC ---- */
+  /** Trend history (stars/followers/repos per day, appended by each build). */
+  async function loadHistory() {
+    try {
+      const res = await fetch("data/history.json", { cache: "no-store" });
+      if (!res.ok) return;
+      const data = await res.json();
+      if (Array.isArray(data?.entries)) state.history = data.entries;
+    } catch {}
+  }
+
   async function loadSnapshot() {
     try {
       const res = await fetch("data/snapshot.json", { cache: "no-store" });
@@ -2959,8 +3413,15 @@
   async function boot() {
     applyTheme(state.theme);
 
+    // Soundtrack: sync the HUD, offer the hint once, follow playback events.
+    syncSoundUI();
+    setTimeout(renderSoundHint, 2600);
+    document.addEventListener("pulse:music", syncSoundUI);
+    document.addEventListener("pulse:mood", syncSoundUI);
+
     // No login, no gate: the snapshot renders immediately for every visitor.
     const ok = await loadSnapshot();
+    await loadHistory();
     render();
 
     // Register Service Worker on supported http(s) protocols
@@ -2989,6 +3450,12 @@
     });
     $('#paletteOverlay')?.addEventListener("click", (e) => {
       if (e.target.id === "paletteOverlay") closeCommandPalette();
+    });
+    $('#audioOverlay')?.addEventListener("click", (e) => {
+      if (e.target.id === "audioOverlay") {
+        e.target.classList.remove("open");
+        e.target.setAttribute("aria-hidden", "true");
+      }
     });
     $('#widgetOverlay')?.addEventListener("click", (e) => {
       if (e.target.id === "widgetOverlay") {

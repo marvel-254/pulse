@@ -99,9 +99,9 @@ existing snapshot rather than publishing an empty one.
 
 ## Roadmap
 
-The visitor-first restructure (Phase 1) has shipped. Remaining work — a 52-week
-contribution heatmap, authored PR/issue counts, language statistics by bytes,
-Open Graph share cards — is tracked in [`SHOWCASE-PLAN.md`](SHOWCASE-PLAN.md).
+Phases 1–4 have shipped. Still open — Open Graph share cards, a sitemap/feed,
+an accessibility pass and CI checks — is tracked in
+[`SHOWCASE-PLAN.md`](SHOWCASE-PLAN.md).
 
 ## Smoke test
 
@@ -140,6 +140,56 @@ columns, horizontally scrollable account/filter chips, full-width bottom sheets
 with `dvh` sizing, safe-area padding top and bottom, 40px+ touch targets, and
 tilt/3D effects disabled on touch-only devices. `npm run audit` statically
 checks the CSS for mobile overflow risks.
+
+## Data depth
+
+Every number on the page is real and public — nothing is typed in by hand.
+
+- **Contributions** — the build parses the public calendar at
+  `github.com/users/<login>/contributions` (the same data as the profile
+  graph): 365 days, per-day levels, totals, active days and current/longest
+  streaks. Rendered as a 53×7 heatmap on Overview and Numbers.
+- **Code by language (bytes)** — `api.github.com/repos/:full/languages` for the
+  featured repos, so the composition bar is weighted by real byte counts, not
+  repo counts.
+- **Authored work** — `search/issues?author:<login>+type:pr|issue` gives
+  PRs opened/merged and issues authored (build-time only; the search bucket is
+  30 requests/hour per IP, so it is cached into the snapshot).
+- **Commit activity** — `stats/participation` per repo drives the per-project
+  sparkline (52 weeks). GitHub sometimes returns all-zeros while it computes;
+  the UI treats that as "no data" and hides the chart.
+- **Trends** — `data/history.json` appends one line per build (stars,
+  followers, repos, contributions/code totals) and the Numbers view diffs the
+  newest entry against the previous one, so deltas grow as the site rebuilds.
+
+All of it lands in `data/snapshot.json` at build time; the browser only ever
+reads that file. No visitor analytics, ever.
+
+## Soundtrack
+
+Pulse ships a soundtrack that is **generated in your browser** (Web Audio API)
+— there are no `.mp3`/`.wav` files in this repo, so nothing here can infringe a
+copyright. Two moods:
+
+- **Cinematic** — 84 BPM, Dm–Bb–F–C, felt piano + string pad (Einaudi-ish
+  atmosphere).
+- **Phonk** — 132 BPM, Am–F–C–G, 808 glide, cowbell, hat rolls, vinyl noise.
+
+It never autoplays: the engine stays silent until you press the speaker button
+(topbar, sidebar, More sheet or `⌘/Ctrl-K` → "soundtrack"). The choice, mood,
+volume and hint state persist in `localStorage` under `pulse-audio`; playback
+pauses on tab hide and only resumes after a gesture.
+
+Play a track you own instead: put a file in `assets/` and point config at it.
+
+```js
+audio: {
+  enabled: false,          // true = try to start with the first gesture
+  mood: "cinematic",       // "cinematic" | "phonk"
+  volume: 0.35,
+  track: "assets/your-licensed-track.mp3",  // optional, replaces the synth
+}
+```
 
 ## Tech
 

@@ -25,6 +25,7 @@ import { dirname, join } from "node:path";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUT = join(__dirname, "data", "snapshot.json");
+const HISTORY_OUT = join(__dirname, "data", "history.json");
 const API = "https://api.github.com";
 const TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "";
 
@@ -84,6 +85,129 @@ const EVENT_VERBS = {
   PullRequestReviewEvent: () => ["reviewed a PR in", ""],
   PublicEvent: () => ["made public", ""],
 };
+
+/**
+ * Public contribution calendar.
+ * Scraped from github.com/users/<login>/contributions — the same public page
+ * every visitor can open. Returns per-day counts, totals and streaks.
+ * Fails soft: the site simply hides the heatmap if GitHub changes its markup.
+ */
+async function fetchContributions(login) {
+  try {
+    const res = await fetch(`https://github.com/users/${encodeURIComponent(login)}/contributions`, {
+      headers: { "User-Agent": "pulse-public-snapshot", Accept: "text/html" },
+    });
+    if (!res.ok) return null;
+    const html = await res.text();
+
+    // day cells: id="contribution-day-component-<weekday>-<week>" + date/level
+    const cells = {};
+    for (const tag of html.match(/<td[^>]*contribution-day-component[^>]*>/g) || []) {
+      const id = tag.match(/id="contribution-day-component-(\d+)-(\d+)"/);
+      const date = tag.match(/data-date="(\d{4}-\d{2}-\d{2})"/);
+      const level = tag.match(/data-level="(\d)"/);
+      if (id && date) cells[`${id[1]}-${id[2]}`] = { date: date[1], level: Number(level?.[1] || 0), count: 0 };
+    }
+    // tooltips carry the exact counts ("6 contributions on May 17th.")
+    for (const tip of html.match(/<tool-tip[^>]*for="contribution-day-component-\d+-\d+"[^>]*>[^<]*<\/tool-tip>/g) || []) {
+      const key = tip.match(/for="contribution-day-component-(\d+-\d+)"/)?.[1];
+      if (!key || !cells[key]) continue;
+      const n = tip.match(/(\d+)\s+contributions?/);
+      cells[key].count = n ? Number(n[1]) : 0;
+    }
+
+    const days = Object.values(cells).sort((a, b) => a.date.localeCompare(b.date));
+    if (!days.length) return null;
+
+    const total = days.reduce((a, d) => a + d.count, 0);
+    const activeDays = days.filter((d) => d.count > 0).length;
+    const best = days.reduce((a, d) => (d.count > a.count ? d : a), days[0]);
+
+    // streaks (count only, no private detail — this is the public calendar)
+    let longest = 0;
+    let run = 0;
+    for (const d of days) {
+      run = d.count > 0 ? run + 1 : 0;
+      if (run > longest) longest = run;
+    }
+    let current = 0;
+    for (let i = days.length - 1; i >= 0; i--) {
+      if (days[i].count > 0) current++;
+      else if (i === days.length - 1) continue; // today may simply be young
+      else break;
+    }
+
+    return {
+      login,
+      total,
+      activeDays,
+      best: { date: best.date, count: best.count },
+      currentStreak: current,
+      longestStreak: longest,
+      start: days[0].date,
+      end: days[days.length - 1].date,
+      // compact: [date, count, level][]
+      days: days.map((d) => [d.date, d.count, d.level]),
+    };
+  } catch (e) {
+    console.warn(`  ! contributions/${login}: ${e.message}`);
+    return null;
+  }
+}
+
+/** Public search API totals: PRs opened/merged and issues opened. */
+async function fetchSearchCounts(login) {
+  const queries = {
+    prsOpened: `author:${login}+type:pr`,
+    prsMerged: `author:${login}+type:pr+is:merged`,
+    issuesOpened: `author:${login}+type:issue`,
+  };
+  const out = {};
+  for (const [key, q] of Object.entries(queries)) {
+    const data = await api(`/search/issues?q=${q}&per_page=1`);
+    out[key] = typeof data?.total_count === "number" ? data.total_count : null;
+  }
+  return out;
+}
+
+/** Public per-repo language breakdown in bytes. */
+async function fetchLanguages(fullName) {
+  const data = await api(`/repos/${fullName}/languages`);
+  if (!data || typeof data !== "object" || Array.isArray(data)) return null;
+  const entries = Object.entries(data)
+    .filter(([, bytes]) => Number(bytes) > 0)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8);
+  if (!entries.length) return null;
+  return { bytes: entries.reduce((a, [, b]) => a + b, 0), languages: Object.fromEntries(entries) };
+}
+
+/** Public 52-week commit activity for the repo sparkline (best effort). */
+async function fetchParticipation(fullName) {
+  const data = await api(`/repos/${fullName}/stats/participation`);
+  if (!data || !Array.isArray(data.all) || !data.all.length) return null;
+  const weeks = data.all.map((n) => Number(n) || 0);
+  if (!weeks.some((n) => n > 0)) return null; // GitHub returns zeros while computing
+  return weeks;
+}
+
+/** Append/refresh today's totals in data/history.json (enables trend charts). */
+function updateHistory(entry) {
+  let history = { entries: [] };
+  try {
+    if (existsSync(HISTORY_OUT)) history = JSON.parse(readFileSync(HISTORY_OUT, "utf8"));
+  } catch {}
+  if (!Array.isArray(history.entries)) history.entries = [];
+
+  const day = entry.date.slice(0, 10);
+  const rest = history.entries.filter((e) => e.date !== day);
+  rest.push(entry);
+  rest.sort((a, b) => a.date.localeCompare(b.date));
+
+  const trimmed = rest.slice(-400); // keep a little over a year
+  writeFileSync(HISTORY_OUT, JSON.stringify({ updated: new Date().toISOString(), entries: trimmed }, null, 2));
+  return trimmed.length;
+}
 
 /** Reduce a README to a short plain-text pitch for highlight cards. */
 function readmeExcerpt(markdown, limit = 220) {
@@ -148,6 +272,10 @@ console.log(
 );
 
 const profiles = await Promise.all(accounts.map((account) => api(`/users/${account}`)));
+console.log("  · profile search totals (PRs / issues)…");
+const searchCounts = await Promise.all(accounts.map((account) => fetchSearchCounts(account)));
+console.log("  · public contribution calendars…");
+const contributionCalendars = await Promise.all(accounts.map((account) => fetchContributions(account)));
 
 const repoLists = await Promise.all(
   accounts.map(async (account) => {
@@ -205,12 +333,23 @@ const EXCERPT_SET = TOKEN ? repos : deepRepos;
 for (const repo of deepRepos) {
   const full = repo.fullName;
   const wantsExcerpt = EXCERPT_SET.includes(repo);
-  const [releasesRaw, runsRaw, workflowsRaw, readmeRaw] = await Promise.all([
+  const [releasesRaw, runsRaw, workflowsRaw, readmeRaw, langData, activity] = await Promise.all([
     api(`/repos/${full}/releases?per_page=5`),
     api(`/repos/${full}/actions/runs?per_page=10`),
     TOKEN ? api(`/repos/${full}/actions/workflows?per_page=20`) : Promise.resolve(null),
     wantsExcerpt ? api(`/repos/${full}/readme`) : Promise.resolve(null),
+    fetchLanguages(full),
+    fetchParticipation(full),
   ]);
+
+  // Real code composition (bytes) beats "number of repos using language X"
+  if (langData) {
+    repo.languages = langData.languages;
+    repo.languageBytes = langData.bytes;
+    repo.primaryLanguage =
+      Object.entries(langData.languages).sort((a, b) => b[1] - a[1])[0]?.[0] || repo.language;
+  }
+  if (activity) repo.activity = activity;
 
   const releases = (Array.isArray(releasesRaw) ? releasesRaw : []).map((rel) => ({
     tag: rel.tag_name,
@@ -279,6 +418,8 @@ const profile =
 const accountSummaries = accounts.map((account, i) => {
   const profile = profiles[i];
   const own = repos.filter((r) => r.owner === account);
+  const search = searchCounts[i] || {};
+  const contributions = contributionCalendars[i];
   return {
     login: account,
     name: profile?.name || null,
@@ -294,9 +435,26 @@ const accountSummaries = accounts.map((account, i) => {
     createdAt: profile?.created_at || null,
     repoCount: own.length,
     stars: own.reduce((a, r) => a + r.stars, 0),
+    forks: own.reduce((a, r) => a + r.forks, 0),
+    codeBytes: own.reduce((a, r) => a + (r.languageBytes || 0), 0),
     latestPush: own.slice().sort((a, b) => new Date(b.pushedAt) - new Date(a.pushedAt))[0]?.pushedAt || null,
+    metrics: {
+      prsOpened: search.prsOpened ?? null,
+      prsMerged: search.prsMerged ?? null,
+      issuesOpened: search.issuesOpened ?? null,
+      contributionsLastYear: contributions?.total ?? null,
+      activeDays: contributions?.activeDays ?? null,
+      currentStreak: contributions?.currentStreak ?? null,
+      longestStreak: contributions?.longestStreak ?? null,
+    },
   };
 });
+
+const contributions = Object.fromEntries(
+  accounts
+    .map((account, i) => [account, contributionCalendars[i]])
+    .filter(([, cal]) => cal)
+);
 
 const snapshot = {
   generatedAt: new Date().toISOString(),
@@ -320,11 +478,57 @@ const snapshot = {
   events,
   extras,
   profile,
+  contributions,
+  // Aggregate code composition by bytes across every featured account
+  languageBytes: (() => {
+    const totals = {};
+    for (const r of repos) {
+      for (const [lang, bytes] of Object.entries(r.languages || {})) {
+        totals[lang] = (totals[lang] || 0) + bytes;
+      }
+    }
+    return Object.fromEntries(Object.entries(totals).sort((a, b) => b[1] - a[1]).slice(0, 12));
+  })(),
+  metrics: {
+    codeBytes: repos.reduce((a, r) => a + (r.languageBytes || 0), 0),
+    documentedRepos: repos.filter((r) => r.readmeExcerpt).length,
+    contributionsLastYear: Object.values(contributions).reduce((a, c) => a + (c.total || 0), 0),
+    activeDays: Object.values(contributions).reduce((a, c) => a + (c.activeDays || 0), 0),
+    longestStreak: Math.max(0, ...Object.values(contributions).map((c) => c.longestStreak || 0)),
+    currentStreak: Math.max(0, ...Object.values(contributions).map((c) => c.currentStreak || 0)),
+    prsOpened: accounts.reduce((a, _, i) => a + (searchCounts[i]?.prsOpened || 0), 0),
+    prsMerged: accounts.reduce((a, _, i) => a + (searchCounts[i]?.prsMerged || 0), 0),
+    issuesOpened: accounts.reduce((a, _, i) => a + (searchCounts[i]?.issuesOpened || 0), 0),
+  },
 };
+
+// Trend history (stars / followers / repos per day) — grows into charts over time.
+const historyEntry = {
+  date: new Date().toISOString(),
+  accounts: accountSummaries.map((a) => ({
+    login: a.login,
+    repos: a.repoCount,
+    stars: a.stars,
+    forks: a.forks || 0,
+    followers: a.followers || 0,
+    contributions: a.metrics.contributionsLastYear || 0,
+  })),
+  totals: {
+    repos: repos.length,
+    stars: snapshot.totalStars,
+    forks: snapshot.totalForks,
+    followers: accountSummaries.reduce((a, x) => a + (x.followers || 0), 0),
+  },
+};
+snapshot.historyDays = updateHistory(historyEntry);
 
 mkdirSync(dirname(OUT), { recursive: true });
 writeFileSync(OUT, JSON.stringify(snapshot, null, 2));
 console.log(`Wrote ${OUT}`);
 console.log(
-  `Repos: ${repos.length} · Stars: ${snapshot.totalStars} · Forks: ${snapshot.totalForks} · Events: ${events.length} · Deep: ${extras.length} · README: ${profile ? "yes" : "no"}`
+  `Repos: ${repos.length} · Stars: ${snapshot.totalStars} · Forks: ${snapshot.totalForks} · Events: ${events.length} · Deep: ${extras.length}`
 );
+console.log(
+  `Contributions: ${snapshot.metrics.contributionsLastYear} over ${snapshot.metrics.activeDays} active days · streak ${snapshot.metrics.currentStreak} (best ${snapshot.metrics.longestStreak}) · PRs ${snapshot.metrics.prsMerged}/${snapshot.metrics.prsOpened} merged · Code: ${(snapshot.metrics.codeBytes / 1048576).toFixed(1)} MB · Languages: ${Object.keys(snapshot.languageBytes).join(", ")}`
+);
+console.log(`History: ${snapshot.historyDays} day(s) recorded in data/history.json`);

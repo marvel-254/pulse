@@ -190,12 +190,22 @@ Visitor sees fresh data even if the snapshot is hours old
 - [x] Per-visitor live reads stay inside the 60 req/hr public limit by polling
       slowly and only while Craft/Project views are open.
 
-### Phase 2 — data depth (next)
-- Contribution heatmap + totals (build-time scrape → snapshot).
-- Authored PR/issue counts via the Search API (build-time, cheap).
-- Languages **by bytes** for the top repos.
-- README excerpt + cover image per featured repo.
-- "This week" digest computed in `build.mjs` (not in the browser).
+### Phase 2 — data depth — ✅ SHIPPED
+- Contribution heatmap + totals (build-time scrape → snapshot). ✅ 365-day
+  calendar, active days, current/longest streaks; heatmap on Overview + Numbers.
+- Authored PR/issue counts via the Search API (build-time, cheap). ✅ 24 merged /
+  42 opened across both accounts, plus issues authored.
+- Languages **by bytes** for the top repos. ✅ composition bars on Craft and on
+  each project page, weighted by real bytes.
+- Commit-activity sparkline per repo. ✅ `stats/participation` (52 weeks).
+- History trends. ✅ `data/history.json` grows one entry per build; Numbers
+  diffs the last two.
+- README excerpt + cover image per featured repo. ⏳ still open.
+- "This week" digest computed in `build.mjs`. ⏳ still open.
+
+### Phase 2b — soundtrack — ✅ SHIPPED
+- Web Audio soundtrack (no audio files in the repo), two moods, topbar/sidebar/
+  palette controls, never autoplays, optional `audio.track` for a licensed file.
 
 ### Phase 3 — 3D + motion — ✅ SHIPPED
 - [x] `js/depth.js`: dependency-free perspective starfield in a real 3D volume,

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-01T12:54:13.817Z",
+  "generatedAt": "2026-10-01T13:22:41.238Z",
   "account": "marvel-254",
   "accounts": [
     {
@@ -17,7 +17,18 @@
       "createdAt": "2026-06-26T18:12:39Z",
       "repoCount": 9,
       "stars": 0,
-      "latestPush": "2026-10-01T12:25:09Z"
+      "forks": 0,
+      "codeBytes": 4890380,
+      "latestPush": "2026-10-01T13:07:04Z",
+      "metrics": {
+        "prsOpened": 12,
+        "prsMerged": 7,
+        "issuesOpened": 11,
+        "contributionsLastYear": 278,
+        "activeDays": 18,
+        "currentStreak": 8,
+        "longestStreak": 8
+      }
     },
     {
       "login": "oliver4441",
@@ -34,7 +45,18 @@
       "createdAt": "2024-06-21T18:11:32Z",
       "repoCount": 32,
       "stars": 2,
-      "latestPush": "2026-10-01T12:52:00Z"
+      "forks": 0,
+      "codeBytes": 11073784,
+      "latestPush": "2026-10-01T13:05:17Z",
+      "metrics": {
+        "prsOpened": 30,
+        "prsMerged": 17,
+        "issuesOpened": 5,
+        "contributionsLastYear": 1509,
+        "activeDays": 108,
+        "currentStreak": 1,
+        "longestStreak": 27
+      }
     }
   ],
   "user": {
@@ -52,7 +74,18 @@
     "createdAt": "2026-06-26T18:12:39Z",
     "repoCount": 9,
     "stars": 0,
-    "latestPush": "2026-10-01T12:25:09Z",
+    "forks": 0,
+    "codeBytes": 4890380,
+    "latestPush": "2026-10-01T13:07:04Z",
+    "metrics": {
+      "prsOpened": 12,
+      "prsMerged": 7,
+      "issuesOpened": 11,
+      "contributionsLastYear": 278,
+      "activeDays": 18,
+      "currentStreak": 8,
+      "longestStreak": 8
+    },
     "twitter": null,
     "hireable": null,
     "publicGists": 0
@@ -61,28 +94,6 @@
   "totalForks": 0,
   "totalOpenIssues": 28,
   "repos": [
-    {
-      "name": "gideon-portfolio",
-      "fullName": "oliver4441/gideon-portfolio",
-      "description": "Gideon Kipkirui - Full-Stack Developer & AI Engineer Portfolio",
-      "htmlUrl": "https://github.com/oliver4441/gideon-portfolio",
-      "homepage": "https://gideon-portfolio-mu.vercel.app",
-      "language": "Astro",
-      "topics": [],
-      "stars": 0,
-      "forks": 0,
-      "openIssues": 1,
-      "watchers": 0,
-      "license": null,
-      "isPrivate": false,
-      "archived": false,
-      "defaultBranch": "master",
-      "size": 2024,
-      "createdAt": "2026-06-12T15:34:35Z",
-      "updatedAt": "2026-10-01T12:52:04Z",
-      "pushedAt": "2026-10-01T12:52:00Z",
-      "owner": "oliver4441"
-    },
     {
       "name": "stor1",
       "fullName": "marvel-254/stor1",
@@ -101,10 +112,329 @@
       "defaultBranch": "main",
       "size": 19260,
       "createdAt": "2026-09-18T12:12:24Z",
-      "updatedAt": "2026-10-01T12:25:14Z",
-      "pushedAt": "2026-10-01T12:25:09Z",
+      "updatedAt": "2026-10-01T13:07:08Z",
+      "pushedAt": "2026-10-01T13:07:04Z",
       "owner": "marvel-254",
+      "languages": {
+        "JavaScript": 2849756,
+        "CSS": 180172,
+        "PLpgSQL": 157926,
+        "HTML": 55048,
+        "Python": 38164,
+        "Java": 13878,
+        "TypeScript": 12366,
+        "Shell": 469
+      },
+      "languageBytes": 3307779,
+      "primaryLanguage": "JavaScript",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        16,
+        188
+      ],
       "readmeExcerpt": "STOR1 A modern marketplace platform for discovering, buying, and managing products in one place."
+    },
+    {
+      "name": "omnianalytics-recovered",
+      "fullName": "oliver4441/omnianalytics-recovered",
+      "description": "recovery of fairytale",
+      "htmlUrl": "https://github.com/oliver4441/omnianalytics-recovered",
+      "homepage": "https://omnianalytics.vercel.app",
+      "language": "JavaScript",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "openIssues": 4,
+      "watchers": 0,
+      "license": "BSL-1.0",
+      "isPrivate": false,
+      "archived": false,
+      "defaultBranch": "main",
+      "size": 745,
+      "createdAt": "2026-08-11T09:17:57Z",
+      "updatedAt": "2026-10-01T13:05:21Z",
+      "pushedAt": "2026-10-01T13:05:17Z",
+      "owner": "oliver4441",
+      "languages": {
+        "JavaScript": 455861,
+        "CSS": 161200,
+        "TypeScript": 5726,
+        "HTML": 2479
+      },
+      "languageBytes": 625266,
+      "primaryLanguage": "JavaScript",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7,
+        0,
+        0,
+        0,
+        0,
+        5,
+        0,
+        0
+      ],
+      "readmeExcerpt": "OmniAnalytics OmniAnalytics is a developer-focused engineering operations workspace that connects planning, delivery work, engineering signals, and project access in one responsive application."
+    },
+    {
+      "name": "gideon-portfolio",
+      "fullName": "oliver4441/gideon-portfolio",
+      "description": "Gideon Kipkirui - Full-Stack Developer & AI Engineer Portfolio",
+      "htmlUrl": "https://github.com/oliver4441/gideon-portfolio",
+      "homepage": "https://gideon-portfolio-mu.vercel.app",
+      "language": "Astro",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "openIssues": 1,
+      "watchers": 0,
+      "license": null,
+      "isPrivate": false,
+      "archived": false,
+      "defaultBranch": "master",
+      "size": 2024,
+      "createdAt": "2026-06-12T15:34:35Z",
+      "updatedAt": "2026-10-01T12:57:57Z",
+      "pushedAt": "2026-10-01T12:57:53Z",
+      "owner": "oliver4441",
+      "languages": {
+        "Astro": 41108,
+        "CSS": 22839,
+        "JavaScript": 4723
+      },
+      "languageBytes": 68670,
+      "primaryLanguage": "Astro",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        43,
+        7,
+        0,
+        18,
+        5,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "omix-leads",
+      "fullName": "oliver4441/omix-leads",
+      "description": "Omix Leads - Lead generation app for Omix Store & Omixsystems",
+      "htmlUrl": "https://github.com/oliver4441/omix-leads",
+      "homepage": "https://omix-blog.vercel.app",
+      "language": "JavaScript",
+      "topics": [],
+      "stars": 0,
+      "forks": 0,
+      "openIssues": 2,
+      "watchers": 0,
+      "license": null,
+      "isPrivate": false,
+      "archived": false,
+      "defaultBranch": "main",
+      "size": 1026,
+      "createdAt": "2026-06-25T13:16:34Z",
+      "updatedAt": "2026-09-12T23:44:21Z",
+      "pushedAt": "2026-10-01T12:57:23Z",
+      "owner": "oliver4441",
+      "languages": {
+        "JavaScript": 99938,
+        "CSS": 30940,
+        "Python": 17537,
+        "HTML": 871
+      },
+      "languageBytes": 149286,
+      "primaryLanguage": "JavaScript",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        8,
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        29,
+        0,
+        0,
+        13,
+        27,
+        0,
+        0
+      ],
+      "readmeExcerpt": "React + Vite This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules."
     },
     {
       "name": "aide",
@@ -127,6 +457,70 @@
       "updatedAt": "2026-10-01T11:21:17Z",
       "pushedAt": "2026-10-01T11:21:13Z",
       "owner": "oliver4441",
+      "languages": {
+        "TypeScript": 442983,
+        "HTML": 223497,
+        "Kotlin": 93149,
+        "JavaScript": 6503,
+        "CSS": 3465,
+        "Shell": 1080
+      },
+      "languageBytes": 770677,
+      "primaryLanguage": "TypeScript",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        8,
+        0,
+        14,
+        36,
+        2,
+        24
+      ],
       "readmeExcerpt": "Aide Multi-business management platform for small shops and businesses."
     },
     {
@@ -153,6 +547,60 @@
       "updatedAt": "2026-08-10T20:52:12Z",
       "pushedAt": "2026-10-01T04:12:20Z",
       "owner": "oliver4441",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        6,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
       "readmeExcerpt": "--- About Me I'm Oliver (Gideon Kipkirui), a full-stack developer and AI engineer based in Kenya."
     },
     {
@@ -176,6 +624,70 @@
       "updatedAt": "2026-09-28T20:32:38Z",
       "pushedAt": "2026-09-28T20:32:33Z",
       "owner": "marvel-254",
+      "languages": {
+        "TypeScript": 979872,
+        "Shell": 4577,
+        "JavaScript": 2463,
+        "Dockerfile": 2231,
+        "CSS": 936,
+        "HTML": 370
+      },
+      "languageBytes": 990449,
+      "primaryLanguage": "TypeScript",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        11,
+        3
+      ],
       "readmeExcerpt": "forge@omix — Omix Builder AI-native visual software builder. Design, structure, and ship production applications from a visual canvas. Vision Omix Builder is not a mockup tool."
     },
     {
@@ -199,6 +711,67 @@
       "updatedAt": "2026-09-28T09:18:40Z",
       "pushedAt": "2026-09-28T09:18:36Z",
       "owner": "marvel-254",
+      "languages": {
+        "JavaScript": 131204,
+        "CSS": 45141,
+        "HTML": 2970
+      },
+      "languageBytes": 179315,
+      "primaryLanguage": "JavaScript",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        14
+      ],
       "readmeExcerpt": "Pulse — Personal GitHub Command Center A personal, mobile-first developer operations cockpit powered by GitHub."
     },
     {
@@ -222,6 +795,69 @@
       "updatedAt": "2026-09-27T22:06:56Z",
       "pushedAt": "2026-09-27T22:06:52Z",
       "owner": "marvel-254",
+      "languages": {
+        "Python": 6676,
+        "JavaScript": 1469,
+        "TypeScript": 1357,
+        "HTML": 443,
+        "CSS": 57
+      },
+      "languageBytes": 10002,
+      "primaryLanguage": "Python",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        10
+      ],
       "readmeExcerpt": "ThreadMyMail - AI Email Harness Personal AI-powered email management platform. BYOK (Bring Your Own Key). Host on Render. Android APK with push notifications."
     },
     {
@@ -245,6 +881,69 @@
       "updatedAt": "2026-09-16T14:30:58Z",
       "pushedAt": "2026-09-27T22:02:27Z",
       "owner": "marvel-254",
+      "languages": {
+        "TypeScript": 136905,
+        "HTML": 49529,
+        "Kotlin": 4552,
+        "Shell": 3872,
+        "JavaScript": 2676
+      },
+      "languageBytes": 197534,
+      "primaryLanguage": "TypeScript",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        16,
+        0,
+        0
+      ],
       "readmeExcerpt": "BRO — TALK. CONNECT. EXIST. BRO is a free and open-source social communication platform for Android. It is a living communication environment built around conversations, people, spaces, and presence."
     },
     {
@@ -267,7 +966,68 @@
       "createdAt": "2026-09-27T19:46:27Z",
       "updatedAt": "2026-09-27T22:01:38Z",
       "pushedAt": "2026-09-27T22:01:34Z",
-      "owner": "marvel-254"
+      "owner": "marvel-254",
+      "languages": {
+        "JavaScript": 71335,
+        "HTML": 38119,
+        "CSS": 17904
+      },
+      "languageBytes": 127358,
+      "primaryLanguage": "JavaScript",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7
+      ]
     },
     {
       "name": "agentdock",
@@ -290,6 +1050,67 @@
       "updatedAt": "2026-09-16T17:33:30Z",
       "pushedAt": "2026-09-26T22:19:36Z",
       "owner": "marvel-254",
+      "languages": {
+        "Go": 74289,
+        "Shell": 3234,
+        "Dockerfile": 420
+      },
+      "languageBytes": 77943,
+      "primaryLanguage": "Go",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        10,
+        0,
+        0
+      ],
       "readmeExcerpt": "OrionOS 🐑 Lightweight, self-hosted web dashboard for monitoring AI agents. What is OrionOS?"
     },
     {
@@ -312,7 +1133,68 @@
       "createdAt": "2026-05-14T12:14:29Z",
       "updatedAt": "2026-09-26T18:36:07Z",
       "pushedAt": "2026-09-26T18:36:02Z",
-      "owner": "oliver4441"
+      "owner": "oliver4441",
+      "languages": {
+        "JavaScript": 92377,
+        "Python": 59319,
+        "HTML": 10263
+      },
+      "languageBytes": 161959,
+      "primaryLanguage": "JavaScript",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        18,
+        21,
+        0,
+        5,
+        8,
+        2,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2
+      ]
     },
     {
       "name": "omixsystems-site",
@@ -334,7 +1216,67 @@
       "createdAt": "2026-06-10T18:16:17Z",
       "updatedAt": "2026-09-26T11:20:14Z",
       "pushedAt": "2026-09-26T11:20:10Z",
-      "owner": "oliver4441"
+      "owner": "oliver4441",
+      "languages": {
+        "HTML": 111875,
+        "JavaScript": 21928
+      },
+      "languageBytes": 133803,
+      "primaryLanguage": "HTML",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        15,
+        14,
+        0,
+        1,
+        8,
+        0,
+        49
+      ]
     },
     {
       "name": "stor1",
@@ -357,6 +1299,71 @@
       "updatedAt": "2026-09-18T08:26:27Z",
       "pushedAt": "2026-09-18T08:26:22Z",
       "owner": "oliver4441",
+      "languages": {
+        "JavaScript": 1843405,
+        "CSS": 151810,
+        "PLpgSQL": 86758,
+        "Python": 36649,
+        "HTML": 31425,
+        "TypeScript": 2956,
+        "Shell": 469
+      },
+      "languageBytes": 2153472,
+      "primaryLanguage": "JavaScript",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        70,
+        70,
+        65,
+        50,
+        56,
+        26,
+        38,
+        34,
+        0,
+        1,
+        5,
+        0,
+        0,
+        0,
+        6,
+        3,
+        0
+      ],
       "readmeExcerpt": "STOR1 A modern marketplace platform for discovering, buying, and managing products in one place."
     },
     {
@@ -379,53 +1386,61 @@
       "createdAt": "2026-09-15T23:23:11Z",
       "updatedAt": "2026-09-15T23:23:27Z",
       "pushedAt": "2026-09-15T23:23:22Z",
-      "owner": "marvel-254"
-    },
-    {
-      "name": "omnianalytics-recovered",
-      "fullName": "oliver4441/omnianalytics-recovered",
-      "description": "recovery of fairytale",
-      "htmlUrl": "https://github.com/oliver4441/omnianalytics-recovered",
-      "homepage": "https://omnianalytics.vercel.app",
-      "language": "JavaScript",
-      "topics": [],
-      "stars": 0,
-      "forks": 0,
-      "openIssues": 4,
-      "watchers": 0,
-      "license": "BSL-1.0",
-      "isPrivate": false,
-      "archived": false,
-      "defaultBranch": "main",
-      "size": 745,
-      "createdAt": "2026-08-11T09:17:57Z",
-      "updatedAt": "2026-09-14T14:22:27Z",
-      "pushedAt": "2026-09-14T14:22:21Z",
-      "owner": "oliver4441",
-      "readmeExcerpt": "OmniAnalytics OmniAnalytics is a developer-focused engineering operations workspace that connects planning, delivery work, engineering signals, and project access in one responsive application."
-    },
-    {
-      "name": "omix-leads",
-      "fullName": "oliver4441/omix-leads",
-      "description": "Omix Leads - Lead generation app for Omix Store & Omixsystems",
-      "htmlUrl": "https://github.com/oliver4441/omix-leads",
-      "homepage": "https://omix-blog.vercel.app",
-      "language": "JavaScript",
-      "topics": [],
-      "stars": 0,
-      "forks": 0,
-      "openIssues": 2,
-      "watchers": 0,
-      "license": null,
-      "isPrivate": false,
-      "archived": false,
-      "defaultBranch": "main",
-      "size": 1026,
-      "createdAt": "2026-06-25T13:16:34Z",
-      "updatedAt": "2026-09-12T23:44:21Z",
-      "pushedAt": "2026-09-12T23:44:18Z",
-      "owner": "oliver4441",
-      "readmeExcerpt": "React + Vite This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules."
+      "owner": "marvel-254",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ]
     },
     {
       "name": "twistedoliver211fs-art",
@@ -448,6 +1463,60 @@
       "updatedAt": "2026-09-08T22:37:06Z",
       "pushedAt": "2026-09-08T22:37:02Z",
       "owner": "marvel-254",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        0,
+        0,
+        0
+      ],
       "readmeExcerpt": "--- --- --- Hi, I'm Kipkirui Gideon Building practical, offline-first web apps for Kenyan businesses — POS, inventory, and analytics that work without a reliable connection."
     },
     {
@@ -471,6 +1540,68 @@
       "updatedAt": "2026-08-23T22:59:44Z",
       "pushedAt": "2026-08-23T22:59:39Z",
       "owner": "oliver4441",
+      "languages": {
+        "TypeScript": 804540,
+        "JavaScript": 2209,
+        "CSS": 2154,
+        "Shell": 816
+      },
+      "languageBytes": 809719,
+      "primaryLanguage": "TypeScript",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        54,
+        2,
+        5,
+        1,
+        0,
+        0,
+        5,
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
       "readmeExcerpt": "omixsystems — School Management System A futuristic, AI-powered school management platform built by omixsystems."
     },
     {
@@ -494,6 +1625,68 @@
       "updatedAt": "2026-08-23T22:32:25Z",
       "pushedAt": "2026-08-23T22:32:15Z",
       "owner": "oliver4441",
+      "languages": {
+        "TypeScript": 179289,
+        "PLpgSQL": 9930,
+        "JavaScript": 5101,
+        "CSS": 801
+      },
+      "languageBytes": 195121,
+      "primaryLanguage": "TypeScript",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        46,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
       "readmeExcerpt": "This is a Next.js project bootstrapped with create-next-app . Getting Started First, run the development server: Open with your browser to see the result. You can start editing the page by modifying app/page.tsx ."
     },
     {
@@ -517,6 +1710,69 @@
       "updatedAt": "2026-08-17T21:37:07Z",
       "pushedAt": "2026-08-17T21:37:03Z",
       "owner": "oliver4441",
+      "languages": {
+        "HTML": 647148,
+        "TypeScript": 559295,
+        "PLpgSQL": 23129,
+        "JavaScript": 13881,
+        "CSS": 11345
+      },
+      "languageBytes": 1254798,
+      "primaryLanguage": "HTML",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        9,
+        1,
+        1,
+        16,
+        30,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
       "readmeExcerpt": "Omix Community — Docs Deployment: DEPLOY.md — full guide (Vercel + Cloudflare Workers + Supabase) Readiness: DEPLOYMENT READINESS.md — current checklist Workers: CLOUDFLARE WORKERS.md — API layer details Build troublesho"
     },
     {
@@ -540,6 +1796,69 @@
       "updatedAt": "2026-08-17T20:44:58Z",
       "pushedAt": "2026-08-17T20:44:25Z",
       "owner": "oliver4441",
+      "languages": {
+        "TypeScript": 466795,
+        "HTML": 228936,
+        "JavaScript": 12906,
+        "CSS": 2932,
+        "Shell": 429
+      },
+      "languageBytes": 711998,
+      "primaryLanguage": "TypeScript",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        11,
+        22,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
       "readmeExcerpt": "Veyra A premium cinematic streaming platform built with Next.js, Cloudflare Workers, and Neon PostgreSQL."
     },
     {
@@ -563,6 +1882,65 @@
       "updatedAt": "2026-06-28T05:56:47Z",
       "pushedAt": "2026-08-14T23:51:58Z",
       "owner": "oliver4441",
+      "languages": {
+        "HTML": 1740760
+      },
+      "languageBytes": 1740760,
+      "primaryLanguage": "HTML",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
       "readmeExcerpt": "Valhalla Startup Graveyard Intelligence"
     },
     {
@@ -586,6 +1964,67 @@
       "updatedAt": "2026-07-27T11:59:17Z",
       "pushedAt": "2026-07-27T11:58:42Z",
       "owner": "oliver4441",
+      "languages": {
+        "JavaScript": 346998,
+        "PLpgSQL": 24483,
+        "Shell": 1264
+      },
+      "languageBytes": 372745,
+      "primaryLanguage": "JavaScript",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        5,
+        0,
+        18,
+        59,
+        19,
+        29,
+        19,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
       "readmeExcerpt": "Force re-deploy"
     },
     {
@@ -609,6 +2048,69 @@
       "updatedAt": "2026-07-05T19:29:54Z",
       "pushedAt": "2026-07-05T19:29:50Z",
       "owner": "oliver4441",
+      "languages": {
+        "TypeScript": 621737,
+        "CSS": 10483,
+        "JavaScript": 8674,
+        "Shell": 3755,
+        "Python": 2483
+      },
+      "languageBytes": 647132,
+      "primaryLanguage": "TypeScript",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        13,
+        16,
+        20,
+        5,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
       "readmeExcerpt": "Shadboard - Next.js 15 & Shadcn/UI Admin Dashboard Template Shadboard is an open-source admin dashboard template built with Next.js 15 and Shadcn/ui components for scalable, user-friendly web apps."
     },
     {
@@ -632,6 +2134,68 @@
       "updatedAt": "2026-06-25T17:06:43Z",
       "pushedAt": "2026-06-25T17:07:20Z",
       "owner": "oliver4441",
+      "languages": {
+        "JavaScript": 56688,
+        "Kotlin": 36479,
+        "HTML": 6780,
+        "CSS": 1793
+      },
+      "languageBytes": 101740,
+      "primaryLanguage": "JavaScript",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7,
+        15,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
       "readmeExcerpt": "🖥️ Device Monitor — Personal Device Monitoring System A full-stack personal device monitoring system with an Android app, Node.js backend, and real-time React dashboard."
     },
     {
@@ -655,6 +2219,67 @@
       "updatedAt": "2026-06-16T08:01:18Z",
       "pushedAt": "2026-06-16T08:01:10Z",
       "owner": "oliver4441",
+      "languages": {
+        "TypeScript": 115460,
+        "CSS": 720,
+        "JavaScript": 559
+      },
+      "languageBytes": 116739,
+      "primaryLanguage": "TypeScript",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
       "readmeExcerpt": "This is a Next.js project bootstrapped with create-next-app . Getting Started First, run the development server: Open with your browser to see the result. You can start editing the page by modifying app/page.tsx ."
     },
     {
@@ -677,7 +2302,68 @@
       "createdAt": "2026-06-04T17:10:22Z",
       "updatedAt": "2026-06-10T18:43:06Z",
       "pushedAt": "2026-06-10T18:43:01Z",
-      "owner": "oliver4441"
+      "owner": "oliver4441",
+      "languages": {
+        "JavaScript": 38236,
+        "CSS": 18328,
+        "HTML": 827
+      },
+      "languageBytes": 57391,
+      "primaryLanguage": "JavaScript",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
     },
     {
       "name": "pothole-web",
@@ -699,7 +2385,66 @@
       "createdAt": "2026-06-06T22:31:59Z",
       "updatedAt": "2026-06-06T22:58:39Z",
       "pushedAt": "2026-06-06T22:58:36Z",
-      "owner": "oliver4441"
+      "owner": "oliver4441",
+      "languages": {
+        "HTML": 68093
+      },
+      "languageBytes": 68093,
+      "primaryLanguage": "HTML",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
     },
     {
       "name": "pothole",
@@ -722,6 +2467,69 @@
       "updatedAt": "2026-06-06T20:03:40Z",
       "pushedAt": "2026-06-06T20:03:36Z",
       "owner": "oliver4441",
+      "languages": {
+        "Rust": 55018,
+        "TypeScript": 31183,
+        "CSS": 14852,
+        "Kotlin": 5830,
+        "HTML": 369
+      },
+      "languageBytes": 107252,
+      "primaryLanguage": "Rust",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        4,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
       "readmeExcerpt": "Pothole Audio player, downloader, radio, and DJ deck. Built with Tauri + React + Rust — by OmixSystems. Lean, cross-platform. Under 15 MB desktop, native on Android."
     },
     {
@@ -745,6 +2553,68 @@
       "updatedAt": "2026-06-03T10:59:06Z",
       "pushedAt": "2026-06-04T15:42:58Z",
       "owner": "oliver4441",
+      "languages": {
+        "TypeScript": 399644,
+        "PLpgSQL": 34668,
+        "CSS": 6027,
+        "JavaScript": 4299
+      },
+      "languageBytes": 444638,
+      "primaryLanguage": "TypeScript",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        54,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
       "readmeExcerpt": "This is a Next.js project bootstrapped with create-next-app . Getting Started First, run the development server: Open with your browser to see the result. You can start editing the page by modifying app/page.tsx ."
     },
     {
@@ -768,6 +2638,68 @@
       "updatedAt": "2026-06-04T07:20:04Z",
       "pushedAt": "2026-06-04T07:19:59Z",
       "owner": "oliver4441",
+      "languages": {
+        "HTML": 38949,
+        "TypeScript": 26609,
+        "JavaScript": 10430,
+        "CSS": 10420
+      },
+      "languageBytes": 86408,
+      "primaryLanguage": "HTML",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
       "readmeExcerpt": "👵 Granny Exchange A decentralized exchange (DEX) interface for swapping SOL ↔ $GRANNY on Solana."
     },
     {
@@ -790,7 +2722,68 @@
       "createdAt": "2026-05-29T12:56:55Z",
       "updatedAt": "2026-06-03T10:09:31Z",
       "pushedAt": "2026-06-03T10:09:22Z",
-      "owner": "oliver4441"
+      "owner": "oliver4441",
+      "languages": {
+        "TypeScript": 61258,
+        "JavaScript": 6123,
+        "CSS": 474
+      },
+      "languageBytes": 67855,
+      "primaryLanguage": "TypeScript",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        20,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
     },
     {
       "name": "sentienx-v2",
@@ -834,7 +2827,70 @@
       "createdAt": "2026-05-22T13:36:57Z",
       "updatedAt": "2026-05-22T13:37:12Z",
       "pushedAt": "2026-05-22T13:37:05Z",
-      "owner": "oliver4441"
+      "owner": "oliver4441",
+      "languages": {
+        "TypeScript": 71064,
+        "Python": 34946,
+        "CSS": 4867,
+        "Dockerfile": 274,
+        "JavaScript": 105
+      },
+      "languageBytes": 111256,
+      "primaryLanguage": "TypeScript",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        15,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
     },
     {
       "name": "omix-live",
@@ -856,7 +2912,67 @@
       "createdAt": "2026-05-14T14:46:40Z",
       "updatedAt": "2026-08-23T21:09:20Z",
       "pushedAt": "2026-05-15T06:27:28Z",
-      "owner": "oliver4441"
+      "owner": "oliver4441",
+      "languages": {
+        "JavaScript": 73351,
+        "HTML": 22085
+      },
+      "languageBytes": 95436,
+      "primaryLanguage": "JavaScript",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
     },
     {
       "name": "omix-systems-official-v2",
@@ -966,7 +3082,68 @@
       "createdAt": "2026-05-06T21:32:35Z",
       "updatedAt": "2026-05-06T21:33:39Z",
       "pushedAt": "2026-05-06T21:33:35Z",
-      "owner": "oliver4441"
+      "owner": "oliver4441",
+      "languages": {
+        "HTML": 11747,
+        "CSS": 7700,
+        "JavaScript": 2123
+      },
+      "languageBytes": 21570,
+      "primaryLanguage": "HTML",
+      "activity": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
     },
     {
       "name": "astra",
@@ -992,6 +3169,30 @@
     }
   ],
   "events": [
+    {
+      "type": "PushEvent",
+      "action": "pushed to",
+      "repo": "oliver4441/omnianalytics-recovered",
+      "createdAt": "2026-10-01T13:05:08Z",
+      "extra": 0,
+      "htmlUrl": "https://github.com/oliver4441/omnianalytics-recovered/commits"
+    },
+    {
+      "type": "PushEvent",
+      "action": "pushed to",
+      "repo": "oliver4441/omnianalytics-recovered",
+      "createdAt": "2026-10-01T13:05:05Z",
+      "extra": 0,
+      "htmlUrl": "https://github.com/oliver4441/omnianalytics-recovered/commits"
+    },
+    {
+      "type": "CreateEvent",
+      "action": "created branch/tag in",
+      "repo": "oliver4441/omix-leads",
+      "createdAt": "2026-10-01T12:57:23Z",
+      "extra": "",
+      "htmlUrl": "https://github.com/oliver4441/omix-leads"
+    },
     {
       "type": "PushEvent",
       "action": "pushed to",
@@ -1287,37 +3488,500 @@
       "createdAt": "2026-09-30T20:24:16Z",
       "extra": 0,
       "htmlUrl": "https://github.com/marvel-254/stor1/commits"
-    },
-    {
-      "type": "PushEvent",
-      "action": "pushed to",
-      "repo": "oliver4441/aide",
-      "createdAt": "2026-09-30T20:21:24Z",
-      "extra": 0,
-      "htmlUrl": "https://github.com/oliver4441/aide/commits"
-    },
-    {
-      "type": "PushEvent",
-      "action": "pushed to",
-      "repo": "oliver4441/aide",
-      "createdAt": "2026-09-30T17:43:18Z",
-      "extra": 0,
-      "htmlUrl": "https://github.com/oliver4441/aide/commits"
-    },
-    {
-      "type": "PushEvent",
-      "action": "pushed to",
-      "repo": "marvel-254/stor1",
-      "createdAt": "2026-09-30T17:41:18Z",
-      "extra": 0,
-      "htmlUrl": "https://github.com/marvel-254/stor1/commits"
     }
   ],
   "extras": [
     {
+      "fullName": "marvel-254/stor1",
+      "releases": [
+        {
+          "tag": "v1.5.1",
+          "name": "Omix Store v1.5.1",
+          "publishedAt": "2026-09-28T19:37:02Z",
+          "prerelease": false,
+          "draft": false,
+          "htmlUrl": "https://github.com/marvel-254/stor1/releases/tag/v1.5.1"
+        },
+        {
+          "tag": "v1.5.0",
+          "name": "Omix Store v1.5.0",
+          "publishedAt": "2026-09-27T09:20:56Z",
+          "prerelease": false,
+          "draft": false,
+          "htmlUrl": "https://github.com/marvel-254/stor1/releases/tag/v1.5.0"
+        },
+        {
+          "tag": "v1.4.0",
+          "name": "Omix Store v1.4.0",
+          "publishedAt": "2026-09-27T07:03:34Z",
+          "prerelease": false,
+          "draft": false,
+          "htmlUrl": "https://github.com/marvel-254/stor1/releases/tag/v1.4.0"
+        },
+        {
+          "tag": "v1.3.0",
+          "name": "Omix Store v1.3.0",
+          "publishedAt": "2026-09-27T01:01:40Z",
+          "prerelease": false,
+          "draft": false,
+          "htmlUrl": "https://github.com/marvel-254/stor1/releases/tag/v1.3.0"
+        },
+        {
+          "tag": "v1.2.0",
+          "name": "Omix Store v1.2.0",
+          "publishedAt": "2026-09-26T23:36:44Z",
+          "prerelease": false,
+          "draft": false,
+          "htmlUrl": "https://github.com/marvel-254/stor1/releases/tag/v1.2.0"
+        }
+      ],
+      "runs": [
+        {
+          "id": 36866369893,
+          "runNumber": 217,
+          "name": "CI",
+          "displayTitle": "feat: give every listing a real shop behind it",
+          "headBranch": "main",
+          "headSha": "ace8afb",
+          "event": "push",
+          "status": "in_progress",
+          "conclusion": null,
+          "workflowId": 361642638,
+          "actor": "marvel-254",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/297240437?v=4",
+          "createdAt": "2026-10-01T13:07:06Z",
+          "updatedAt": "2026-10-01T13:07:10Z",
+          "htmlUrl": "https://github.com/marvel-254/stor1/actions/runs/36866369893"
+        },
+        {
+          "id": 36861620091,
+          "runNumber": 216,
+          "name": "CI",
+          "displayTitle": "fix: emit noindex on private routes instead of computing it and disca…",
+          "headBranch": "main",
+          "headSha": "d600afd",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "failure",
+          "workflowId": 361642638,
+          "actor": "marvel-254",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/297240437?v=4",
+          "createdAt": "2026-10-01T12:25:12Z",
+          "updatedAt": "2026-10-01T13:22:21Z",
+          "htmlUrl": "https://github.com/marvel-254/stor1/actions/runs/36861620091"
+        },
+        {
+          "id": 36860824895,
+          "runNumber": 215,
+          "name": "CI",
+          "displayTitle": "fix: make per-page descriptions actually apply, and give listings the…",
+          "headBranch": "main",
+          "headSha": "2a4b0fc",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "failure",
+          "workflowId": 361642638,
+          "actor": "marvel-254",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/297240437?v=4",
+          "createdAt": "2026-10-01T12:17:53Z",
+          "updatedAt": "2026-10-01T13:14:56Z",
+          "htmlUrl": "https://github.com/marvel-254/stor1/actions/runs/36860824895"
+        },
+        {
+          "id": 36857499380,
+          "runNumber": 214,
+          "name": "CI",
+          "displayTitle": "feat: give every sitemap page its own title and description",
+          "headBranch": "main",
+          "headSha": "1a26b8a",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "workflowId": 361642638,
+          "actor": "marvel-254",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/297240437?v=4",
+          "createdAt": "2026-10-01T11:46:47Z",
+          "updatedAt": "2026-10-01T11:57:09Z",
+          "htmlUrl": "https://github.com/marvel-254/stor1/actions/runs/36857499380"
+        },
+        {
+          "id": 36855050824,
+          "runNumber": 213,
+          "name": "CI",
+          "displayTitle": "feat: send a welcome email on signup, and fix the canonical on every …",
+          "headBranch": "main",
+          "headSha": "17881fe",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "workflowId": 361642638,
+          "actor": "marvel-254",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/297240437?v=4",
+          "createdAt": "2026-10-01T11:23:19Z",
+          "updatedAt": "2026-10-01T11:34:01Z",
+          "htmlUrl": "https://github.com/marvel-254/stor1/actions/runs/36855050824"
+        },
+        {
+          "id": 36850458164,
+          "runNumber": 212,
+          "name": "CI",
+          "displayTitle": "test: stub localStorage when jsdom omits it, so local runs match CI",
+          "headBranch": "main",
+          "headSha": "12d4981",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "workflowId": 361642638,
+          "actor": "marvel-254",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/297240437?v=4",
+          "createdAt": "2026-10-01T10:39:07Z",
+          "updatedAt": "2026-10-01T10:49:27Z",
+          "htmlUrl": "https://github.com/marvel-254/stor1/actions/runs/36850458164"
+        },
+        {
+          "id": 36848260755,
+          "runNumber": 211,
+          "name": "CI",
+          "displayTitle": "test: add the Resend exports the push-broadcast env mock omits",
+          "headBranch": "main",
+          "headSha": "611d942",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "workflowId": 361642638,
+          "actor": "marvel-254",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/297240437?v=4",
+          "createdAt": "2026-10-01T10:18:03Z",
+          "updatedAt": "2026-10-01T10:28:09Z",
+          "htmlUrl": "https://github.com/marvel-254/stor1/actions/runs/36848260755"
+        },
+        {
+          "id": 36847318835,
+          "runNumber": 210,
+          "name": "CI",
+          "displayTitle": "chore: remove stale test accounts from the live profiles table",
+          "headBranch": "main",
+          "headSha": "06aa51e",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "failure",
+          "workflowId": 361642638,
+          "actor": "marvel-254",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/297240437?v=4",
+          "createdAt": "2026-10-01T10:09:15Z",
+          "updatedAt": "2026-10-01T10:19:27Z",
+          "htmlUrl": "https://github.com/marvel-254/stor1/actions/runs/36847318835"
+        },
+        {
+          "id": 36846483579,
+          "runNumber": 209,
+          "name": "CI",
+          "displayTitle": "feat: make broadcast email actually send",
+          "headBranch": "main",
+          "headSha": "32302b1",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "failure",
+          "workflowId": 361642638,
+          "actor": "marvel-254",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/297240437?v=4",
+          "createdAt": "2026-10-01T10:01:25Z",
+          "updatedAt": "2026-10-01T10:11:53Z",
+          "htmlUrl": "https://github.com/marvel-254/stor1/actions/runs/36846483579"
+        },
+        {
+          "id": 36821525348,
+          "runNumber": 208,
+          "name": "CI",
+          "displayTitle": "chore: keep the wallet migration applier as a record",
+          "headBranch": "main",
+          "headSha": "9063e1d",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "workflowId": 361642638,
+          "actor": "marvel-254",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/297240437?v=4",
+          "createdAt": "2026-10-01T05:48:03Z",
+          "updatedAt": "2026-10-01T05:58:31Z",
+          "htmlUrl": "https://github.com/marvel-254/stor1/actions/runs/36821525348"
+        }
+      ],
+      "workflows": [
+        {
+          "id": 368264719,
+          "name": "Android dev APK",
+          "path": ".github/workflows/android-dev-apk.yml",
+          "state": "active",
+          "htmlUrl": "https://github.com/marvel-254/stor1/blob/main/.github/workflows/android-dev-apk.yml"
+        },
+        {
+          "id": 367919142,
+          "name": "Android APK",
+          "path": ".github/workflows/android-release.yml",
+          "state": "active",
+          "htmlUrl": "https://github.com/marvel-254/stor1/blob/main/.github/workflows/android-release.yml"
+        },
+        {
+          "id": 361341823,
+          "name": "Auto-merge Arena PRs",
+          "path": ".github/workflows/arena-auto-merge.yml",
+          "state": "active",
+          "htmlUrl": "https://github.com/marvel-254/stor1/blob/main/.github/workflows/arena-auto-merge.yml"
+        },
+        {
+          "id": 361341825,
+          "name": "Arena PR CI",
+          "path": ".github/workflows/arena-ci.yml",
+          "state": "active",
+          "htmlUrl": "https://github.com/marvel-254/stor1/blob/main/.github/workflows/arena-ci.yml"
+        },
+        {
+          "id": 361642638,
+          "name": "CI",
+          "path": ".github/workflows/ci.yml",
+          "state": "active",
+          "htmlUrl": "https://github.com/marvel-254/stor1/blob/main/.github/workflows/ci.yml"
+        },
+        {
+          "id": 369666052,
+          "name": "Tauri Build (Windows)",
+          "path": ".github/workflows/tauri-build.yml",
+          "state": "active",
+          "htmlUrl": "https://github.com/marvel-254/stor1/blob/main/.github/workflows/tauri-build.yml"
+        }
+      ]
+    },
+    {
+      "fullName": "oliver4441/omnianalytics-recovered",
+      "releases": [],
+      "runs": [
+        {
+          "id": 36866191710,
+          "runNumber": 13,
+          "name": "Deploy to Vercel",
+          "displayTitle": "Fix crawler file routing on Vercel",
+          "headBranch": "main",
+          "headSha": "ca48094",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "workflowId": 331837342,
+          "actor": "oliver4441",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
+          "createdAt": "2026-10-01T13:05:19Z",
+          "updatedAt": "2026-10-01T13:08:04Z",
+          "htmlUrl": "https://github.com/oliver4441/omnianalytics-recovered/actions/runs/36866191710"
+        },
+        {
+          "id": 36866191435,
+          "runNumber": 16,
+          "name": "CI",
+          "displayTitle": "Fix crawler file routing on Vercel",
+          "headBranch": "main",
+          "headSha": "ca48094",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "workflowId": 331836463,
+          "actor": "oliver4441",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
+          "createdAt": "2026-10-01T13:05:19Z",
+          "updatedAt": "2026-10-01T13:10:14Z",
+          "htmlUrl": "https://github.com/oliver4441/omnianalytics-recovered/actions/runs/36866191435"
+        },
+        {
+          "id": 36866176124,
+          "runNumber": 12,
+          "name": "Deploy to Vercel",
+          "displayTitle": "Add full LLM crawler context",
+          "headBranch": "main",
+          "headSha": "7c10393",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "failure",
+          "workflowId": 331837342,
+          "actor": "oliver4441",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
+          "createdAt": "2026-10-01T13:05:10Z",
+          "updatedAt": "2026-10-01T13:08:04Z",
+          "htmlUrl": "https://github.com/oliver4441/omnianalytics-recovered/actions/runs/36866176124"
+        },
+        {
+          "id": 36866176106,
+          "runNumber": 15,
+          "name": "CI",
+          "displayTitle": "Add full LLM crawler context",
+          "headBranch": "main",
+          "headSha": "7c10393",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "workflowId": 331836463,
+          "actor": "oliver4441",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
+          "createdAt": "2026-10-01T13:05:10Z",
+          "updatedAt": "2026-10-01T13:05:20Z",
+          "htmlUrl": "https://github.com/oliver4441/omnianalytics-recovered/actions/runs/36866176106"
+        },
+        {
+          "id": 36866171469,
+          "runNumber": 14,
+          "name": "CI",
+          "displayTitle": "Add LLM crawler guidance",
+          "headBranch": "main",
+          "headSha": "a691819",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "workflowId": 331836463,
+          "actor": "oliver4441",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
+          "createdAt": "2026-10-01T13:05:08Z",
+          "updatedAt": "2026-10-01T13:05:11Z",
+          "htmlUrl": "https://github.com/oliver4441/omnianalytics-recovered/actions/runs/36866171469"
+        },
+        {
+          "id": 36866171407,
+          "runNumber": 11,
+          "name": "Deploy to Vercel",
+          "displayTitle": "Add LLM crawler guidance",
+          "headBranch": "main",
+          "headSha": "a691819",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "workflowId": 331837342,
+          "actor": "oliver4441",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
+          "createdAt": "2026-10-01T13:05:08Z",
+          "updatedAt": "2026-10-01T13:07:26Z",
+          "htmlUrl": "https://github.com/oliver4441/omnianalytics-recovered/actions/runs/36866171407"
+        },
+        {
+          "id": 36866165926,
+          "runNumber": 13,
+          "name": "CI",
+          "displayTitle": "Add XML sitemap",
+          "headBranch": "main",
+          "headSha": "6f68f58",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "workflowId": 331836463,
+          "actor": "oliver4441",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
+          "createdAt": "2026-10-01T13:05:04Z",
+          "updatedAt": "2026-10-01T13:05:09Z",
+          "htmlUrl": "https://github.com/oliver4441/omnianalytics-recovered/actions/runs/36866165926"
+        },
+        {
+          "id": 36866165884,
+          "runNumber": 10,
+          "name": "Deploy to Vercel",
+          "displayTitle": "Add XML sitemap",
+          "headBranch": "main",
+          "headSha": "6f68f58",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "workflowId": 331837342,
+          "actor": "oliver4441",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
+          "createdAt": "2026-10-01T13:05:04Z",
+          "updatedAt": "2026-10-01T13:07:28Z",
+          "htmlUrl": "https://github.com/oliver4441/omnianalytics-recovered/actions/runs/36866165884"
+        },
+        {
+          "id": 36866161601,
+          "runNumber": 12,
+          "name": "CI",
+          "displayTitle": "Add crawler directives",
+          "headBranch": "main",
+          "headSha": "6f8ccff",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "workflowId": 331836463,
+          "actor": "oliver4441",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
+          "createdAt": "2026-10-01T13:05:02Z",
+          "updatedAt": "2026-10-01T13:06:35Z",
+          "htmlUrl": "https://github.com/oliver4441/omnianalytics-recovered/actions/runs/36866161601"
+        },
+        {
+          "id": 36866161552,
+          "runNumber": 9,
+          "name": "Deploy to Vercel",
+          "displayTitle": "Add crawler directives",
+          "headBranch": "main",
+          "headSha": "6f8ccff",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "workflowId": 331837342,
+          "actor": "oliver4441",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
+          "createdAt": "2026-10-01T13:05:02Z",
+          "updatedAt": "2026-10-01T13:08:20Z",
+          "htmlUrl": "https://github.com/oliver4441/omnianalytics-recovered/actions/runs/36866161552"
+        }
+      ],
+      "workflows": [
+        {
+          "id": 331836463,
+          "name": "CI",
+          "path": ".github/workflows/ci.yml",
+          "state": "active",
+          "htmlUrl": "https://github.com/oliver4441/omnianalytics-recovered/blob/main/.github/workflows/ci.yml"
+        },
+        {
+          "id": 331837342,
+          "name": "Deploy to Vercel",
+          "path": ".github/workflows/deploy.yml",
+          "state": "active",
+          "htmlUrl": "https://github.com/oliver4441/omnianalytics-recovered/blob/main/.github/workflows/deploy.yml"
+        }
+      ]
+    },
+    {
       "fullName": "oliver4441/gideon-portfolio",
       "releases": [],
       "runs": [
+        {
+          "id": 36865337990,
+          "runNumber": 9,
+          "name": "Fix hosted portfolio images",
+          "displayTitle": "Fix static output for crawlable sitemap and robots files",
+          "headBranch": "master",
+          "headSha": "ae88c82",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "failure",
+          "workflowId": 354193374,
+          "actor": "oliver4441",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
+          "createdAt": "2026-10-01T12:57:55Z",
+          "updatedAt": "2026-10-01T12:58:03Z",
+          "htmlUrl": "https://github.com/oliver4441/gideon-portfolio/actions/runs/36865337990"
+        },
+        {
+          "id": 36865337947,
+          "runNumber": 6,
+          "name": "Rename Phikila to Decimal",
+          "displayTitle": "Fix static output for crawlable sitemap and robots files",
+          "headBranch": "master",
+          "headSha": "ae88c82",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "workflowId": 356793299,
+          "actor": "oliver4441",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
+          "createdAt": "2026-10-01T12:57:55Z",
+          "updatedAt": "2026-10-01T12:58:02Z",
+          "htmlUrl": "https://github.com/oliver4441/gideon-portfolio/actions/runs/36865337947"
+        },
         {
           "id": 36864663633,
           "runNumber": 8,
@@ -1453,40 +4117,6 @@
           "createdAt": "2026-09-12T23:05:56Z",
           "updatedAt": "2026-09-12T23:06:04Z",
           "htmlUrl": "https://github.com/oliver4441/gideon-portfolio/actions/runs/34724507998"
-        },
-        {
-          "id": 34724482054,
-          "runNumber": 4,
-          "name": "Fix hosted portfolio images",
-          "displayTitle": "chore: remove failed rename workflow",
-          "headBranch": "master",
-          "headSha": "6bd5152",
-          "event": "push",
-          "status": "completed",
-          "conclusion": "failure",
-          "workflowId": 354193374,
-          "actor": "oliver4441",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
-          "createdAt": "2026-09-12T23:05:23Z",
-          "updatedAt": "2026-09-12T23:05:31Z",
-          "htmlUrl": "https://github.com/oliver4441/gideon-portfolio/actions/runs/34724482054"
-        },
-        {
-          "id": 34724460836,
-          "runNumber": 1,
-          "name": "Rename Phikila to Decimal",
-          "displayTitle": "chore: migrate Phikila references to Decimal",
-          "headBranch": "master",
-          "headSha": "7042633",
-          "event": "push",
-          "status": "completed",
-          "conclusion": "failure",
-          "workflowId": 356793299,
-          "actor": "oliver4441",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
-          "createdAt": "2026-09-12T23:04:57Z",
-          "updatedAt": "2026-09-12T23:05:06Z",
-          "htmlUrl": "https://github.com/oliver4441/gideon-portfolio/actions/runs/34724460836"
         }
       ],
       "workflows": [
@@ -1507,263 +4137,208 @@
       ]
     },
     {
-      "fullName": "marvel-254/stor1",
-      "releases": [
-        {
-          "tag": "v1.5.1",
-          "name": "Omix Store v1.5.1",
-          "publishedAt": "2026-09-28T19:37:02Z",
-          "prerelease": false,
-          "draft": false,
-          "htmlUrl": "https://github.com/marvel-254/stor1/releases/tag/v1.5.1"
-        },
-        {
-          "tag": "v1.5.0",
-          "name": "Omix Store v1.5.0",
-          "publishedAt": "2026-09-27T09:20:56Z",
-          "prerelease": false,
-          "draft": false,
-          "htmlUrl": "https://github.com/marvel-254/stor1/releases/tag/v1.5.0"
-        },
-        {
-          "tag": "v1.4.0",
-          "name": "Omix Store v1.4.0",
-          "publishedAt": "2026-09-27T07:03:34Z",
-          "prerelease": false,
-          "draft": false,
-          "htmlUrl": "https://github.com/marvel-254/stor1/releases/tag/v1.4.0"
-        },
-        {
-          "tag": "v1.3.0",
-          "name": "Omix Store v1.3.0",
-          "publishedAt": "2026-09-27T01:01:40Z",
-          "prerelease": false,
-          "draft": false,
-          "htmlUrl": "https://github.com/marvel-254/stor1/releases/tag/v1.3.0"
-        },
-        {
-          "tag": "v1.2.0",
-          "name": "Omix Store v1.2.0",
-          "publishedAt": "2026-09-26T23:36:44Z",
-          "prerelease": false,
-          "draft": false,
-          "htmlUrl": "https://github.com/marvel-254/stor1/releases/tag/v1.2.0"
-        }
-      ],
+      "fullName": "oliver4441/omix-leads",
+      "releases": [],
       "runs": [
         {
-          "id": 36861620091,
-          "runNumber": 216,
-          "name": "CI",
-          "displayTitle": "fix: emit noindex on private routes instead of computing it and disca…",
+          "id": 34726192899,
+          "runNumber": 4,
+          "name": "Install Blog Design Skills",
+          "displayTitle": "feat: apply motion and interaction guidance to journal homepage",
           "headBranch": "main",
-          "headSha": "d600afd",
-          "event": "push",
-          "status": "in_progress",
-          "conclusion": null,
-          "workflowId": 361642638,
-          "actor": "marvel-254",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/297240437?v=4",
-          "createdAt": "2026-10-01T12:25:12Z",
-          "updatedAt": "2026-10-01T12:25:17Z",
-          "htmlUrl": "https://github.com/marvel-254/stor1/actions/runs/36861620091"
-        },
-        {
-          "id": 36860824895,
-          "runNumber": 215,
-          "name": "CI",
-          "displayTitle": "fix: make per-page descriptions actually apply, and give listings the…",
-          "headBranch": "main",
-          "headSha": "2a4b0fc",
-          "event": "push",
-          "status": "in_progress",
-          "conclusion": null,
-          "workflowId": 361642638,
-          "actor": "marvel-254",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/297240437?v=4",
-          "createdAt": "2026-10-01T12:17:53Z",
-          "updatedAt": "2026-10-01T12:18:06Z",
-          "htmlUrl": "https://github.com/marvel-254/stor1/actions/runs/36860824895"
-        },
-        {
-          "id": 36857499380,
-          "runNumber": 214,
-          "name": "CI",
-          "displayTitle": "feat: give every sitemap page its own title and description",
-          "headBranch": "main",
-          "headSha": "1a26b8a",
+          "headSha": "7c7ce39",
           "event": "push",
           "status": "completed",
           "conclusion": "success",
-          "workflowId": 361642638,
-          "actor": "marvel-254",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/297240437?v=4",
-          "createdAt": "2026-10-01T11:46:47Z",
-          "updatedAt": "2026-10-01T11:57:09Z",
-          "htmlUrl": "https://github.com/marvel-254/stor1/actions/runs/36857499380"
+          "workflowId": 356806105,
+          "actor": "oliver4441",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
+          "createdAt": "2026-09-12T23:44:20Z",
+          "updatedAt": "2026-09-12T23:44:38Z",
+          "htmlUrl": "https://github.com/oliver4441/omix-leads/actions/runs/34726192899"
         },
         {
-          "id": 36855050824,
-          "runNumber": 213,
-          "name": "CI",
-          "displayTitle": "feat: send a welcome email on signup, and fix the canonical on every …",
+          "id": 34726192891,
+          "runNumber": 19,
+          "name": "Migrate Phikila to Decimal",
+          "displayTitle": "feat: apply motion and interaction guidance to journal homepage",
           "headBranch": "main",
-          "headSha": "17881fe",
+          "headSha": "7c7ce39",
           "event": "push",
           "status": "completed",
           "conclusion": "success",
-          "workflowId": 361642638,
-          "actor": "marvel-254",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/297240437?v=4",
-          "createdAt": "2026-10-01T11:23:19Z",
-          "updatedAt": "2026-10-01T11:34:01Z",
-          "htmlUrl": "https://github.com/marvel-254/stor1/actions/runs/36855050824"
+          "workflowId": 356802116,
+          "actor": "oliver4441",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
+          "createdAt": "2026-09-12T23:44:20Z",
+          "updatedAt": "2026-09-12T23:44:29Z",
+          "htmlUrl": "https://github.com/oliver4441/omix-leads/actions/runs/34726192891"
         },
         {
-          "id": 36850458164,
-          "runNumber": 212,
-          "name": "CI",
-          "displayTitle": "test: stub localStorage when jsdom omits it, so local runs match CI",
+          "id": 34726192876,
+          "runNumber": 11,
+          "name": "Journal CI",
+          "displayTitle": "feat: apply motion and interaction guidance to journal homepage",
           "headBranch": "main",
-          "headSha": "12d4981",
+          "headSha": "7c7ce39",
           "event": "push",
           "status": "completed",
           "conclusion": "success",
-          "workflowId": 361642638,
-          "actor": "marvel-254",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/297240437?v=4",
-          "createdAt": "2026-10-01T10:39:07Z",
-          "updatedAt": "2026-10-01T10:49:27Z",
-          "htmlUrl": "https://github.com/marvel-254/stor1/actions/runs/36850458164"
+          "workflowId": 356802814,
+          "actor": "oliver4441",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
+          "createdAt": "2026-09-12T23:44:20Z",
+          "updatedAt": "2026-09-12T23:44:43Z",
+          "htmlUrl": "https://github.com/oliver4441/omix-leads/actions/runs/34726192876"
         },
         {
-          "id": 36848260755,
-          "runNumber": 211,
-          "name": "CI",
-          "displayTitle": "test: add the Resend exports the push-broadcast env mock omits",
+          "id": 34726192842,
+          "runNumber": 10,
+          "name": "Install Taste Skill",
+          "displayTitle": "feat: apply motion and interaction guidance to journal homepage",
           "headBranch": "main",
-          "headSha": "611d942",
+          "headSha": "7c7ce39",
           "event": "push",
           "status": "completed",
           "conclusion": "success",
-          "workflowId": 361642638,
-          "actor": "marvel-254",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/297240437?v=4",
-          "createdAt": "2026-10-01T10:18:03Z",
-          "updatedAt": "2026-10-01T10:28:09Z",
-          "htmlUrl": "https://github.com/marvel-254/stor1/actions/runs/36848260755"
+          "workflowId": 356804264,
+          "actor": "oliver4441",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
+          "createdAt": "2026-09-12T23:44:19Z",
+          "updatedAt": "2026-09-12T23:44:27Z",
+          "htmlUrl": "https://github.com/oliver4441/omix-leads/actions/runs/34726192842"
         },
         {
-          "id": 36847318835,
-          "runNumber": 210,
-          "name": "CI",
-          "displayTitle": "chore: remove stale test accounts from the live profiles table",
+          "id": 34726187313,
+          "runNumber": 10,
+          "name": "Journal CI",
+          "displayTitle": "style: add accessible editorial motion layer",
           "headBranch": "main",
-          "headSha": "06aa51e",
-          "event": "push",
-          "status": "completed",
-          "conclusion": "failure",
-          "workflowId": 361642638,
-          "actor": "marvel-254",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/297240437?v=4",
-          "createdAt": "2026-10-01T10:09:15Z",
-          "updatedAt": "2026-10-01T10:19:27Z",
-          "htmlUrl": "https://github.com/marvel-254/stor1/actions/runs/36847318835"
-        },
-        {
-          "id": 36846483579,
-          "runNumber": 209,
-          "name": "CI",
-          "displayTitle": "feat: make broadcast email actually send",
-          "headBranch": "main",
-          "headSha": "32302b1",
-          "event": "push",
-          "status": "completed",
-          "conclusion": "failure",
-          "workflowId": 361642638,
-          "actor": "marvel-254",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/297240437?v=4",
-          "createdAt": "2026-10-01T10:01:25Z",
-          "updatedAt": "2026-10-01T10:11:53Z",
-          "htmlUrl": "https://github.com/marvel-254/stor1/actions/runs/36846483579"
-        },
-        {
-          "id": 36821525348,
-          "runNumber": 208,
-          "name": "CI",
-          "displayTitle": "chore: keep the wallet migration applier as a record",
-          "headBranch": "main",
-          "headSha": "9063e1d",
+          "headSha": "2f8afd5",
           "event": "push",
           "status": "completed",
           "conclusion": "success",
-          "workflowId": 361642638,
-          "actor": "marvel-254",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/297240437?v=4",
-          "createdAt": "2026-10-01T05:48:03Z",
-          "updatedAt": "2026-10-01T05:58:31Z",
-          "htmlUrl": "https://github.com/marvel-254/stor1/actions/runs/36821525348"
+          "workflowId": 356802814,
+          "actor": "oliver4441",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
+          "createdAt": "2026-09-12T23:44:11Z",
+          "updatedAt": "2026-09-12T23:44:31Z",
+          "htmlUrl": "https://github.com/oliver4441/omix-leads/actions/runs/34726187313"
         },
         {
-          "id": 36821419292,
-          "runNumber": 207,
-          "name": "CI",
-          "displayTitle": "fix(security): enforce caller identity on wallet and payment endpoint…",
+          "id": 34726187311,
+          "runNumber": 3,
+          "name": "Install Blog Design Skills",
+          "displayTitle": "style: add accessible editorial motion layer",
           "headBranch": "main",
-          "headSha": "36b889b",
+          "headSha": "2f8afd5",
           "event": "push",
           "status": "completed",
           "conclusion": "success",
-          "workflowId": 361642638,
-          "actor": "marvel-254",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/297240437?v=4",
-          "createdAt": "2026-10-01T05:46:42Z",
-          "updatedAt": "2026-10-01T05:57:48Z",
-          "htmlUrl": "https://github.com/marvel-254/stor1/actions/runs/36821419292"
+          "workflowId": 356806105,
+          "actor": "oliver4441",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
+          "createdAt": "2026-09-12T23:44:11Z",
+          "updatedAt": "2026-09-12T23:44:34Z",
+          "htmlUrl": "https://github.com/oliver4441/omix-leads/actions/runs/34726187311"
+        },
+        {
+          "id": 34726187307,
+          "runNumber": 18,
+          "name": "Migrate Phikila to Decimal",
+          "displayTitle": "style: add accessible editorial motion layer",
+          "headBranch": "main",
+          "headSha": "2f8afd5",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "workflowId": 356802116,
+          "actor": "oliver4441",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
+          "createdAt": "2026-09-12T23:44:11Z",
+          "updatedAt": "2026-09-12T23:44:54Z",
+          "htmlUrl": "https://github.com/oliver4441/omix-leads/actions/runs/34726187307"
+        },
+        {
+          "id": 34726187266,
+          "runNumber": 9,
+          "name": "Install Taste Skill",
+          "displayTitle": "style: add accessible editorial motion layer",
+          "headBranch": "main",
+          "headSha": "2f8afd5",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "workflowId": 356804264,
+          "actor": "oliver4441",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
+          "createdAt": "2026-09-12T23:44:11Z",
+          "updatedAt": "2026-09-12T23:44:18Z",
+          "htmlUrl": "https://github.com/oliver4441/omix-leads/actions/runs/34726187266"
+        },
+        {
+          "id": 34726181874,
+          "runNumber": 2,
+          "name": "Install Blog Design Skills",
+          "displayTitle": "docs: define blog design skill orchestration",
+          "headBranch": "main",
+          "headSha": "45bb081",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "workflowId": 356806105,
+          "actor": "oliver4441",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
+          "createdAt": "2026-09-12T23:44:03Z",
+          "updatedAt": "2026-09-12T23:44:23Z",
+          "htmlUrl": "https://github.com/oliver4441/omix-leads/actions/runs/34726181874"
+        },
+        {
+          "id": 34726181872,
+          "runNumber": 9,
+          "name": "Journal CI",
+          "displayTitle": "docs: define blog design skill orchestration",
+          "headBranch": "main",
+          "headSha": "45bb081",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "workflowId": 356802814,
+          "actor": "oliver4441",
+          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
+          "createdAt": "2026-09-12T23:44:03Z",
+          "updatedAt": "2026-09-12T23:44:22Z",
+          "htmlUrl": "https://github.com/oliver4441/omix-leads/actions/runs/34726181872"
         }
       ],
       "workflows": [
         {
-          "id": 368264719,
-          "name": "Android dev APK",
-          "path": ".github/workflows/android-dev-apk.yml",
-          "state": "active",
-          "htmlUrl": "https://github.com/marvel-254/stor1/blob/main/.github/workflows/android-dev-apk.yml"
-        },
-        {
-          "id": 367919142,
-          "name": "Android APK",
-          "path": ".github/workflows/android-release.yml",
-          "state": "active",
-          "htmlUrl": "https://github.com/marvel-254/stor1/blob/main/.github/workflows/android-release.yml"
-        },
-        {
-          "id": 361341823,
-          "name": "Auto-merge Arena PRs",
-          "path": ".github/workflows/arena-auto-merge.yml",
-          "state": "active",
-          "htmlUrl": "https://github.com/marvel-254/stor1/blob/main/.github/workflows/arena-auto-merge.yml"
-        },
-        {
-          "id": 361341825,
-          "name": "Arena PR CI",
-          "path": ".github/workflows/arena-ci.yml",
-          "state": "active",
-          "htmlUrl": "https://github.com/marvel-254/stor1/blob/main/.github/workflows/arena-ci.yml"
-        },
-        {
-          "id": 361642638,
-          "name": "CI",
+          "id": 356802814,
+          "name": "Journal CI",
           "path": ".github/workflows/ci.yml",
           "state": "active",
-          "htmlUrl": "https://github.com/marvel-254/stor1/blob/main/.github/workflows/ci.yml"
+          "htmlUrl": "https://github.com/oliver4441/omix-leads/blob/main/.github/workflows/ci.yml"
         },
         {
-          "id": 369666052,
-          "name": "Tauri Build (Windows)",
-          "path": ".github/workflows/tauri-build.yml",
+          "id": 356806105,
+          "name": "Install Blog Design Skills",
+          "path": ".github/workflows/install-design-skills.yml",
           "state": "active",
-          "htmlUrl": "https://github.com/marvel-254/stor1/blob/main/.github/workflows/tauri-build.yml"
+          "htmlUrl": "https://github.com/oliver4441/omix-leads/blob/main/.github/workflows/install-design-skills.yml"
+        },
+        {
+          "id": 356804264,
+          "name": "Install Taste Skill",
+          "path": ".github/workflows/install-taste-skill.yml",
+          "state": "active",
+          "htmlUrl": "https://github.com/oliver4441/omix-leads/blob/main/.github/workflows/install-taste-skill.yml"
+        },
+        {
+          "id": 356802116,
+          "name": "Migrate Phikila to Decimal",
+          "path": ".github/workflows/rename-phikila-to-decimal.yml",
+          "state": "active",
+          "htmlUrl": "https://github.com/oliver4441/omix-leads/blob/main/.github/workflows/rename-phikila-to-decimal.yml"
         }
       ]
     },
@@ -3691,404 +6266,6 @@
       "workflows": []
     },
     {
-      "fullName": "oliver4441/omnianalytics-recovered",
-      "releases": [],
-      "runs": [
-        {
-          "id": 34855179727,
-          "runNumber": 11,
-          "name": "CI",
-          "displayTitle": "fix: pass --prod to vercel build to match --prebuilt deploy target",
-          "headBranch": "main",
-          "headSha": "456cfd7",
-          "event": "push",
-          "status": "completed",
-          "conclusion": "success",
-          "workflowId": 331836463,
-          "actor": "marvel-254",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/297240437?v=4",
-          "createdAt": "2026-09-14T14:22:23Z",
-          "updatedAt": "2026-09-14T14:25:06Z",
-          "htmlUrl": "https://github.com/oliver4441/omnianalytics-recovered/actions/runs/34855179727"
-        },
-        {
-          "id": 34855179709,
-          "runNumber": 8,
-          "name": "Deploy to Vercel",
-          "displayTitle": "fix: pass --prod to vercel build to match --prebuilt deploy target",
-          "headBranch": "main",
-          "headSha": "456cfd7",
-          "event": "push",
-          "status": "completed",
-          "conclusion": "success",
-          "workflowId": 331837342,
-          "actor": "marvel-254",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/297240437?v=4",
-          "createdAt": "2026-09-14T14:22:23Z",
-          "updatedAt": "2026-09-14T14:23:34Z",
-          "htmlUrl": "https://github.com/oliver4441/omnianalytics-recovered/actions/runs/34855179709"
-        },
-        {
-          "id": 34848679543,
-          "runNumber": 7,
-          "name": "Deploy to Vercel",
-          "displayTitle": "fix: resolve Playwright strict-mode locator collision for Create acco…",
-          "headBranch": "main",
-          "headSha": "d8a8dfa",
-          "event": "push",
-          "status": "completed",
-          "conclusion": "failure",
-          "workflowId": 331837342,
-          "actor": "marvel-254",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/297240437?v=4",
-          "createdAt": "2026-09-14T13:20:52Z",
-          "updatedAt": "2026-09-14T13:21:52Z",
-          "htmlUrl": "https://github.com/oliver4441/omnianalytics-recovered/actions/runs/34848679543"
-        },
-        {
-          "id": 34848679370,
-          "runNumber": 10,
-          "name": "CI",
-          "displayTitle": "fix: resolve Playwright strict-mode locator collision for Create acco…",
-          "headBranch": "main",
-          "headSha": "d8a8dfa",
-          "event": "push",
-          "status": "completed",
-          "conclusion": "success",
-          "workflowId": 331836463,
-          "actor": "marvel-254",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/297240437?v=4",
-          "createdAt": "2026-09-14T13:20:52Z",
-          "updatedAt": "2026-09-14T13:23:39Z",
-          "htmlUrl": "https://github.com/oliver4441/omnianalytics-recovered/actions/runs/34848679370"
-        },
-        {
-          "id": 34848321883,
-          "runNumber": 6,
-          "name": "Deploy to Vercel",
-          "displayTitle": "fix: replace silent disabled controls with explained toast feedback +…",
-          "headBranch": "main",
-          "headSha": "09cc478",
-          "event": "push",
-          "status": "completed",
-          "conclusion": "failure",
-          "workflowId": 331837342,
-          "actor": "marvel-254",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/297240437?v=4",
-          "createdAt": "2026-09-14T13:17:24Z",
-          "updatedAt": "2026-09-14T13:19:48Z",
-          "htmlUrl": "https://github.com/oliver4441/omnianalytics-recovered/actions/runs/34848321883"
-        },
-        {
-          "id": 34848321769,
-          "runNumber": 9,
-          "name": "CI",
-          "displayTitle": "fix: replace silent disabled controls with explained toast feedback +…",
-          "headBranch": "main",
-          "headSha": "09cc478",
-          "event": "push",
-          "status": "completed",
-          "conclusion": "cancelled",
-          "workflowId": 331836463,
-          "actor": "marvel-254",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/297240437?v=4",
-          "createdAt": "2026-09-14T13:17:24Z",
-          "updatedAt": "2026-09-14T13:20:57Z",
-          "htmlUrl": "https://github.com/oliver4441/omnianalytics-recovered/actions/runs/34848321769"
-        },
-        {
-          "id": 34848314222,
-          "runNumber": 8,
-          "name": "CI",
-          "displayTitle": "ci: add Vercel deploy + CI workflows (#2)",
-          "headBranch": "main",
-          "headSha": "2637848",
-          "event": "push",
-          "status": "completed",
-          "conclusion": "cancelled",
-          "workflowId": 331836463,
-          "actor": "marvel-254",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/297240437?v=4",
-          "createdAt": "2026-09-14T13:17:19Z",
-          "updatedAt": "2026-09-14T13:18:50Z",
-          "htmlUrl": "https://github.com/oliver4441/omnianalytics-recovered/actions/runs/34848314222"
-        },
-        {
-          "id": 34848314139,
-          "runNumber": 5,
-          "name": "Deploy to Vercel",
-          "displayTitle": "ci: add Vercel deploy + CI workflows (#2)",
-          "headBranch": "main",
-          "headSha": "2637848",
-          "event": "push",
-          "status": "completed",
-          "conclusion": "failure",
-          "workflowId": 331837342,
-          "actor": "marvel-254",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/297240437?v=4",
-          "createdAt": "2026-09-14T13:17:19Z",
-          "updatedAt": "2026-09-14T13:19:34Z",
-          "htmlUrl": "https://github.com/oliver4441/omnianalytics-recovered/actions/runs/34848314139"
-        },
-        {
-          "id": 31538183490,
-          "runNumber": 7,
-          "name": "CI",
-          "displayTitle": "fix: replace silent disabled controls with explained toast feedback + GitHub connect component",
-          "headBranch": "omnianalytics",
-          "headSha": "333d2c1",
-          "event": "pull_request",
-          "status": "completed",
-          "conclusion": "failure",
-          "workflowId": 331836463,
-          "actor": "oliver4441",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
-          "createdAt": "2026-08-11T21:30:11Z",
-          "updatedAt": "2026-08-11T21:35:00Z",
-          "htmlUrl": "https://github.com/oliver4441/omnianalytics-recovered/actions/runs/31538183490"
-        },
-        {
-          "id": 31538183279,
-          "runNumber": 4,
-          "name": "Deploy to Vercel",
-          "displayTitle": "fix: replace silent disabled controls with explained toast feedback + GitHub connect component",
-          "headBranch": "omnianalytics",
-          "headSha": "333d2c1",
-          "event": "pull_request",
-          "status": "completed",
-          "conclusion": "success",
-          "workflowId": 331837342,
-          "actor": "oliver4441",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
-          "createdAt": "2026-08-11T21:30:11Z",
-          "updatedAt": "2026-08-11T21:32:35Z",
-          "htmlUrl": "https://github.com/oliver4441/omnianalytics-recovered/actions/runs/31538183279"
-        }
-      ],
-      "workflows": [
-        {
-          "id": 331836463,
-          "name": "CI",
-          "path": ".github/workflows/ci.yml",
-          "state": "active",
-          "htmlUrl": "https://github.com/oliver4441/omnianalytics-recovered/blob/main/.github/workflows/ci.yml"
-        },
-        {
-          "id": 331837342,
-          "name": "Deploy to Vercel",
-          "path": ".github/workflows/deploy.yml",
-          "state": "active",
-          "htmlUrl": "https://github.com/oliver4441/omnianalytics-recovered/blob/main/.github/workflows/deploy.yml"
-        }
-      ]
-    },
-    {
-      "fullName": "oliver4441/omix-leads",
-      "releases": [],
-      "runs": [
-        {
-          "id": 34726192899,
-          "runNumber": 4,
-          "name": "Install Blog Design Skills",
-          "displayTitle": "feat: apply motion and interaction guidance to journal homepage",
-          "headBranch": "main",
-          "headSha": "7c7ce39",
-          "event": "push",
-          "status": "completed",
-          "conclusion": "success",
-          "workflowId": 356806105,
-          "actor": "oliver4441",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
-          "createdAt": "2026-09-12T23:44:20Z",
-          "updatedAt": "2026-09-12T23:44:38Z",
-          "htmlUrl": "https://github.com/oliver4441/omix-leads/actions/runs/34726192899"
-        },
-        {
-          "id": 34726192891,
-          "runNumber": 19,
-          "name": "Migrate Phikila to Decimal",
-          "displayTitle": "feat: apply motion and interaction guidance to journal homepage",
-          "headBranch": "main",
-          "headSha": "7c7ce39",
-          "event": "push",
-          "status": "completed",
-          "conclusion": "success",
-          "workflowId": 356802116,
-          "actor": "oliver4441",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
-          "createdAt": "2026-09-12T23:44:20Z",
-          "updatedAt": "2026-09-12T23:44:29Z",
-          "htmlUrl": "https://github.com/oliver4441/omix-leads/actions/runs/34726192891"
-        },
-        {
-          "id": 34726192876,
-          "runNumber": 11,
-          "name": "Journal CI",
-          "displayTitle": "feat: apply motion and interaction guidance to journal homepage",
-          "headBranch": "main",
-          "headSha": "7c7ce39",
-          "event": "push",
-          "status": "completed",
-          "conclusion": "success",
-          "workflowId": 356802814,
-          "actor": "oliver4441",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
-          "createdAt": "2026-09-12T23:44:20Z",
-          "updatedAt": "2026-09-12T23:44:43Z",
-          "htmlUrl": "https://github.com/oliver4441/omix-leads/actions/runs/34726192876"
-        },
-        {
-          "id": 34726192842,
-          "runNumber": 10,
-          "name": "Install Taste Skill",
-          "displayTitle": "feat: apply motion and interaction guidance to journal homepage",
-          "headBranch": "main",
-          "headSha": "7c7ce39",
-          "event": "push",
-          "status": "completed",
-          "conclusion": "success",
-          "workflowId": 356804264,
-          "actor": "oliver4441",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
-          "createdAt": "2026-09-12T23:44:19Z",
-          "updatedAt": "2026-09-12T23:44:27Z",
-          "htmlUrl": "https://github.com/oliver4441/omix-leads/actions/runs/34726192842"
-        },
-        {
-          "id": 34726187313,
-          "runNumber": 10,
-          "name": "Journal CI",
-          "displayTitle": "style: add accessible editorial motion layer",
-          "headBranch": "main",
-          "headSha": "2f8afd5",
-          "event": "push",
-          "status": "completed",
-          "conclusion": "success",
-          "workflowId": 356802814,
-          "actor": "oliver4441",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
-          "createdAt": "2026-09-12T23:44:11Z",
-          "updatedAt": "2026-09-12T23:44:31Z",
-          "htmlUrl": "https://github.com/oliver4441/omix-leads/actions/runs/34726187313"
-        },
-        {
-          "id": 34726187311,
-          "runNumber": 3,
-          "name": "Install Blog Design Skills",
-          "displayTitle": "style: add accessible editorial motion layer",
-          "headBranch": "main",
-          "headSha": "2f8afd5",
-          "event": "push",
-          "status": "completed",
-          "conclusion": "success",
-          "workflowId": 356806105,
-          "actor": "oliver4441",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
-          "createdAt": "2026-09-12T23:44:11Z",
-          "updatedAt": "2026-09-12T23:44:34Z",
-          "htmlUrl": "https://github.com/oliver4441/omix-leads/actions/runs/34726187311"
-        },
-        {
-          "id": 34726187307,
-          "runNumber": 18,
-          "name": "Migrate Phikila to Decimal",
-          "displayTitle": "style: add accessible editorial motion layer",
-          "headBranch": "main",
-          "headSha": "2f8afd5",
-          "event": "push",
-          "status": "completed",
-          "conclusion": "success",
-          "workflowId": 356802116,
-          "actor": "oliver4441",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
-          "createdAt": "2026-09-12T23:44:11Z",
-          "updatedAt": "2026-09-12T23:44:54Z",
-          "htmlUrl": "https://github.com/oliver4441/omix-leads/actions/runs/34726187307"
-        },
-        {
-          "id": 34726187266,
-          "runNumber": 9,
-          "name": "Install Taste Skill",
-          "displayTitle": "style: add accessible editorial motion layer",
-          "headBranch": "main",
-          "headSha": "2f8afd5",
-          "event": "push",
-          "status": "completed",
-          "conclusion": "success",
-          "workflowId": 356804264,
-          "actor": "oliver4441",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
-          "createdAt": "2026-09-12T23:44:11Z",
-          "updatedAt": "2026-09-12T23:44:18Z",
-          "htmlUrl": "https://github.com/oliver4441/omix-leads/actions/runs/34726187266"
-        },
-        {
-          "id": 34726181874,
-          "runNumber": 2,
-          "name": "Install Blog Design Skills",
-          "displayTitle": "docs: define blog design skill orchestration",
-          "headBranch": "main",
-          "headSha": "45bb081",
-          "event": "push",
-          "status": "completed",
-          "conclusion": "success",
-          "workflowId": 356806105,
-          "actor": "oliver4441",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
-          "createdAt": "2026-09-12T23:44:03Z",
-          "updatedAt": "2026-09-12T23:44:23Z",
-          "htmlUrl": "https://github.com/oliver4441/omix-leads/actions/runs/34726181874"
-        },
-        {
-          "id": 34726181872,
-          "runNumber": 9,
-          "name": "Journal CI",
-          "displayTitle": "docs: define blog design skill orchestration",
-          "headBranch": "main",
-          "headSha": "45bb081",
-          "event": "push",
-          "status": "completed",
-          "conclusion": "success",
-          "workflowId": 356802814,
-          "actor": "oliver4441",
-          "actorAvatar": "https://avatars.githubusercontent.com/u/173495825?v=4",
-          "createdAt": "2026-09-12T23:44:03Z",
-          "updatedAt": "2026-09-12T23:44:22Z",
-          "htmlUrl": "https://github.com/oliver4441/omix-leads/actions/runs/34726181872"
-        }
-      ],
-      "workflows": [
-        {
-          "id": 356802814,
-          "name": "Journal CI",
-          "path": ".github/workflows/ci.yml",
-          "state": "active",
-          "htmlUrl": "https://github.com/oliver4441/omix-leads/blob/main/.github/workflows/ci.yml"
-        },
-        {
-          "id": 356806105,
-          "name": "Install Blog Design Skills",
-          "path": ".github/workflows/install-design-skills.yml",
-          "state": "active",
-          "htmlUrl": "https://github.com/oliver4441/omix-leads/blob/main/.github/workflows/install-design-skills.yml"
-        },
-        {
-          "id": 356804264,
-          "name": "Install Taste Skill",
-          "path": ".github/workflows/install-taste-skill.yml",
-          "state": "active",
-          "htmlUrl": "https://github.com/oliver4441/omix-leads/blob/main/.github/workflows/install-taste-skill.yml"
-        },
-        {
-          "id": 356802116,
-          "name": "Migrate Phikila to Decimal",
-          "path": ".github/workflows/rename-phikila-to-decimal.yml",
-          "state": "active",
-          "htmlUrl": "https://github.com/oliver4441/omix-leads/blob/main/.github/workflows/rename-phikila-to-decimal.yml"
-        }
-      ]
-    },
-    {
       "fullName": "marvel-254/twistedoliver211fs-art",
       "releases": [],
       "runs": [],
@@ -5106,6 +7283,3754 @@
     "raw": "<!-- ══════════════════════════════════════════════════════════════ -->\n<!--                      OLIVER — PROFILE README                      -->\n<!-- ══════════════════════════════════════════════════════════════ -->\n\n<div align=\"center\">\n\n<!-- Animated gradient header banner -->\n<img src=\"https://capsule-render.vercel.app/api?type=waving&color=0:6366F1,50:818CF8,100:06B6D4&height=160&section=header&text=Oliver&fontSize=60&fontColor=FFFFFF&fontAlignY=68&desc=Full-Stack%20Developer%20%26%20AI%20Engineer%20%E2%80%A2%20Omix%20Systems&descAlignY=84&descSize=16&animation=fadeIn&fontAlign=50\" width=\"100%\" />\n\n<!-- Redesigned typing animation -->\n<img src=\"https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=22&duration=3500&pause=900&color=818CF8&center=true&vCenter=true&width=680&lines=Hi%2C+I'm+Oliver;Full-Stack+Developer+%26+AI+Engineer;Building+products+at+Omix+Systems;TypeScript+%E2%80%A2+Python+%E2%80%A2+Rust+%E2%80%A2+Node.js\" alt=\"Typing SVG\" />\n\n<br/><br/>\n\n<!-- Quick info badges -->\n<a href=\"mailto:kipkiruigideon890@gmail.com\"><img src=\"https://img.shields.io/badge/Open_to-Collaboration-22C55E?style=flat-square\" alt=\"Open to collaboration\" /></a>\n<img src=\"https://img.shields.io/badge/Focus-Full_Stack_%26_AI-6366F1?style=flat-square\" alt=\"Focus\" />\n<img src=\"https://img.shields.io/badge/Based_in-Kenya-06B6D4?style=flat-square\" alt=\"Kenya\" />\n<img src=\"https://img.shields.io/badge/Venture-Omix_Systems-818CF8?style=flat-square\" alt=\"Omix Systems\" />\n<img src=\"https://img.shields.io/badge/Status-Shipping-22C55E?style=flat-square\" alt=\"Shipping\" />\n\n</div>\n\n---\n\n## About Me\n\nI'm **Oliver** (Gideon Kipkirui), a **full-stack developer and AI engineer** based in Kenya. I design, build, and ship end-to-end products through **[Omix Systems](https://omixsystems.store)** — from trading SaaS and fintech to edtech, marketplaces, real-time apps, and Web3.\n\nI work primarily across **TypeScript, Python, and Rust**, and I'm comfortable moving between frontend, backend, mobile, and desktop (Tauri). I care about turning ideas into real, working software — fast and with care.\n\n> *\"Ship the thing. Then make it better.\"*\n\n---\n\n## Tech Stack\n\n<div align=\"center\">\n\n**Languages**\n\n![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)\n![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)\n![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)\n![Rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)\n![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)\n![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)\n\n<br/>\n\n**Frontend**\n\n![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)\n![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)\n![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)\n![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)\n![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)\n\n<br/>\n\n**Backend & Data**\n\n![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)\n![Express](https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white)\n![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)\n![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)\n\n<br/>\n\n**Tools & Platforms**\n\n![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)\n![Tauri](https://img.shields.io/badge/Tauri-24C8D8?style=for-the-badge&logo=tauri&logoColor=white)\n![Solana](https://img.shields.io/badge/Solana-9945FF?style=for-the-badge&logo=solana&logoColor=white)\n![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)\n![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)\n\n</div>\n\n---\n\n## Featured Projects\n\n<div align=\"center\">\n\n<a href=\"https://github.com/oliver4441/sentienx\"><img src=\"https://github-readme-stats.vercel.app/api/pin/?username=oliver4441&repo=sentienx&title_color=818CF8&icon_color=06B6D4&text_color=c9d1d1&bg_color=0d1117&border_color=30363d&border_radius=12\" /></a>\n&nbsp;&nbsp;\n<a href=\"https://github.com/oliver4441/pothole\"><img src=\"https://github-readme-stats.vercel.app/api/pin/?username=oliver4441&repo=pothole&title_color=818CF8&icon_color=06B6D4&text_color=c9d1d1&bg_color=0d1117&border_color=30363d&border_radius=12\" /></a>\n\n<br/>\n\n<a href=\"https://github.com/oliver4441/omix-marketplace\"><img src=\"https://github-readme-stats.vercel.app/api/pin/?username=oliver4441&repo=omix-marketplace&title_color=818CF8&icon_color=06B6D4&text_color=c9d1d1&bg_color=0d1117&border_color=30363d&border_radius=12\" /></a>\n&nbsp;&nbsp;\n<a href=\"https://github.com/oliver4441/school-sas\"><img src=\"https://github-readme-stats.vercel.app/api/pin/?username=oliver4441&repo=school-sas&title_color=818CF8&icon_color=06B6D4&text_color=c9d1d1&bg_color=0d1117&border_color=30363d&border_radius=12\" /></a>\n\n<br/>\n\n<a href=\"https://github.com/oliver4441/omix-community-platform\"><img src=\"https://github-readme-stats.vercel.app/api/pin/?username=oliver4441&repo=omix-community-platform&title_color=818CF8&icon_color=06B6D4&text_color=c9d1d1&bg_color=0d1117&border_color=30363d&border_radius=12\" /></a>\n&nbsp;&nbsp;\n<a href=\"https://github.com/oliver4441/granny-exchange\"><img src=\"https://github-readme-stats.vercel.app/api/pin/?username=oliver4441&repo=granny-exchange&title_color=818CF8&icon_color=06B6D4&text_color=c9d1d1&bg_color=0d1117&border_color=30363d&border_radius=12\" /></a>\n\n</div>\n\n<details>\n<summary>More projects</summary>\n\n| Project | What it is |\n|:---|:---|\n| **[hotel-management](https://github.com/oliver4441/hotel-management)** | Hotel management system — Node.js, Express, PostgreSQL |\n| **[device-monitor](https://github.com/oliver4441/device-monitor)** | Personal device monitoring — Android + React dashboard + Node backend |\n| **[omixbooks](https://github.com/oliver4441/omixbooks)** | Digital book store (OmixBooks) |\n| **[pothole-web](https://github.com/oliver4441/pothole-web)** | Free online music streaming |\n| **[valhalla](https://github.com/oliver4441/valhalla)** | Startup Graveyard Intelligence — top ideas index |\n| **[belgut-tti](https://github.com/oliver4441/belgut-tti)** | Belgut Technical Training Institute website |\n\n</details>\n\n---\n\n## Currently\n\n- Building **Sentienx** — a Deriv trading SaaS platform\n- Shipping **Pothole** — a cross-platform Tauri music app\n- Exploring **AI engineering** — pen-testing agents, intelligent tooling, automation\n- Open to collaborating on **fintech, AI, and developer tools**\n\n---\n\n## GitHub Stats\n\n<div align=\"center\">\n\n<img src=\"https://github-readme-stats.vercel.app/api?username=oliver4441&show_icons=true&include_all_commits=true&count_private=true&theme=transparent&title_color=818CF8&icon_color=06B6D4&text_color=c9d1d1&bg_color=0d1117&border_color=30363d&border_radius=12\" height=\"170\" />\n&nbsp;&nbsp;\n<img src=\"https://github-readme-stats.vercel.app/api/top-langs/?username=oliver4441&layout=compact&theme=transparent&title_color=818CF8&text_color=c9d1d1&bg_color=0d1117&border_color=30363d&border_radius=12&exclude_repo=Cybersecurity-Projects,hackingtool,Bombers,Impulse,strix,valhalla,free-for-dev\" height=\"170\" />\n\n<br/><br/>\n\n<img src=\"https://github-readme-streak-stats.herokuapp.com/?user=oliver4441&theme=transparent&background=0d1117&border=30363d&stroke=818CF8&ring=6366F1&fire=F0883E&currStreakLabel=818CF8&sideLabels=c9d1d1&dates=8b949e\" />\n\n<br/><br/>\n\n<!-- Redesigned animated contribution graph -->\n<img src=\"https://github-readme-activity-graph.vercel.app/graph?username=oliver4441&radius=16&theme=react-dark&area=true&order=5&bg_color=0d1117&color=818CF8&line=06B6D4&point=FFFFFF&hide_border=true\" width=\"95%\" />\n\n</div>\n\n---\n\n## Connect\n\n<div align=\"center\">\n\n[![Email](https://img.shields.io/badge/Email-kipkiruigideon890%40gmail.com-6366F1?style=for-the-badge&logo=gmail&logoColor=white&labelColor=0d1117)](mailto:kipkiruigideon890@gmail.com)\n[![GitHub](https://img.shields.io/badge/GitHub-oliver4441-c9d1d1?style=for-the-badge&logo=github&logoColor=white&labelColor=0d1117)](https://github.com/oliver4441)\n[![Website](https://img.shields.io/badge/Website-Omixsystems.Store-06B6D4?style=for-the-badge&logo=googlechrome&logoColor=white&labelColor=0d1117)](https://omixsystems.store)\n\n</div>\n\n---\n\n<div align=\"center\">\n\n<!-- Animated contribution snake -->\n<img src=\"https://github.com/oliver4441/oliver4441/blob/output/github-contribution-grid-snake-dark.svg\" alt=\"Contribution graph\" />\n\n![Visitor Count](https://komarev.com/ghpvc/?username=oliver4441&color=6366F1&style=for-the-badge&label=Profile+Views)\n\n<br/>\n\n<img src=\"https://capsule-render.vercel.app/api?type=waving&color=0:6366F1,50:818CF8,100:06B6D4&height=120&section=footer&animation=fadeIn\" width=\"100%\" />\n\n</div>\n\n<!-- ══════════════════════════════════════════════════════════════ -->\n<!--   GitHub Profile README — Oliver (Gideon Kipkirui) · Omix Systems  -->\n<!-- ══════════════════════════════════════════════════════════════ -->\n",
     "url": "https://github.com/oliver4441/oliver4441",
     "rawUrl": "https://raw.githubusercontent.com/oliver4441/oliver4441/HEAD/README.md",
-    "fetchedAt": "2026-10-01T12:54:13.816Z"
-  }
+    "fetchedAt": "2026-10-01T13:22:41.236Z"
+  },
+  "contributions": {
+    "marvel-254": {
+      "login": "marvel-254",
+      "total": 278,
+      "activeDays": 18,
+      "best": {
+        "date": "2026-09-27",
+        "count": 68
+      },
+      "currentStreak": 8,
+      "longestStreak": 8,
+      "start": "2025-09-28",
+      "end": "2026-10-01",
+      "days": [
+        [
+          "2025-09-28",
+          0,
+          0
+        ],
+        [
+          "2025-09-29",
+          0,
+          0
+        ],
+        [
+          "2025-09-30",
+          0,
+          0
+        ],
+        [
+          "2025-10-01",
+          0,
+          0
+        ],
+        [
+          "2025-10-02",
+          0,
+          0
+        ],
+        [
+          "2025-10-03",
+          0,
+          0
+        ],
+        [
+          "2025-10-04",
+          0,
+          0
+        ],
+        [
+          "2025-10-05",
+          0,
+          0
+        ],
+        [
+          "2025-10-06",
+          0,
+          0
+        ],
+        [
+          "2025-10-07",
+          0,
+          0
+        ],
+        [
+          "2025-10-08",
+          0,
+          0
+        ],
+        [
+          "2025-10-09",
+          0,
+          0
+        ],
+        [
+          "2025-10-10",
+          0,
+          0
+        ],
+        [
+          "2025-10-11",
+          0,
+          0
+        ],
+        [
+          "2025-10-12",
+          0,
+          0
+        ],
+        [
+          "2025-10-13",
+          0,
+          0
+        ],
+        [
+          "2025-10-14",
+          0,
+          0
+        ],
+        [
+          "2025-10-15",
+          0,
+          0
+        ],
+        [
+          "2025-10-16",
+          0,
+          0
+        ],
+        [
+          "2025-10-17",
+          0,
+          0
+        ],
+        [
+          "2025-10-18",
+          0,
+          0
+        ],
+        [
+          "2025-10-19",
+          0,
+          0
+        ],
+        [
+          "2025-10-20",
+          0,
+          0
+        ],
+        [
+          "2025-10-21",
+          0,
+          0
+        ],
+        [
+          "2025-10-22",
+          0,
+          0
+        ],
+        [
+          "2025-10-23",
+          0,
+          0
+        ],
+        [
+          "2025-10-24",
+          0,
+          0
+        ],
+        [
+          "2025-10-25",
+          0,
+          0
+        ],
+        [
+          "2025-10-26",
+          0,
+          0
+        ],
+        [
+          "2025-10-27",
+          0,
+          0
+        ],
+        [
+          "2025-10-28",
+          0,
+          0
+        ],
+        [
+          "2025-10-29",
+          0,
+          0
+        ],
+        [
+          "2025-10-30",
+          0,
+          0
+        ],
+        [
+          "2025-10-31",
+          0,
+          0
+        ],
+        [
+          "2025-11-01",
+          0,
+          0
+        ],
+        [
+          "2025-11-02",
+          0,
+          0
+        ],
+        [
+          "2025-11-03",
+          0,
+          0
+        ],
+        [
+          "2025-11-04",
+          0,
+          0
+        ],
+        [
+          "2025-11-05",
+          0,
+          0
+        ],
+        [
+          "2025-11-06",
+          0,
+          0
+        ],
+        [
+          "2025-11-07",
+          0,
+          0
+        ],
+        [
+          "2025-11-08",
+          0,
+          0
+        ],
+        [
+          "2025-11-09",
+          0,
+          0
+        ],
+        [
+          "2025-11-10",
+          0,
+          0
+        ],
+        [
+          "2025-11-11",
+          0,
+          0
+        ],
+        [
+          "2025-11-12",
+          0,
+          0
+        ],
+        [
+          "2025-11-13",
+          0,
+          0
+        ],
+        [
+          "2025-11-14",
+          0,
+          0
+        ],
+        [
+          "2025-11-15",
+          0,
+          0
+        ],
+        [
+          "2025-11-16",
+          0,
+          0
+        ],
+        [
+          "2025-11-17",
+          0,
+          0
+        ],
+        [
+          "2025-11-18",
+          0,
+          0
+        ],
+        [
+          "2025-11-19",
+          0,
+          0
+        ],
+        [
+          "2025-11-20",
+          0,
+          0
+        ],
+        [
+          "2025-11-21",
+          0,
+          0
+        ],
+        [
+          "2025-11-22",
+          0,
+          0
+        ],
+        [
+          "2025-11-23",
+          0,
+          0
+        ],
+        [
+          "2025-11-24",
+          0,
+          0
+        ],
+        [
+          "2025-11-25",
+          0,
+          0
+        ],
+        [
+          "2025-11-26",
+          0,
+          0
+        ],
+        [
+          "2025-11-27",
+          0,
+          0
+        ],
+        [
+          "2025-11-28",
+          0,
+          0
+        ],
+        [
+          "2025-11-29",
+          0,
+          0
+        ],
+        [
+          "2025-11-30",
+          0,
+          0
+        ],
+        [
+          "2025-12-01",
+          0,
+          0
+        ],
+        [
+          "2025-12-02",
+          0,
+          0
+        ],
+        [
+          "2025-12-03",
+          0,
+          0
+        ],
+        [
+          "2025-12-04",
+          0,
+          0
+        ],
+        [
+          "2025-12-05",
+          0,
+          0
+        ],
+        [
+          "2025-12-06",
+          0,
+          0
+        ],
+        [
+          "2025-12-07",
+          0,
+          0
+        ],
+        [
+          "2025-12-08",
+          0,
+          0
+        ],
+        [
+          "2025-12-09",
+          0,
+          0
+        ],
+        [
+          "2025-12-10",
+          0,
+          0
+        ],
+        [
+          "2025-12-11",
+          0,
+          0
+        ],
+        [
+          "2025-12-12",
+          0,
+          0
+        ],
+        [
+          "2025-12-13",
+          0,
+          0
+        ],
+        [
+          "2025-12-14",
+          0,
+          0
+        ],
+        [
+          "2025-12-15",
+          0,
+          0
+        ],
+        [
+          "2025-12-16",
+          0,
+          0
+        ],
+        [
+          "2025-12-17",
+          0,
+          0
+        ],
+        [
+          "2025-12-18",
+          0,
+          0
+        ],
+        [
+          "2025-12-19",
+          0,
+          0
+        ],
+        [
+          "2025-12-20",
+          0,
+          0
+        ],
+        [
+          "2025-12-21",
+          0,
+          0
+        ],
+        [
+          "2025-12-22",
+          0,
+          0
+        ],
+        [
+          "2025-12-23",
+          0,
+          0
+        ],
+        [
+          "2025-12-24",
+          0,
+          0
+        ],
+        [
+          "2025-12-25",
+          0,
+          0
+        ],
+        [
+          "2025-12-26",
+          0,
+          0
+        ],
+        [
+          "2025-12-27",
+          0,
+          0
+        ],
+        [
+          "2025-12-28",
+          0,
+          0
+        ],
+        [
+          "2025-12-29",
+          0,
+          0
+        ],
+        [
+          "2025-12-30",
+          0,
+          0
+        ],
+        [
+          "2025-12-31",
+          0,
+          0
+        ],
+        [
+          "2026-01-01",
+          0,
+          0
+        ],
+        [
+          "2026-01-02",
+          0,
+          0
+        ],
+        [
+          "2026-01-03",
+          0,
+          0
+        ],
+        [
+          "2026-01-04",
+          0,
+          0
+        ],
+        [
+          "2026-01-05",
+          0,
+          0
+        ],
+        [
+          "2026-01-06",
+          0,
+          0
+        ],
+        [
+          "2026-01-07",
+          0,
+          0
+        ],
+        [
+          "2026-01-08",
+          0,
+          0
+        ],
+        [
+          "2026-01-09",
+          0,
+          0
+        ],
+        [
+          "2026-01-10",
+          0,
+          0
+        ],
+        [
+          "2026-01-11",
+          0,
+          0
+        ],
+        [
+          "2026-01-12",
+          0,
+          0
+        ],
+        [
+          "2026-01-13",
+          0,
+          0
+        ],
+        [
+          "2026-01-14",
+          0,
+          0
+        ],
+        [
+          "2026-01-15",
+          0,
+          0
+        ],
+        [
+          "2026-01-16",
+          0,
+          0
+        ],
+        [
+          "2026-01-17",
+          0,
+          0
+        ],
+        [
+          "2026-01-18",
+          0,
+          0
+        ],
+        [
+          "2026-01-19",
+          0,
+          0
+        ],
+        [
+          "2026-01-20",
+          0,
+          0
+        ],
+        [
+          "2026-01-21",
+          0,
+          0
+        ],
+        [
+          "2026-01-22",
+          0,
+          0
+        ],
+        [
+          "2026-01-23",
+          0,
+          0
+        ],
+        [
+          "2026-01-24",
+          0,
+          0
+        ],
+        [
+          "2026-01-25",
+          0,
+          0
+        ],
+        [
+          "2026-01-26",
+          0,
+          0
+        ],
+        [
+          "2026-01-27",
+          0,
+          0
+        ],
+        [
+          "2026-01-28",
+          0,
+          0
+        ],
+        [
+          "2026-01-29",
+          0,
+          0
+        ],
+        [
+          "2026-01-30",
+          0,
+          0
+        ],
+        [
+          "2026-01-31",
+          0,
+          0
+        ],
+        [
+          "2026-02-01",
+          0,
+          0
+        ],
+        [
+          "2026-02-02",
+          0,
+          0
+        ],
+        [
+          "2026-02-03",
+          0,
+          0
+        ],
+        [
+          "2026-02-04",
+          0,
+          0
+        ],
+        [
+          "2026-02-05",
+          0,
+          0
+        ],
+        [
+          "2026-02-06",
+          0,
+          0
+        ],
+        [
+          "2026-02-07",
+          0,
+          0
+        ],
+        [
+          "2026-02-08",
+          0,
+          0
+        ],
+        [
+          "2026-02-09",
+          0,
+          0
+        ],
+        [
+          "2026-02-10",
+          0,
+          0
+        ],
+        [
+          "2026-02-11",
+          0,
+          0
+        ],
+        [
+          "2026-02-12",
+          0,
+          0
+        ],
+        [
+          "2026-02-13",
+          0,
+          0
+        ],
+        [
+          "2026-02-14",
+          0,
+          0
+        ],
+        [
+          "2026-02-15",
+          0,
+          0
+        ],
+        [
+          "2026-02-16",
+          0,
+          0
+        ],
+        [
+          "2026-02-17",
+          0,
+          0
+        ],
+        [
+          "2026-02-18",
+          0,
+          0
+        ],
+        [
+          "2026-02-19",
+          0,
+          0
+        ],
+        [
+          "2026-02-20",
+          0,
+          0
+        ],
+        [
+          "2026-02-21",
+          0,
+          0
+        ],
+        [
+          "2026-02-22",
+          0,
+          0
+        ],
+        [
+          "2026-02-23",
+          0,
+          0
+        ],
+        [
+          "2026-02-24",
+          0,
+          0
+        ],
+        [
+          "2026-02-25",
+          0,
+          0
+        ],
+        [
+          "2026-02-26",
+          0,
+          0
+        ],
+        [
+          "2026-02-27",
+          0,
+          0
+        ],
+        [
+          "2026-02-28",
+          0,
+          0
+        ],
+        [
+          "2026-03-01",
+          0,
+          0
+        ],
+        [
+          "2026-03-02",
+          0,
+          0
+        ],
+        [
+          "2026-03-03",
+          0,
+          0
+        ],
+        [
+          "2026-03-04",
+          0,
+          0
+        ],
+        [
+          "2026-03-05",
+          0,
+          0
+        ],
+        [
+          "2026-03-06",
+          0,
+          0
+        ],
+        [
+          "2026-03-07",
+          0,
+          0
+        ],
+        [
+          "2026-03-08",
+          0,
+          0
+        ],
+        [
+          "2026-03-09",
+          0,
+          0
+        ],
+        [
+          "2026-03-10",
+          0,
+          0
+        ],
+        [
+          "2026-03-11",
+          0,
+          0
+        ],
+        [
+          "2026-03-12",
+          0,
+          0
+        ],
+        [
+          "2026-03-13",
+          0,
+          0
+        ],
+        [
+          "2026-03-14",
+          0,
+          0
+        ],
+        [
+          "2026-03-15",
+          0,
+          0
+        ],
+        [
+          "2026-03-16",
+          0,
+          0
+        ],
+        [
+          "2026-03-17",
+          0,
+          0
+        ],
+        [
+          "2026-03-18",
+          0,
+          0
+        ],
+        [
+          "2026-03-19",
+          0,
+          0
+        ],
+        [
+          "2026-03-20",
+          0,
+          0
+        ],
+        [
+          "2026-03-21",
+          0,
+          0
+        ],
+        [
+          "2026-03-22",
+          0,
+          0
+        ],
+        [
+          "2026-03-23",
+          0,
+          0
+        ],
+        [
+          "2026-03-24",
+          0,
+          0
+        ],
+        [
+          "2026-03-25",
+          0,
+          0
+        ],
+        [
+          "2026-03-26",
+          0,
+          0
+        ],
+        [
+          "2026-03-27",
+          0,
+          0
+        ],
+        [
+          "2026-03-28",
+          0,
+          0
+        ],
+        [
+          "2026-03-29",
+          0,
+          0
+        ],
+        [
+          "2026-03-30",
+          0,
+          0
+        ],
+        [
+          "2026-03-31",
+          0,
+          0
+        ],
+        [
+          "2026-04-01",
+          0,
+          0
+        ],
+        [
+          "2026-04-02",
+          0,
+          0
+        ],
+        [
+          "2026-04-03",
+          0,
+          0
+        ],
+        [
+          "2026-04-04",
+          0,
+          0
+        ],
+        [
+          "2026-04-05",
+          0,
+          0
+        ],
+        [
+          "2026-04-06",
+          0,
+          0
+        ],
+        [
+          "2026-04-07",
+          0,
+          0
+        ],
+        [
+          "2026-04-08",
+          0,
+          0
+        ],
+        [
+          "2026-04-09",
+          0,
+          0
+        ],
+        [
+          "2026-04-10",
+          0,
+          0
+        ],
+        [
+          "2026-04-11",
+          0,
+          0
+        ],
+        [
+          "2026-04-12",
+          0,
+          0
+        ],
+        [
+          "2026-04-13",
+          0,
+          0
+        ],
+        [
+          "2026-04-14",
+          0,
+          0
+        ],
+        [
+          "2026-04-15",
+          0,
+          0
+        ],
+        [
+          "2026-04-16",
+          0,
+          0
+        ],
+        [
+          "2026-04-17",
+          0,
+          0
+        ],
+        [
+          "2026-04-18",
+          0,
+          0
+        ],
+        [
+          "2026-04-19",
+          0,
+          0
+        ],
+        [
+          "2026-04-20",
+          0,
+          0
+        ],
+        [
+          "2026-04-21",
+          0,
+          0
+        ],
+        [
+          "2026-04-22",
+          0,
+          0
+        ],
+        [
+          "2026-04-23",
+          0,
+          0
+        ],
+        [
+          "2026-04-24",
+          0,
+          0
+        ],
+        [
+          "2026-04-25",
+          0,
+          0
+        ],
+        [
+          "2026-04-26",
+          0,
+          0
+        ],
+        [
+          "2026-04-27",
+          0,
+          0
+        ],
+        [
+          "2026-04-28",
+          0,
+          0
+        ],
+        [
+          "2026-04-29",
+          0,
+          0
+        ],
+        [
+          "2026-04-30",
+          0,
+          0
+        ],
+        [
+          "2026-05-01",
+          0,
+          0
+        ],
+        [
+          "2026-05-02",
+          0,
+          0
+        ],
+        [
+          "2026-05-03",
+          0,
+          0
+        ],
+        [
+          "2026-05-04",
+          0,
+          0
+        ],
+        [
+          "2026-05-05",
+          0,
+          0
+        ],
+        [
+          "2026-05-06",
+          0,
+          0
+        ],
+        [
+          "2026-05-07",
+          0,
+          0
+        ],
+        [
+          "2026-05-08",
+          0,
+          0
+        ],
+        [
+          "2026-05-09",
+          0,
+          0
+        ],
+        [
+          "2026-05-10",
+          0,
+          0
+        ],
+        [
+          "2026-05-11",
+          0,
+          0
+        ],
+        [
+          "2026-05-12",
+          0,
+          0
+        ],
+        [
+          "2026-05-13",
+          0,
+          0
+        ],
+        [
+          "2026-05-14",
+          0,
+          0
+        ],
+        [
+          "2026-05-15",
+          0,
+          0
+        ],
+        [
+          "2026-05-16",
+          0,
+          0
+        ],
+        [
+          "2026-05-17",
+          0,
+          0
+        ],
+        [
+          "2026-05-18",
+          0,
+          0
+        ],
+        [
+          "2026-05-19",
+          0,
+          0
+        ],
+        [
+          "2026-05-20",
+          0,
+          0
+        ],
+        [
+          "2026-05-21",
+          0,
+          0
+        ],
+        [
+          "2026-05-22",
+          0,
+          0
+        ],
+        [
+          "2026-05-23",
+          0,
+          0
+        ],
+        [
+          "2026-05-24",
+          0,
+          0
+        ],
+        [
+          "2026-05-25",
+          0,
+          0
+        ],
+        [
+          "2026-05-26",
+          0,
+          0
+        ],
+        [
+          "2026-05-27",
+          0,
+          0
+        ],
+        [
+          "2026-05-28",
+          0,
+          0
+        ],
+        [
+          "2026-05-29",
+          0,
+          0
+        ],
+        [
+          "2026-05-30",
+          0,
+          0
+        ],
+        [
+          "2026-05-31",
+          0,
+          0
+        ],
+        [
+          "2026-06-01",
+          0,
+          0
+        ],
+        [
+          "2026-06-02",
+          0,
+          0
+        ],
+        [
+          "2026-06-03",
+          0,
+          0
+        ],
+        [
+          "2026-06-04",
+          0,
+          0
+        ],
+        [
+          "2026-06-05",
+          0,
+          0
+        ],
+        [
+          "2026-06-06",
+          0,
+          0
+        ],
+        [
+          "2026-06-07",
+          0,
+          0
+        ],
+        [
+          "2026-06-08",
+          0,
+          0
+        ],
+        [
+          "2026-06-09",
+          0,
+          0
+        ],
+        [
+          "2026-06-10",
+          0,
+          0
+        ],
+        [
+          "2026-06-11",
+          0,
+          0
+        ],
+        [
+          "2026-06-12",
+          0,
+          0
+        ],
+        [
+          "2026-06-13",
+          0,
+          0
+        ],
+        [
+          "2026-06-14",
+          0,
+          0
+        ],
+        [
+          "2026-06-15",
+          0,
+          0
+        ],
+        [
+          "2026-06-16",
+          0,
+          0
+        ],
+        [
+          "2026-06-17",
+          0,
+          0
+        ],
+        [
+          "2026-06-18",
+          0,
+          0
+        ],
+        [
+          "2026-06-19",
+          0,
+          0
+        ],
+        [
+          "2026-06-20",
+          0,
+          0
+        ],
+        [
+          "2026-06-21",
+          0,
+          0
+        ],
+        [
+          "2026-06-22",
+          0,
+          0
+        ],
+        [
+          "2026-06-23",
+          0,
+          0
+        ],
+        [
+          "2026-06-24",
+          0,
+          0
+        ],
+        [
+          "2026-06-25",
+          0,
+          0
+        ],
+        [
+          "2026-06-26",
+          1,
+          1
+        ],
+        [
+          "2026-06-27",
+          0,
+          0
+        ],
+        [
+          "2026-06-28",
+          0,
+          0
+        ],
+        [
+          "2026-06-29",
+          0,
+          0
+        ],
+        [
+          "2026-06-30",
+          0,
+          0
+        ],
+        [
+          "2026-07-01",
+          0,
+          0
+        ],
+        [
+          "2026-07-02",
+          0,
+          0
+        ],
+        [
+          "2026-07-03",
+          0,
+          0
+        ],
+        [
+          "2026-07-04",
+          0,
+          0
+        ],
+        [
+          "2026-07-05",
+          0,
+          0
+        ],
+        [
+          "2026-07-06",
+          0,
+          0
+        ],
+        [
+          "2026-07-07",
+          0,
+          0
+        ],
+        [
+          "2026-07-08",
+          0,
+          0
+        ],
+        [
+          "2026-07-09",
+          0,
+          0
+        ],
+        [
+          "2026-07-10",
+          0,
+          0
+        ],
+        [
+          "2026-07-11",
+          0,
+          0
+        ],
+        [
+          "2026-07-12",
+          0,
+          0
+        ],
+        [
+          "2026-07-13",
+          0,
+          0
+        ],
+        [
+          "2026-07-14",
+          0,
+          0
+        ],
+        [
+          "2026-07-15",
+          0,
+          0
+        ],
+        [
+          "2026-07-16",
+          0,
+          0
+        ],
+        [
+          "2026-07-17",
+          0,
+          0
+        ],
+        [
+          "2026-07-18",
+          0,
+          0
+        ],
+        [
+          "2026-07-19",
+          0,
+          0
+        ],
+        [
+          "2026-07-20",
+          0,
+          0
+        ],
+        [
+          "2026-07-21",
+          0,
+          0
+        ],
+        [
+          "2026-07-22",
+          0,
+          0
+        ],
+        [
+          "2026-07-23",
+          0,
+          0
+        ],
+        [
+          "2026-07-24",
+          0,
+          0
+        ],
+        [
+          "2026-07-25",
+          0,
+          0
+        ],
+        [
+          "2026-07-26",
+          0,
+          0
+        ],
+        [
+          "2026-07-27",
+          0,
+          0
+        ],
+        [
+          "2026-07-28",
+          0,
+          0
+        ],
+        [
+          "2026-07-29",
+          0,
+          0
+        ],
+        [
+          "2026-07-30",
+          0,
+          0
+        ],
+        [
+          "2026-07-31",
+          0,
+          0
+        ],
+        [
+          "2026-08-01",
+          0,
+          0
+        ],
+        [
+          "2026-08-02",
+          0,
+          0
+        ],
+        [
+          "2026-08-03",
+          0,
+          0
+        ],
+        [
+          "2026-08-04",
+          0,
+          0
+        ],
+        [
+          "2026-08-05",
+          0,
+          0
+        ],
+        [
+          "2026-08-06",
+          0,
+          0
+        ],
+        [
+          "2026-08-07",
+          0,
+          0
+        ],
+        [
+          "2026-08-08",
+          0,
+          0
+        ],
+        [
+          "2026-08-09",
+          0,
+          0
+        ],
+        [
+          "2026-08-10",
+          0,
+          0
+        ],
+        [
+          "2026-08-11",
+          0,
+          0
+        ],
+        [
+          "2026-08-12",
+          0,
+          0
+        ],
+        [
+          "2026-08-13",
+          0,
+          0
+        ],
+        [
+          "2026-08-14",
+          0,
+          0
+        ],
+        [
+          "2026-08-15",
+          0,
+          0
+        ],
+        [
+          "2026-08-16",
+          0,
+          0
+        ],
+        [
+          "2026-08-17",
+          0,
+          0
+        ],
+        [
+          "2026-08-18",
+          0,
+          0
+        ],
+        [
+          "2026-08-19",
+          0,
+          0
+        ],
+        [
+          "2026-08-20",
+          0,
+          0
+        ],
+        [
+          "2026-08-21",
+          0,
+          0
+        ],
+        [
+          "2026-08-22",
+          0,
+          0
+        ],
+        [
+          "2026-08-23",
+          0,
+          0
+        ],
+        [
+          "2026-08-24",
+          0,
+          0
+        ],
+        [
+          "2026-08-25",
+          0,
+          0
+        ],
+        [
+          "2026-08-26",
+          0,
+          0
+        ],
+        [
+          "2026-08-27",
+          0,
+          0
+        ],
+        [
+          "2026-08-28",
+          0,
+          0
+        ],
+        [
+          "2026-08-29",
+          0,
+          0
+        ],
+        [
+          "2026-08-30",
+          0,
+          0
+        ],
+        [
+          "2026-08-31",
+          0,
+          0
+        ],
+        [
+          "2026-09-01",
+          0,
+          0
+        ],
+        [
+          "2026-09-02",
+          0,
+          0
+        ],
+        [
+          "2026-09-03",
+          0,
+          0
+        ],
+        [
+          "2026-09-04",
+          0,
+          0
+        ],
+        [
+          "2026-09-05",
+          0,
+          0
+        ],
+        [
+          "2026-09-06",
+          3,
+          1
+        ],
+        [
+          "2026-09-07",
+          0,
+          0
+        ],
+        [
+          "2026-09-08",
+          0,
+          0
+        ],
+        [
+          "2026-09-09",
+          13,
+          1
+        ],
+        [
+          "2026-09-10",
+          0,
+          0
+        ],
+        [
+          "2026-09-11",
+          0,
+          0
+        ],
+        [
+          "2026-09-12",
+          0,
+          0
+        ],
+        [
+          "2026-09-13",
+          0,
+          0
+        ],
+        [
+          "2026-09-14",
+          13,
+          1
+        ],
+        [
+          "2026-09-15",
+          1,
+          1
+        ],
+        [
+          "2026-09-16",
+          8,
+          1
+        ],
+        [
+          "2026-09-17",
+          2,
+          1
+        ],
+        [
+          "2026-09-18",
+          24,
+          2
+        ],
+        [
+          "2026-09-19",
+          2,
+          1
+        ],
+        [
+          "2026-09-20",
+          4,
+          1
+        ],
+        [
+          "2026-09-21",
+          0,
+          0
+        ],
+        [
+          "2026-09-22",
+          0,
+          0
+        ],
+        [
+          "2026-09-23",
+          0,
+          0
+        ],
+        [
+          "2026-09-24",
+          22,
+          2
+        ],
+        [
+          "2026-09-25",
+          3,
+          1
+        ],
+        [
+          "2026-09-26",
+          34,
+          2
+        ],
+        [
+          "2026-09-27",
+          68,
+          4
+        ],
+        [
+          "2026-09-28",
+          29,
+          2
+        ],
+        [
+          "2026-09-29",
+          14,
+          1
+        ],
+        [
+          "2026-09-30",
+          17,
+          1
+        ],
+        [
+          "2026-10-01",
+          20,
+          2
+        ]
+      ]
+    },
+    "oliver4441": {
+      "login": "oliver4441",
+      "total": 1509,
+      "activeDays": 108,
+      "best": {
+        "date": "2026-08-16",
+        "count": 83
+      },
+      "currentStreak": 1,
+      "longestStreak": 27,
+      "start": "2025-09-28",
+      "end": "2026-10-01",
+      "days": [
+        [
+          "2025-09-28",
+          0,
+          0
+        ],
+        [
+          "2025-09-29",
+          0,
+          0
+        ],
+        [
+          "2025-09-30",
+          0,
+          0
+        ],
+        [
+          "2025-10-01",
+          0,
+          0
+        ],
+        [
+          "2025-10-02",
+          0,
+          0
+        ],
+        [
+          "2025-10-03",
+          0,
+          0
+        ],
+        [
+          "2025-10-04",
+          0,
+          0
+        ],
+        [
+          "2025-10-05",
+          0,
+          0
+        ],
+        [
+          "2025-10-06",
+          0,
+          0
+        ],
+        [
+          "2025-10-07",
+          0,
+          0
+        ],
+        [
+          "2025-10-08",
+          0,
+          0
+        ],
+        [
+          "2025-10-09",
+          0,
+          0
+        ],
+        [
+          "2025-10-10",
+          0,
+          0
+        ],
+        [
+          "2025-10-11",
+          0,
+          0
+        ],
+        [
+          "2025-10-12",
+          0,
+          0
+        ],
+        [
+          "2025-10-13",
+          0,
+          0
+        ],
+        [
+          "2025-10-14",
+          0,
+          0
+        ],
+        [
+          "2025-10-15",
+          0,
+          0
+        ],
+        [
+          "2025-10-16",
+          0,
+          0
+        ],
+        [
+          "2025-10-17",
+          0,
+          0
+        ],
+        [
+          "2025-10-18",
+          0,
+          0
+        ],
+        [
+          "2025-10-19",
+          0,
+          0
+        ],
+        [
+          "2025-10-20",
+          0,
+          0
+        ],
+        [
+          "2025-10-21",
+          0,
+          0
+        ],
+        [
+          "2025-10-22",
+          0,
+          0
+        ],
+        [
+          "2025-10-23",
+          0,
+          0
+        ],
+        [
+          "2025-10-24",
+          0,
+          0
+        ],
+        [
+          "2025-10-25",
+          0,
+          0
+        ],
+        [
+          "2025-10-26",
+          0,
+          0
+        ],
+        [
+          "2025-10-27",
+          0,
+          0
+        ],
+        [
+          "2025-10-28",
+          0,
+          0
+        ],
+        [
+          "2025-10-29",
+          0,
+          0
+        ],
+        [
+          "2025-10-30",
+          0,
+          0
+        ],
+        [
+          "2025-10-31",
+          0,
+          0
+        ],
+        [
+          "2025-11-01",
+          0,
+          0
+        ],
+        [
+          "2025-11-02",
+          0,
+          0
+        ],
+        [
+          "2025-11-03",
+          0,
+          0
+        ],
+        [
+          "2025-11-04",
+          0,
+          0
+        ],
+        [
+          "2025-11-05",
+          0,
+          0
+        ],
+        [
+          "2025-11-06",
+          0,
+          0
+        ],
+        [
+          "2025-11-07",
+          0,
+          0
+        ],
+        [
+          "2025-11-08",
+          0,
+          0
+        ],
+        [
+          "2025-11-09",
+          0,
+          0
+        ],
+        [
+          "2025-11-10",
+          0,
+          0
+        ],
+        [
+          "2025-11-11",
+          0,
+          0
+        ],
+        [
+          "2025-11-12",
+          0,
+          0
+        ],
+        [
+          "2025-11-13",
+          0,
+          0
+        ],
+        [
+          "2025-11-14",
+          0,
+          0
+        ],
+        [
+          "2025-11-15",
+          0,
+          0
+        ],
+        [
+          "2025-11-16",
+          0,
+          0
+        ],
+        [
+          "2025-11-17",
+          0,
+          0
+        ],
+        [
+          "2025-11-18",
+          0,
+          0
+        ],
+        [
+          "2025-11-19",
+          0,
+          0
+        ],
+        [
+          "2025-11-20",
+          0,
+          0
+        ],
+        [
+          "2025-11-21",
+          0,
+          0
+        ],
+        [
+          "2025-11-22",
+          0,
+          0
+        ],
+        [
+          "2025-11-23",
+          0,
+          0
+        ],
+        [
+          "2025-11-24",
+          0,
+          0
+        ],
+        [
+          "2025-11-25",
+          0,
+          0
+        ],
+        [
+          "2025-11-26",
+          0,
+          0
+        ],
+        [
+          "2025-11-27",
+          0,
+          0
+        ],
+        [
+          "2025-11-28",
+          0,
+          0
+        ],
+        [
+          "2025-11-29",
+          0,
+          0
+        ],
+        [
+          "2025-11-30",
+          0,
+          0
+        ],
+        [
+          "2025-12-01",
+          0,
+          0
+        ],
+        [
+          "2025-12-02",
+          0,
+          0
+        ],
+        [
+          "2025-12-03",
+          0,
+          0
+        ],
+        [
+          "2025-12-04",
+          0,
+          0
+        ],
+        [
+          "2025-12-05",
+          0,
+          0
+        ],
+        [
+          "2025-12-06",
+          0,
+          0
+        ],
+        [
+          "2025-12-07",
+          0,
+          0
+        ],
+        [
+          "2025-12-08",
+          0,
+          0
+        ],
+        [
+          "2025-12-09",
+          0,
+          0
+        ],
+        [
+          "2025-12-10",
+          0,
+          0
+        ],
+        [
+          "2025-12-11",
+          0,
+          0
+        ],
+        [
+          "2025-12-12",
+          0,
+          0
+        ],
+        [
+          "2025-12-13",
+          0,
+          0
+        ],
+        [
+          "2025-12-14",
+          0,
+          0
+        ],
+        [
+          "2025-12-15",
+          0,
+          0
+        ],
+        [
+          "2025-12-16",
+          0,
+          0
+        ],
+        [
+          "2025-12-17",
+          0,
+          0
+        ],
+        [
+          "2025-12-18",
+          0,
+          0
+        ],
+        [
+          "2025-12-19",
+          0,
+          0
+        ],
+        [
+          "2025-12-20",
+          0,
+          0
+        ],
+        [
+          "2025-12-21",
+          0,
+          0
+        ],
+        [
+          "2025-12-22",
+          0,
+          0
+        ],
+        [
+          "2025-12-23",
+          0,
+          0
+        ],
+        [
+          "2025-12-24",
+          0,
+          0
+        ],
+        [
+          "2025-12-25",
+          0,
+          0
+        ],
+        [
+          "2025-12-26",
+          0,
+          0
+        ],
+        [
+          "2025-12-27",
+          0,
+          0
+        ],
+        [
+          "2025-12-28",
+          0,
+          0
+        ],
+        [
+          "2025-12-29",
+          0,
+          0
+        ],
+        [
+          "2025-12-30",
+          0,
+          0
+        ],
+        [
+          "2025-12-31",
+          0,
+          0
+        ],
+        [
+          "2026-01-01",
+          0,
+          0
+        ],
+        [
+          "2026-01-02",
+          0,
+          0
+        ],
+        [
+          "2026-01-03",
+          0,
+          0
+        ],
+        [
+          "2026-01-04",
+          0,
+          0
+        ],
+        [
+          "2026-01-05",
+          0,
+          0
+        ],
+        [
+          "2026-01-06",
+          0,
+          0
+        ],
+        [
+          "2026-01-07",
+          0,
+          0
+        ],
+        [
+          "2026-01-08",
+          0,
+          0
+        ],
+        [
+          "2026-01-09",
+          0,
+          0
+        ],
+        [
+          "2026-01-10",
+          0,
+          0
+        ],
+        [
+          "2026-01-11",
+          0,
+          0
+        ],
+        [
+          "2026-01-12",
+          0,
+          0
+        ],
+        [
+          "2026-01-13",
+          0,
+          0
+        ],
+        [
+          "2026-01-14",
+          0,
+          0
+        ],
+        [
+          "2026-01-15",
+          0,
+          0
+        ],
+        [
+          "2026-01-16",
+          0,
+          0
+        ],
+        [
+          "2026-01-17",
+          0,
+          0
+        ],
+        [
+          "2026-01-18",
+          0,
+          0
+        ],
+        [
+          "2026-01-19",
+          0,
+          0
+        ],
+        [
+          "2026-01-20",
+          0,
+          0
+        ],
+        [
+          "2026-01-21",
+          0,
+          0
+        ],
+        [
+          "2026-01-22",
+          0,
+          0
+        ],
+        [
+          "2026-01-23",
+          0,
+          0
+        ],
+        [
+          "2026-01-24",
+          0,
+          0
+        ],
+        [
+          "2026-01-25",
+          0,
+          0
+        ],
+        [
+          "2026-01-26",
+          0,
+          0
+        ],
+        [
+          "2026-01-27",
+          0,
+          0
+        ],
+        [
+          "2026-01-28",
+          0,
+          0
+        ],
+        [
+          "2026-01-29",
+          0,
+          0
+        ],
+        [
+          "2026-01-30",
+          0,
+          0
+        ],
+        [
+          "2026-01-31",
+          0,
+          0
+        ],
+        [
+          "2026-02-01",
+          0,
+          0
+        ],
+        [
+          "2026-02-02",
+          0,
+          0
+        ],
+        [
+          "2026-02-03",
+          0,
+          0
+        ],
+        [
+          "2026-02-04",
+          0,
+          0
+        ],
+        [
+          "2026-02-05",
+          0,
+          0
+        ],
+        [
+          "2026-02-06",
+          0,
+          0
+        ],
+        [
+          "2026-02-07",
+          0,
+          0
+        ],
+        [
+          "2026-02-08",
+          0,
+          0
+        ],
+        [
+          "2026-02-09",
+          0,
+          0
+        ],
+        [
+          "2026-02-10",
+          0,
+          0
+        ],
+        [
+          "2026-02-11",
+          2,
+          1
+        ],
+        [
+          "2026-02-12",
+          0,
+          0
+        ],
+        [
+          "2026-02-13",
+          0,
+          0
+        ],
+        [
+          "2026-02-14",
+          0,
+          0
+        ],
+        [
+          "2026-02-15",
+          0,
+          0
+        ],
+        [
+          "2026-02-16",
+          0,
+          0
+        ],
+        [
+          "2026-02-17",
+          0,
+          0
+        ],
+        [
+          "2026-02-18",
+          0,
+          0
+        ],
+        [
+          "2026-02-19",
+          0,
+          0
+        ],
+        [
+          "2026-02-20",
+          0,
+          0
+        ],
+        [
+          "2026-02-21",
+          0,
+          0
+        ],
+        [
+          "2026-02-22",
+          0,
+          0
+        ],
+        [
+          "2026-02-23",
+          0,
+          0
+        ],
+        [
+          "2026-02-24",
+          0,
+          0
+        ],
+        [
+          "2026-02-25",
+          0,
+          0
+        ],
+        [
+          "2026-02-26",
+          0,
+          0
+        ],
+        [
+          "2026-02-27",
+          0,
+          0
+        ],
+        [
+          "2026-02-28",
+          0,
+          0
+        ],
+        [
+          "2026-03-01",
+          0,
+          0
+        ],
+        [
+          "2026-03-02",
+          0,
+          0
+        ],
+        [
+          "2026-03-03",
+          0,
+          0
+        ],
+        [
+          "2026-03-04",
+          0,
+          0
+        ],
+        [
+          "2026-03-05",
+          0,
+          0
+        ],
+        [
+          "2026-03-06",
+          0,
+          0
+        ],
+        [
+          "2026-03-07",
+          0,
+          0
+        ],
+        [
+          "2026-03-08",
+          0,
+          0
+        ],
+        [
+          "2026-03-09",
+          0,
+          0
+        ],
+        [
+          "2026-03-10",
+          0,
+          0
+        ],
+        [
+          "2026-03-11",
+          0,
+          0
+        ],
+        [
+          "2026-03-12",
+          0,
+          0
+        ],
+        [
+          "2026-03-13",
+          0,
+          0
+        ],
+        [
+          "2026-03-14",
+          0,
+          0
+        ],
+        [
+          "2026-03-15",
+          0,
+          0
+        ],
+        [
+          "2026-03-16",
+          0,
+          0
+        ],
+        [
+          "2026-03-17",
+          0,
+          0
+        ],
+        [
+          "2026-03-18",
+          0,
+          0
+        ],
+        [
+          "2026-03-19",
+          0,
+          0
+        ],
+        [
+          "2026-03-20",
+          0,
+          0
+        ],
+        [
+          "2026-03-21",
+          0,
+          0
+        ],
+        [
+          "2026-03-22",
+          0,
+          0
+        ],
+        [
+          "2026-03-23",
+          0,
+          0
+        ],
+        [
+          "2026-03-24",
+          0,
+          0
+        ],
+        [
+          "2026-03-25",
+          0,
+          0
+        ],
+        [
+          "2026-03-26",
+          0,
+          0
+        ],
+        [
+          "2026-03-27",
+          0,
+          0
+        ],
+        [
+          "2026-03-28",
+          0,
+          0
+        ],
+        [
+          "2026-03-29",
+          0,
+          0
+        ],
+        [
+          "2026-03-30",
+          0,
+          0
+        ],
+        [
+          "2026-03-31",
+          0,
+          0
+        ],
+        [
+          "2026-04-01",
+          0,
+          0
+        ],
+        [
+          "2026-04-02",
+          0,
+          0
+        ],
+        [
+          "2026-04-03",
+          0,
+          0
+        ],
+        [
+          "2026-04-04",
+          0,
+          0
+        ],
+        [
+          "2026-04-05",
+          0,
+          0
+        ],
+        [
+          "2026-04-06",
+          0,
+          0
+        ],
+        [
+          "2026-04-07",
+          0,
+          0
+        ],
+        [
+          "2026-04-08",
+          0,
+          0
+        ],
+        [
+          "2026-04-09",
+          0,
+          0
+        ],
+        [
+          "2026-04-10",
+          0,
+          0
+        ],
+        [
+          "2026-04-11",
+          0,
+          0
+        ],
+        [
+          "2026-04-12",
+          0,
+          0
+        ],
+        [
+          "2026-04-13",
+          0,
+          0
+        ],
+        [
+          "2026-04-14",
+          0,
+          0
+        ],
+        [
+          "2026-04-15",
+          0,
+          0
+        ],
+        [
+          "2026-04-16",
+          0,
+          0
+        ],
+        [
+          "2026-04-17",
+          0,
+          0
+        ],
+        [
+          "2026-04-18",
+          0,
+          0
+        ],
+        [
+          "2026-04-19",
+          0,
+          0
+        ],
+        [
+          "2026-04-20",
+          0,
+          0
+        ],
+        [
+          "2026-04-21",
+          0,
+          0
+        ],
+        [
+          "2026-04-22",
+          0,
+          0
+        ],
+        [
+          "2026-04-23",
+          0,
+          0
+        ],
+        [
+          "2026-04-24",
+          0,
+          0
+        ],
+        [
+          "2026-04-25",
+          0,
+          0
+        ],
+        [
+          "2026-04-26",
+          0,
+          0
+        ],
+        [
+          "2026-04-27",
+          0,
+          0
+        ],
+        [
+          "2026-04-28",
+          0,
+          0
+        ],
+        [
+          "2026-04-29",
+          0,
+          0
+        ],
+        [
+          "2026-04-30",
+          0,
+          0
+        ],
+        [
+          "2026-05-01",
+          0,
+          0
+        ],
+        [
+          "2026-05-02",
+          0,
+          0
+        ],
+        [
+          "2026-05-03",
+          0,
+          0
+        ],
+        [
+          "2026-05-04",
+          0,
+          0
+        ],
+        [
+          "2026-05-05",
+          2,
+          1
+        ],
+        [
+          "2026-05-06",
+          1,
+          1
+        ],
+        [
+          "2026-05-07",
+          6,
+          1
+        ],
+        [
+          "2026-05-08",
+          3,
+          1
+        ],
+        [
+          "2026-05-09",
+          0,
+          0
+        ],
+        [
+          "2026-05-10",
+          1,
+          1
+        ],
+        [
+          "2026-05-11",
+          0,
+          0
+        ],
+        [
+          "2026-05-12",
+          0,
+          0
+        ],
+        [
+          "2026-05-13",
+          0,
+          0
+        ],
+        [
+          "2026-05-14",
+          23,
+          2
+        ],
+        [
+          "2026-05-15",
+          27,
+          2
+        ],
+        [
+          "2026-05-16",
+          16,
+          1
+        ],
+        [
+          "2026-05-17",
+          6,
+          1
+        ],
+        [
+          "2026-05-18",
+          1,
+          1
+        ],
+        [
+          "2026-05-19",
+          0,
+          0
+        ],
+        [
+          "2026-05-20",
+          0,
+          0
+        ],
+        [
+          "2026-05-21",
+          0,
+          0
+        ],
+        [
+          "2026-05-22",
+          1,
+          1
+        ],
+        [
+          "2026-05-23",
+          0,
+          0
+        ],
+        [
+          "2026-05-24",
+          0,
+          0
+        ],
+        [
+          "2026-05-25",
+          4,
+          1
+        ],
+        [
+          "2026-05-26",
+          28,
+          2
+        ],
+        [
+          "2026-05-27",
+          0,
+          0
+        ],
+        [
+          "2026-05-28",
+          5,
+          1
+        ],
+        [
+          "2026-05-29",
+          5,
+          1
+        ],
+        [
+          "2026-05-30",
+          0,
+          0
+        ],
+        [
+          "2026-05-31",
+          0,
+          0
+        ],
+        [
+          "2026-06-01",
+          5,
+          1
+        ],
+        [
+          "2026-06-02",
+          1,
+          1
+        ],
+        [
+          "2026-06-03",
+          16,
+          1
+        ],
+        [
+          "2026-06-04",
+          10,
+          1
+        ],
+        [
+          "2026-06-05",
+          0,
+          0
+        ],
+        [
+          "2026-06-06",
+          30,
+          2
+        ],
+        [
+          "2026-06-07",
+          26,
+          2
+        ],
+        [
+          "2026-06-08",
+          15,
+          1
+        ],
+        [
+          "2026-06-09",
+          16,
+          1
+        ],
+        [
+          "2026-06-10",
+          22,
+          2
+        ],
+        [
+          "2026-06-11",
+          21,
+          2
+        ],
+        [
+          "2026-06-12",
+          23,
+          2
+        ],
+        [
+          "2026-06-13",
+          18,
+          1
+        ],
+        [
+          "2026-06-14",
+          23,
+          2
+        ],
+        [
+          "2026-06-15",
+          15,
+          1
+        ],
+        [
+          "2026-06-16",
+          4,
+          1
+        ],
+        [
+          "2026-06-17",
+          11,
+          1
+        ],
+        [
+          "2026-06-18",
+          0,
+          0
+        ],
+        [
+          "2026-06-19",
+          0,
+          0
+        ],
+        [
+          "2026-06-20",
+          3,
+          1
+        ],
+        [
+          "2026-06-21",
+          62,
+          4
+        ],
+        [
+          "2026-06-22",
+          3,
+          1
+        ],
+        [
+          "2026-06-23",
+          8,
+          1
+        ],
+        [
+          "2026-06-24",
+          2,
+          1
+        ],
+        [
+          "2026-06-25",
+          15,
+          1
+        ],
+        [
+          "2026-06-26",
+          3,
+          1
+        ],
+        [
+          "2026-06-27",
+          15,
+          1
+        ],
+        [
+          "2026-06-28",
+          28,
+          2
+        ],
+        [
+          "2026-06-29",
+          19,
+          2
+        ],
+        [
+          "2026-06-30",
+          10,
+          1
+        ],
+        [
+          "2026-07-01",
+          4,
+          1
+        ],
+        [
+          "2026-07-02",
+          17,
+          1
+        ],
+        [
+          "2026-07-03",
+          25,
+          2
+        ],
+        [
+          "2026-07-04",
+          18,
+          1
+        ],
+        [
+          "2026-07-05",
+          18,
+          1
+        ],
+        [
+          "2026-07-06",
+          20,
+          2
+        ],
+        [
+          "2026-07-07",
+          22,
+          2
+        ],
+        [
+          "2026-07-08",
+          11,
+          1
+        ],
+        [
+          "2026-07-09",
+          4,
+          1
+        ],
+        [
+          "2026-07-10",
+          3,
+          1
+        ],
+        [
+          "2026-07-11",
+          9,
+          1
+        ],
+        [
+          "2026-07-12",
+          5,
+          1
+        ],
+        [
+          "2026-07-13",
+          19,
+          2
+        ],
+        [
+          "2026-07-14",
+          4,
+          1
+        ],
+        [
+          "2026-07-15",
+          7,
+          1
+        ],
+        [
+          "2026-07-16",
+          21,
+          2
+        ],
+        [
+          "2026-07-17",
+          0,
+          0
+        ],
+        [
+          "2026-07-18",
+          4,
+          1
+        ],
+        [
+          "2026-07-19",
+          24,
+          2
+        ],
+        [
+          "2026-07-20",
+          16,
+          1
+        ],
+        [
+          "2026-07-21",
+          7,
+          1
+        ],
+        [
+          "2026-07-22",
+          5,
+          1
+        ],
+        [
+          "2026-07-23",
+          12,
+          1
+        ],
+        [
+          "2026-07-24",
+          19,
+          2
+        ],
+        [
+          "2026-07-25",
+          0,
+          0
+        ],
+        [
+          "2026-07-26",
+          5,
+          1
+        ],
+        [
+          "2026-07-27",
+          16,
+          1
+        ],
+        [
+          "2026-07-28",
+          24,
+          2
+        ],
+        [
+          "2026-07-29",
+          21,
+          2
+        ],
+        [
+          "2026-07-30",
+          7,
+          1
+        ],
+        [
+          "2026-07-31",
+          38,
+          3
+        ],
+        [
+          "2026-08-01",
+          53,
+          3
+        ],
+        [
+          "2026-08-02",
+          4,
+          1
+        ],
+        [
+          "2026-08-03",
+          11,
+          1
+        ],
+        [
+          "2026-08-04",
+          18,
+          1
+        ],
+        [
+          "2026-08-05",
+          9,
+          1
+        ],
+        [
+          "2026-08-06",
+          4,
+          1
+        ],
+        [
+          "2026-08-07",
+          12,
+          1
+        ],
+        [
+          "2026-08-08",
+          0,
+          0
+        ],
+        [
+          "2026-08-09",
+          0,
+          0
+        ],
+        [
+          "2026-08-10",
+          3,
+          1
+        ],
+        [
+          "2026-08-11",
+          21,
+          2
+        ],
+        [
+          "2026-08-12",
+          1,
+          1
+        ],
+        [
+          "2026-08-13",
+          6,
+          1
+        ],
+        [
+          "2026-08-14",
+          8,
+          1
+        ],
+        [
+          "2026-08-15",
+          14,
+          1
+        ],
+        [
+          "2026-08-16",
+          83,
+          4
+        ],
+        [
+          "2026-08-17",
+          29,
+          2
+        ],
+        [
+          "2026-08-18",
+          19,
+          2
+        ],
+        [
+          "2026-08-19",
+          0,
+          0
+        ],
+        [
+          "2026-08-20",
+          6,
+          1
+        ],
+        [
+          "2026-08-21",
+          7,
+          1
+        ],
+        [
+          "2026-08-22",
+          6,
+          1
+        ],
+        [
+          "2026-08-23",
+          1,
+          1
+        ],
+        [
+          "2026-08-24",
+          74,
+          4
+        ],
+        [
+          "2026-08-25",
+          9,
+          1
+        ],
+        [
+          "2026-08-26",
+          24,
+          2
+        ],
+        [
+          "2026-08-27",
+          1,
+          1
+        ],
+        [
+          "2026-08-28",
+          2,
+          1
+        ],
+        [
+          "2026-08-29",
+          0,
+          0
+        ],
+        [
+          "2026-08-30",
+          0,
+          0
+        ],
+        [
+          "2026-08-31",
+          0,
+          0
+        ],
+        [
+          "2026-09-01",
+          12,
+          1
+        ],
+        [
+          "2026-09-02",
+          0,
+          0
+        ],
+        [
+          "2026-09-03",
+          0,
+          0
+        ],
+        [
+          "2026-09-04",
+          0,
+          0
+        ],
+        [
+          "2026-09-05",
+          0,
+          0
+        ],
+        [
+          "2026-09-06",
+          0,
+          0
+        ],
+        [
+          "2026-09-07",
+          0,
+          0
+        ],
+        [
+          "2026-09-08",
+          9,
+          1
+        ],
+        [
+          "2026-09-09",
+          1,
+          1
+        ],
+        [
+          "2026-09-10",
+          0,
+          0
+        ],
+        [
+          "2026-09-11",
+          0,
+          0
+        ],
+        [
+          "2026-09-12",
+          0,
+          0
+        ],
+        [
+          "2026-09-13",
+          31,
+          2
+        ],
+        [
+          "2026-09-14",
+          15,
+          1
+        ],
+        [
+          "2026-09-15",
+          0,
+          0
+        ],
+        [
+          "2026-09-16",
+          1,
+          1
+        ],
+        [
+          "2026-09-17",
+          0,
+          0
+        ],
+        [
+          "2026-09-18",
+          3,
+          1
+        ],
+        [
+          "2026-09-19",
+          0,
+          0
+        ],
+        [
+          "2026-09-20",
+          0,
+          0
+        ],
+        [
+          "2026-09-21",
+          0,
+          0
+        ],
+        [
+          "2026-09-22",
+          0,
+          0
+        ],
+        [
+          "2026-09-23",
+          0,
+          0
+        ],
+        [
+          "2026-09-24",
+          1,
+          1
+        ],
+        [
+          "2026-09-25",
+          0,
+          0
+        ],
+        [
+          "2026-09-26",
+          45,
+          3
+        ],
+        [
+          "2026-09-27",
+          0,
+          0
+        ],
+        [
+          "2026-09-28",
+          1,
+          1
+        ],
+        [
+          "2026-09-29",
+          0,
+          0
+        ],
+        [
+          "2026-09-30",
+          0,
+          0
+        ],
+        [
+          "2026-10-01",
+          5,
+          1
+        ]
+      ]
+    }
+  },
+  "languageBytes": {
+    "JavaScript": 6165321,
+    "TypeScript": 4919039,
+    "HTML": 3292583,
+    "CSS": 707360,
+    "PLpgSQL": 336894,
+    "Python": 195774,
+    "Kotlin": 140010,
+    "Go": 74289,
+    "Rust": 55018,
+    "Astro": 41108,
+    "Shell": 19965,
+    "Java": 13878
+  },
+  "metrics": {
+    "codeBytes": 15964164,
+    "documentedRepos": 24,
+    "contributionsLastYear": 1787,
+    "activeDays": 126,
+    "longestStreak": 27,
+    "currentStreak": 8,
+    "prsOpened": 42,
+    "prsMerged": 24,
+    "issuesOpened": 16
+  },
+  "historyDays": 1
 }

@@ -66,6 +66,9 @@ const results = [];
 
 const assert = (name, cond) => results.push({ name, pass: !!cond });
 
+const snapJson = JSON.parse(readFileSync(new URL("../data/snapshot.json", import.meta.url), "utf8"));
+assert("snapshot carries contribution + metrics data", !!snapJson.contributions && !!snapJson.metrics?.contributionsLastYear);
+assert("snapshot repos carry language bytes", Object.values(snapJson.repos || {}).some((r) => r.languageBytes > 0));
 assert("no login gate element", !doc.querySelector("#loginGate"));
 assert("no token overlay element", !doc.querySelector("#tokenOverlay"));
 assert("no login/oauth text on page", !/continue with github|sign in|oauth|access token/i.test(text));
@@ -201,6 +204,47 @@ assert("quest sheet opens with badges", doc.querySelector("#questOverlay")?.clas
 assert("quest sheet explains local-only storage", /never leave this browser/.test(sheetText));
 doc.querySelector("#questCloseBtn")?.dispatchEvent(new dom.window.MouseEvent("click", { bubbles: true }));
 await wait(150);
+
+// ---- real data upgrades (contributions, bytes, trends) ----
+dom.window.location.hash = "#/numbers";
+dom.window.dispatchEvent(new dom.window.HashChangeEvent("hashchange"));
+await wait(500);
+const numbersText = doc.querySelector("#stage")?.textContent || "";
+assert("numbers shows contribution totals", /Contributions/.test(numbersText) && /Active Days/.test(numbersText));
+assert("numbers shows PR/issue counts", /PRs Merged/.test(numbersText) && /Issues Opened/.test(numbersText));
+assert("numbers shows code volume", /Code Written/.test(numbersText));
+assert("real contribution calendar renders", doc.querySelectorAll("#stage .contrib-cell").length > 300);
+assert("calendar has activity levels", doc.querySelectorAll('#stage .contrib-cell[data-level="4"], #stage .contrib-cell[data-level="3"]').length > 0);
+assert("calendar cells carry tooltips", /contributions? on /.test(doc.querySelector(".contrib-cell")?.getAttribute("title") || ""));
+
+dom.window.location.hash = "#/craft";
+dom.window.dispatchEvent(new dom.window.HashChangeEvent("hashchange"));
+await wait(450);
+assert("code-by-language (bytes) card renders", /Code by Language/.test(doc.querySelector("#stage")?.textContent || ""));
+
+dom.window.location.hash = "#/project/stor1";
+dom.window.dispatchEvent(new dom.window.HashChangeEvent("hashchange"));
+await wait(1200);
+const projectText = doc.querySelector("#stage")?.textContent || "";
+assert("project page shows code composition", /Code Composition/.test(projectText) || /README/.test(projectText));
+
+// ---- soundtrack ----
+assert("music module exposed", typeof dom.window.PulseMusic?.toggle === "function" && typeof dom.window.PulseMusic?.setMood === "function");
+assert("music is off until asked", dom.window.PulseMusic.isPlaying() === false);
+assert("sound toggle button rendered", !!doc.querySelector("#soundToggleBtn"));
+doc.querySelector("#soundToggleBtn")?.dispatchEvent(new dom.window.MouseEvent("click", { bubbles: true }));
+await wait(150);
+assert("toggling sound never throws without an AudioContext", true);
+dom.window.PulseMusic.setMood("phonk");
+dom.window.PulseMusic.setVolume(0.5);
+assert("mood selection recorded", dom.window.PulseMusic.mood() === "phonk" || dom.window.PulseMusic.hasCustomTrack());
+assert("volume applied", dom.window.PulseMusic.volume() === 0.5);
+doc.querySelector("#soundToggleBtn")?.dispatchEvent(new dom.window.MouseEvent("contextmenu", { bubbles: true }));
+await wait(250);
+const soundSheet = doc.querySelector("#audioSheet")?.textContent || "";
+assert("sound sheet opens with both moods", /Cinematic/.test(soundSheet) && /Phonk/.test(soundSheet));
+assert("sound sheet explains the synth approach", /generated in your browser/i.test(soundSheet));
+assert("no copyrighted audio is bundled", !/\.mp3|\.wav/i.test(doc.documentElement.innerHTML));
 
 // ---- phone viewport simulation ----
 dom.window.innerWidth = 390;

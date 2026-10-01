@@ -1,4 +1,4 @@
-const CACHE = "pulse-v5";
+const CACHE = "pulse-v6";
 const ASSETS = [
   "./",
   "./index.html",
@@ -7,6 +7,7 @@ const ASSETS = [
   "./js/app.js",
   "./js/depth.js",
   "./js/game.js",
+  "./js/music.js",
   "./data/snapshot.json",
   "./manifest.webmanifest",
   "./icons/icon.svg",
