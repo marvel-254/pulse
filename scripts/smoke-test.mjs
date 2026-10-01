@@ -246,6 +246,21 @@ assert("sound sheet opens with both moods", /Cinematic/.test(soundSheet) && /Pho
 assert("sound sheet explains the synth approach", /generated in your browser/i.test(soundSheet));
 assert("no copyrighted audio is bundled", !/\.mp3|\.wav/i.test(doc.documentElement.innerHTML));
 
+// ---- share cards / SEO ----
+assert("canonical link is absolute", /^https:\/\/[^"]+$/.test(doc.querySelector('link[rel="canonical"]')?.getAttribute("href") || ""));
+assert("og:image points at a real card", /icons\/og\.png$/.test(doc.querySelector('meta[property="og:image"]')?.getAttribute("content") || ""));
+assert("twitter card present", doc.querySelector('meta[name="twitter:card"]')?.getAttribute("content") === "summary_large_image");
+assert("share button rendered", !!doc.querySelector("#shareBtn"));
+dom.window.location.hash = "#/projects";
+dom.window.dispatchEvent(new dom.window.HashChangeEvent("hashchange"));
+await wait(500);
+assert("title follows the view", /Projects/.test(doc.title));
+assert("og:url follows the deep link", /#\/projects$/.test(doc.querySelector('meta[property="og:url"]')?.getAttribute("content") || ""));
+const beforeShare = doc.title;
+doc.querySelector("#shareBtn")?.dispatchEvent(new dom.window.MouseEvent("click", { bubbles: true }));
+await wait(200);
+assert("sharing does not break the view", doc.title === beforeShare && !!doc.querySelector("#stage")?.textContent.trim());
+
 // ---- phone viewport simulation ----
 dom.window.innerWidth = 390;
 dom.window.innerHeight = 844;

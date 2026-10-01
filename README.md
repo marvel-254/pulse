@@ -141,6 +141,34 @@ with `dvh` sizing, safe-area padding top and bottom, 40px+ touch targets, and
 tilt/3D effects disabled on touch-only devices. `npm run audit` statically
 checks the CSS for mobile overflow risks.
 
+## Sharing & SEO
+
+- **Social card** — `icons/og.png` (1200×630), referenced by Open Graph and
+  Twitter `summary_large_image` tags in `index.html`. Regenerate it with
+  ImageMagick if the headline numbers change.
+- **Live meta** — every route keeps `<title>`, `description`, `canonical`,
+  `og:*` and `twitter:*` in sync with the view you are looking at (a project
+  page shares that project, not the homepage). Absolute URLs come from
+  `PULSE_CONFIG.site.url`, so a fork on another domain still produces correct
+  cards.
+- **Structured data** — a `ProfilePage`/`Person` JSON-LD block for search
+  engines.
+- **Share button** — topbar and every project page. Uses the native share sheet
+  where available, falls back to copying the deep link. No third-party share
+  widgets.
+- **`robots.txt` + `sitemap.xml`** — crawlable, points at the canonical site
+  URL.
+
+## Checks (CI)
+
+`.github/workflows/ci.yml` runs on every pull request and non-`main` push:
+
+| Step | What it proves |
+| --- | --- |
+| `npm run check` | Every JS/JSON file parses, every asset referenced by `index.html` and `sw.js` exists, the social card is a real 1200×630 PNG, robots/sitemap are present, and no login/token/analytics/third-party script has crept back in. Offline and deterministic. |
+| `npm run audit` | Static CSS audit for mobile overflow risks. |
+| `npm run smoke` | Informational only (needs the public GitHub API, so shared-runner rate limits would make it flaky). Run it locally before opening a PR. |
+
 ## Data depth
 
 Every number on the page is real and public — nothing is typed in by hand.

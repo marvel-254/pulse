@@ -247,7 +247,19 @@ Visitor sees fresh data even if the snapshot is hours old
 - [x] `npm run audit`: static check for fixed widths, unshrinkable grid minimums,
       nowrap without scroll containers and vh/chrome collisions.
 
-### Phase 5 — optional
+### Phase 5 — sharing, SEO & CI — 🟡 MOSTLY SHIPPED
+- Open Graph + Twitter cards, 1200×630 `icons/og.png`. ✅
+- Per-view live meta (title/canonical/og:url) + JSON-LD. ✅
+- Share button (Web Share API → clipboard fallback). ✅
+- `robots.txt` + `sitemap.xml`. ✅
+- CI: `scripts/ci-check.mjs` + layout audit on every PR (`.github/workflows/ci.yml`). ✅
+- Prerendered static project pages with their own meta tags. ⏳ still open
+  (deep links are hash routes today; the sitemap lists the views).
+- Accessibility pass (skip link, focus rings, ARIA sweep). ⏳ still open
+- Self-hosted fonts + minification. ⏳ still open
+- Curated case studies, a "Now" strip and share cards as images. ⏳ still open
+
+### Phase 5b — optional
 - Embeddable widget (`<iframe src="…/#/project/stor1">`).
 - Open Graph share cards per account and per project.
 - "Timeline of everything shipped" across both accounts.

@@ -348,6 +348,124 @@
   ];
   const VIEW_IDS = [...NAV.map((n) => n.id), "project"];
 
+  /* ---- SHARING / SEO META ----
+     Public metadata only: no tracking, no third-party scripts. Absolute URLs
+     resolve against PULSE_CONFIG.site.url, so a fork on another domain still
+     produces correct share cards. */
+  function siteCfg() {
+    const s = window.PULSE_CONFIG?.site || {};
+    const base = String(s.url || location.origin + location.pathname).replace(/\/?$/, "/");
+    return {
+      base,
+      name: s.name || "Pulse",
+      description:
+        s.description ||
+        "A public, read-only showcase of a GitHub account: projects, activity, releases and CI. No login required.",
+      image: s.image || "icons/og.png",
+      twitter: s.twitter || "",
+    };
+  }
+  const absUrl = (rel) => {
+    try { return new URL(rel, siteCfg().base).href; } catch { return rel; }
+  };
+
+  function routeMeta() {
+    const cfg = siteCfg();
+    const u = state.snapshot?.user || {};
+    const accounts = accountList();
+    const who = accounts.length > 1 ? accounts.map((a) => "@" + a).join(" + ") : "@" + (u.login || ghAccount() || "github");
+    const map = {
+      overview: ["Overview", `What ${who} has been building — highlights, activity and public repositories.`],
+      highlights: ["Highlights", `The work worth seeing from ${who}: featured projects, releases and shipped tools.`],
+      numbers: ["Numbers", `Public GitHub stats for ${who}: contributions, streaks, PRs merged, issues, code volume and trends.`],
+      activity: ["Activity", `Recent public commits, releases and workflow runs from ${who}.`],
+      projects: ["Projects", `Every public repository from ${who}, filterable by language and activity.`],
+      craft: ["How I build", `Tooling, languages, release cadence and CI habits behind the work of ${who}.`],
+      about: ["About", `Who ${who} is, what they build, and how to get in touch.`],
+    };
+    if (state.view === "project") {
+      const repo =
+        repoList().find((r) => (r.name || "").toLowerCase() === String(state.selectedProject || "").toLowerCase()) || repoList()[0];
+      if (repo) {
+        const image = repo.cover || repo.openGraphImage || repo.socialImage;
+        return {
+          title: `${repo.name} — ${cfg.name}`,
+          description: (repo.description || `Public repository ${repo.fullName}.`).slice(0, 180),
+          path: `#/project/${repo.name}`,
+          image: image ? absUrl(image) : absUrl(cfg.image),
+          repo,
+        };
+      }
+    }
+    const [t, d] = map[state.view] || map.overview;
+    return {
+      title: `${t} — ${cfg.name}`,
+      description: d,
+      path: state.view === "overview" ? "" : `#/${state.view}`,
+      image: absUrl(cfg.image),
+    };
+  }
+
+  function metaTag(selector, attrs, create) {
+    let el = document.head.querySelector(selector);
+    if (!el) {
+      el = document.createElement(create.tag);
+      Object.entries(create.attrs).forEach(([k, v]) => el.setAttribute(k, v));
+      document.head.appendChild(el);
+    }
+    Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+    return el;
+  }
+
+  /* Keep <title>, description, canonical and the social card in step with the
+     view/deep link the visitor is looking at. */
+  function syncMeta() {
+    const cfg = siteCfg();
+    const meta = routeMeta();
+    const url = cfg.base + meta.path;
+    document.title = meta.title;
+    metaTag('meta[name="description"]', { content: meta.description }, { tag: "meta", attrs: { name: "description" } });
+    metaTag('link[rel="canonical"]', { href: url }, { tag: "link", attrs: { rel: "canonical" } });
+    [
+      ["og:title", meta.title],
+      ["og:description", meta.description],
+      ["og:url", url],
+      ["og:image", meta.image],
+      ["og:site_name", cfg.name],
+      ["og:type", meta.repo ? "article" : "profile"],
+    ].forEach(([prop, content]) => metaTag(`meta[property="${prop}"]`, { content }, { tag: "meta", attrs: { property: prop } }));
+    [
+      ["twitter:card", "summary_large_image"],
+      ["twitter:title", meta.title],
+      ["twitter:description", meta.description],
+      ["twitter:image", meta.image],
+      ...(cfg.twitter ? [["twitter:site", cfg.twitter]] : []),
+    ].forEach(([name, content]) => metaTag(`meta[name="${name}"]`, { content }, { tag: "meta", attrs: { name } }));
+  }
+
+  /* Share the current deep link: native sheet when the browser has one,
+     clipboard otherwise. Never tracks anything. */
+  async function shareCurrent() {
+    const meta = routeMeta();
+    const url = siteCfg().base + meta.path;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: meta.title, text: meta.description, url });
+        window.PulseQuests?.action("share");
+        return;
+      }
+    } catch (err) {
+      if (err && err.name === "AbortError") return; // visitor dismissed the sheet
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      toast("Link copied to clipboard");
+      window.PulseQuests?.action("share");
+    } catch {
+      window.prompt("Copy this link:", url);
+    }
+  }
+
   /* ---- THEME HANDLING ---- */
   function applyTheme(theme) {
     state.theme = theme;
@@ -401,6 +519,10 @@
           ${ICONS.music}
         </button>
 
+        <button class="topbar-btn" id="shareBtn" title="Share this view" aria-label="Share this view">
+          ${ICONS.share}
+        </button>
+
         <button class="topbar-btn depth-btn" id="depthToggleBtn" title="Toggle the 3D depth layer">
           ${ICONS.layers}
         </button>
@@ -425,6 +547,7 @@
       go("overview");
     });
     $('#topbarSearchTrigger')?.addEventListener("click", openCommandPalette);
+    $('#shareBtn')?.addEventListener("click", shareCurrent);
     $('#themeToggleBtn')?.addEventListener("click", toggleTheme);
     $('#soundToggleBtn')?.addEventListener("click", (e) => {
       if (e.shiftKey) return openSoundSheet();
@@ -1535,6 +1658,7 @@
 
   /* ---- RENDER DISPATCH ---- */
   function render() {
+    syncMeta();
     renderTopbar();
     renderSidebar();
     renderMobileNav();
@@ -1614,6 +1738,7 @@
       b.addEventListener("click", () => go(b.dataset.navJump))
     );
     $('#projectBackBtn')?.addEventListener("click", () => go("projects"));
+    $('#projectShareBtn')?.addEventListener("click", shareCurrent);
     $('#copyHttpsBtn')?.addEventListener("click", () => {
       const repo = repoList().find((r) => r.name === state.selectedProject);
       if (!repo) return;
@@ -2653,6 +2778,7 @@
       repo.name,
       `${repo.fullName} · ${st} · last push ${fmtAgo(repo.pushedAt)}`,
       `<button class="btn btn-sm" id="projectBackBtn">${ICONS.back || ICONS.command} All projects</button>
+       <button class="btn btn-sm" id="projectShareBtn">${ICONS.share} Share</button>
        <a class="btn btn-sm" href="${esc(repo.htmlUrl)}" target="_blank" rel="noopener noreferrer">${ICONS.github} Repository</a>
        ${repo.homepage ? `<a class="btn btn-sm btn-primary" href="${esc(repo.homepage)}" target="_blank" rel="noopener noreferrer">${ICONS.externalLink} Live site</a>` : ""}`,
       `<div class="card">

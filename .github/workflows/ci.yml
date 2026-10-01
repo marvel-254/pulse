@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches-ignore: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Static checks + layout audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dev dependencies
+        run: npm ci
+
+      # Offline and deterministic: parses every JS/JSON file, verifies that the
+      # assets referenced by index.html and the service worker actually exist,
+      # checks the social card / robots / sitemap, and fails if login, token or
+      # analytics code creeps back in.
+      - name: Repository & asset checks
+        run: node scripts/ci-check.mjs
+
+      - name: Static layout audit
+        run: npm run audit
+
+      # Boots index.html in JSDOM and walks every view. Requires the public
+      # GitHub API, so it is not a merge gate (shared-runner rate limits) —
+      # run it locally with `npm run smoke` before opening a PR.
+      - name: Smoke test (informational)
+        continue-on-error: true
+        run: npm run smoke

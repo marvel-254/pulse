@@ -74,7 +74,7 @@
     { id: "action:theme", group: "explore", label: "Light Switch", desc: "Toggle the theme", xp: 10, icon: "sun" },
     { id: "action:sync", group: "explore", label: "Fresh Data", desc: "Trigger a live refresh", xp: 15, icon: "refresh" },
     { id: "action:suggest", group: "explore", label: "Idea Dropper", desc: "Open the Suggest dialog", xp: 15, icon: "bulb" },
-    { id: "action:share", group: "explore", label: "Signal Sharer", desc: "Copy a markdown summary", xp: 15, icon: "share" },
+    { id: "action:share", group: "explore", label: "Signal Sharer", desc: "Share a link or copy a markdown summary", xp: 15, icon: "share" },
     { id: "action:depth", group: "explore", label: "Depth Diver", desc: "Toggle the 3D layer", xp: 10, icon: "cube" },
     { id: "action:contact", group: "explore", label: "Reaching Out", desc: "Follow a portfolio or blog link", xp: 15, icon: "globe" },
     { id: "action:music", group: "explore", label: "Soundtrack", desc: "Turn on the background music", xp: 15, icon: "music" },

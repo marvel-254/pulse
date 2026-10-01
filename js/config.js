@@ -18,6 +18,17 @@ window.PULSE_CONFIG = {
     accounts: ["marvel-254", "oliver4441"],
   },
 
+  // Where the site is published. Used for canonical URLs, Open Graph cards,
+  // sitemap.xml and share links. Change it if you host Pulse on your own domain.
+  site: {
+    url: "https://marvel-254.github.io/pulse/",
+    name: "Pulse",
+    description:
+      "A public, read-only showcase of two GitHub accounts — projects, contribution history, releases and CI. No login.",
+    image: "icons/og.png", // 1200x630 social card
+    twitter: "",           // optional: "@handle" for twitter:site
+  },
+
   display: {
     // Shown under the name in the hero when the GitHub bio is empty.
     tagline: "Builder of AI-native tools, web apps and developer utilities.",

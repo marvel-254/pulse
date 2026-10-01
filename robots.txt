@@ -1,0 +1,7 @@
+# Pulse — public GitHub showcase. Everything here is meant to be indexed.
+User-agent: *
+Allow: /
+Disallow: /scripts/
+Disallow: /node_modules/
+
+Sitemap: https://marvel-254.github.io/pulse/sitemap.xml
