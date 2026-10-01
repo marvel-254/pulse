@@ -130,7 +130,7 @@ server, nothing tracked.
 - **Showcase badges** — derived from the real public GitHub data on screen
   (Polyglot, Prolific, Shipper, Release Train, Veteran…).
 - **HUD** — a level ring in the topbar, a progress strip on the Overview, an
-  achievement toast, and a full badge sheet (27 badges, 7 ranks).
+  achievement toast, and a full badge sheet (32 badges, 7 ranks, 615 XP).
 - Reset any time from the badge sheet.
 
 ## Mobile
@@ -140,6 +140,19 @@ columns, horizontally scrollable account/filter chips, full-width bottom sheets
 with `dvh` sizing, safe-area padding top and bottom, 40px+ touch targets, and
 tilt/3D effects disabled on touch-only devices. `npm run audit` statically
 checks the CSS for mobile overflow risks.
+
+## Views
+
+Seven sections plus two kinds of deep-linkable detail page:
+
+| Route | What it is |
+| --- | --- |
+| `#/overview` … `#/about` | The seven sections (Overview carries the "Right now" strip: current streak, projects pushed this week, last commit, newest release, latest CI run). |
+| `#/project/<repo>` | A project page: stats, commit-activity sparkline, code composition by bytes, README. |
+| `#/account/<login>` | A per-account page: profile hero, that account's contribution calendar, metrics, language mix and top work. |
+
+Every route is shareable, keeps its own `<title>`/canonical/OG tags, and is
+reachable from the command palette (`⌘K`).
 
 ## Sharing & SEO
 

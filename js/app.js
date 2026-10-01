@@ -346,7 +346,7 @@
     { id: "craft", label: "HOW I BUILD", ic: ICONS.pipeline, badge: () => null },
     { id: "about", label: "ABOUT", ic: ICONS.user, badge: () => null },
   ];
-  const VIEW_IDS = [...NAV.map((n) => n.id), "project"];
+  const VIEW_IDS = [...NAV.map((n) => n.id), "project", "account"];
 
   /* ---- SHARING / SEO META ----
      Public metadata only: no tracking, no third-party scripts. Absolute URLs
@@ -394,6 +394,17 @@
           path: `#/project/${repo.name}`,
           image: image ? absUrl(image) : absUrl(cfg.image),
           repo,
+        };
+      }
+    }
+    if (state.view === "account") {
+      const account = accountFor(state.selectedAccount);
+      if (account) {
+        return {
+          title: `${account.name || account.login} (@${account.login}) — ${cfg.name}`,
+          description: (account.bio || `Public GitHub work from @${account.login}: repositories, contributions and languages.`).slice(0, 180),
+          path: `#/account/${account.login}`,
+          image: absUrl(cfg.image),
         };
       }
     }
@@ -1133,6 +1144,12 @@
           },
         },
         ...accountList().map((a) => ({
+          title: `Open @${a}'s page`,
+          sub: "Account",
+          icon: ICONS.user,
+          action: () => goAccount(a),
+        })),
+        ...accountList().map((a) => ({
           title: `Show only @${a}`,
           sub: "Account filter",
           icon: ICONS.layers,
@@ -1340,6 +1357,128 @@
 
     overlay.classList.add("open");
     focusSheet(overlay);
+  }
+
+  /* ---- PER-ACCOUNT PAGES (deep-linkable: #/account/<login>) ---- */
+  function accountFor(login) {
+    const summaries = accountSummaries();
+    return (
+      summaries.find((a) => String(a.login).toLowerCase() === String(login || "").toLowerCase()) ||
+      summaries[0] ||
+      null
+    );
+  }
+
+  function renderAccount() {
+    const account = accountFor(state.selectedAccount);
+    if (!account) {
+      return section("Account", "No account found", "", `<div class="card">That account is not part of this showcase.</div>`);
+    }
+    const login = account.login;
+    const repos = repoList().filter((r) => repoOwner(r) === login);
+    const m = account.metrics || {};
+    const cal = state.snapshot?.contributions?.[login];
+    const bytes = repos.reduce((a, r) => a + (r.languageBytes || 0), 0);
+    const langs = Object.entries(
+      repos.reduce((acc, r) => {
+        for (const [lang, b] of Object.entries(r.languages || {})) acc[lang] = (acc[lang] || 0) + b;
+        return acc;
+      }, {})
+    ).sort((a, b) => b[1] - a[1]);
+    const totalLangBytes = langs.reduce((a, [, b]) => a + b, 0) || 1;
+    const top = repos.slice().sort((a, b) => b.stars - a.stars || new Date(b.pushedAt) - new Date(a.pushedAt)).slice(0, 6);
+
+    return section(
+      account.name || login,
+      `@${login}${account.company ? " · " + account.company : ""} · ${repos.length} public repositories · joined ${account.createdAt ? new Date(account.createdAt).getFullYear() : "—"}`,
+      `<button class="btn btn-sm" id="accountBackBtn">${ICONS.back || ICONS.command} All accounts</button>
+       <button class="btn btn-sm" id="accountShareBtn">${ICONS.share} Share</button>
+       <button class="btn btn-sm" id="accountFilterBtn">${ICONS.command} Filter dashboard to @${esc(login)}</button>
+       <a class="btn btn-sm" href="${esc(account.htmlUrl || "https://github.com/" + login)}" target="_blank" rel="noopener noreferrer">${ICONS.github} GitHub profile</a>`,
+      `<div class="card account-hero">
+        <img src="${esc(account.avatar || `https://github.com/${login}.png`)}" alt="" />
+        <div class="account-meta">
+          <div class="account-name">${esc(account.name || login)}</div>
+          ${account.bio ? `<p class="project-pitch" style="margin:6px 0 0">${esc(account.bio)}</p>` : ""}
+          <div class="account-stats">
+            <span><b>${fmtNum(account.followers ?? "—")}</b> followers</span>
+            <span><b>${fmtNum(account.following ?? "—")}</b> following</span>
+            <span><b>${fmtNum(account.publicRepos ?? repos.length)}</b> public repos</span>
+            <span>last push ${fmtAgo(account.latestPush)}</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="height:18px"></div>
+      <div class="bento">
+        ${statCard("Contributions", fmtNum(m.contributionsLastYear ?? cal?.total ?? 0), "last 12 months", "var(--green)", ICONS.pulse)}
+        ${statCard("Active Days", fmtNum(m.activeDays ?? cal?.activeDays ?? 0), `${plural(cal?.currentStreak || m.currentStreak || 0, "day")} current streak`, "var(--cyan)", ICONS.activity)}
+        ${statCard("PRs Merged", fmtNum(m.prsMerged ?? 0), `${fmtNum(m.prsOpened ?? 0)} opened`, "var(--violet)", ICONS.branch)}
+        ${statCard("Issues", fmtNum(m.issuesOpened ?? 0), "authored", "var(--amber)", ICONS.issue)}
+        ${statCard("Code", formatBytes(bytes || account.codeBytes || 0), "in public repos", "var(--blue)", ICONS.layers)}
+        ${statCard("Stars", fmtNum(repos.reduce((a, r) => a + r.stars, 0)), `${fmtNum(repos.reduce((a, r) => a + r.forks, 0))} forks`, "var(--amber)", ICONS.star)}
+      </div>
+
+      <div style="height:18px"></div>
+      <div class="bento">
+        ${contributionHeatmapWidget(login)}
+        ${langs.length ? `
+          <div class="card col2">
+            <div class="card-head">
+              <div class="card-title"><span class="stat-icon" style="color:var(--violet)">${ICONS.code}</span> @${esc(login)}'s Stack</div>
+              <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">${formatBytes(totalLangBytes)} · by bytes</span>
+            </div>
+            <div class="lang-bar">
+              ${langs.map(([lang, b]) => `<div class="lang-seg" style="width:${((b / totalLangBytes) * 100).toFixed(2)}%;background:${getLangColor(lang)}" title="${esc(lang)}: ${formatBytes(b)}"></div>`).join("")}
+            </div>
+            <div class="lang-legend">
+              ${langs.slice(0, 6).map(([lang, b]) => `
+                <div class="lang-item">
+                  <span class="ldot" style="background:${getLangColor(lang)}"></span>
+                  <span>${esc(lang)} <b>${((b / totalLangBytes) * 100).toFixed(1)}%</b> <em>${formatBytes(b)}</em></span>
+                </div>`).join("")}
+            </div>
+          </div>` : ""}
+      </div>
+
+      <div style="height:26px"></div>
+      <div class="card-head">
+        <div class="card-title"><span class="stat-icon" style="color:var(--cyan)">${ICONS.repos}</span> Top work from @${esc(login)}</div>
+      </div>
+      <div class="hl-grid">${top.map((r, i) => highlightCard(r, i)).join("")}</div>`
+    );
+  }
+
+  /* ---- "NOW" STRIP (what is happening right now) ---- */
+  function nowStrip() {
+    const repos = repoList();
+    if (!repos.length) return "";
+    const m = state.snapshot?.metrics || {};
+    const lastPush = repos.map((r) => r.pushedAt).filter(Boolean).sort().at(-1);
+    const week = repos.filter((r) => Date.now() - new Date(r.pushedAt).getTime() < 7 * 864e5);
+    const releases = allReleases();
+    const latest = releases.slice().sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt))[0];
+    const runs = allWorkflowRuns();
+    const lastRun = runs.slice().sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))[0];
+
+    const chip = (icon, value, label, color) => `
+      <div class="now-chip" data-tilt>
+        <span class="stat-icon" style="color:${color}">${icon}</span>
+        <span class="now-value">${value}</span>
+        <span class="now-label">${label}</span>
+      </div>`;
+
+    return `
+      <div class="now-strip">
+        <span class="now-title">${ICONS.pulse} RIGHT NOW</span>
+        <div class="now-chips">
+          ${chip(ICONS.activity, plural(m.currentStreak || 0, "day"), "current streak", "var(--green)")}
+          ${chip(ICONS.zap, String(week.length), `project${week.length === 1 ? "" : "s"} pushed this week`, "var(--cyan)")}
+          ${chip(ICONS.gitCommit, lastPush ? fmtAgo(lastPush) : "—", "last public commit", "var(--violet)")}
+          ${latest ? chip(ICONS.award, esc(latest.name || latest.tagName || "release"), `newest release · ${fmtAgo(latest.publishedAt)}`, "var(--amber)") : ""}
+          ${lastRun ? chip(lastRun.conclusion === "success" ? ICONS.pulse : ICONS.ci, esc(lastRun.conclusion || lastRun.status || "run"), `CI · ${fmtAgo(lastRun.createdAt)}`, lastRun.conclusion === "success" ? "var(--green)" : "var(--amber)") : ""}
+        </div>
+      </div>`;
   }
 
   /* ---- EXPORT MARKDOWN SUMMARY ---- */
@@ -1705,6 +1844,7 @@
       activity: renderActivity,
       projects: renderProjects,
       project: renderProject,
+      account: renderAccount,
       craft: renderCraft,
       about: renderAbout,
     };
@@ -1773,6 +1913,20 @@
     );
     $('#projectBackBtn')?.addEventListener("click", () => go("projects"));
     $('#projectShareBtn')?.addEventListener("click", shareCurrent);
+    $('#accountBackBtn')?.addEventListener("click", () => go("numbers"));
+    $('#accountShareBtn')?.addEventListener("click", shareCurrent);
+    $('#accountFilterBtn')?.addEventListener("click", () => {
+      state.accountFilter = state.selectedAccount;
+      window.PulseQuests?.action("focus-account");
+      go("overview");
+      toast(`Dashboard filtered to @${state.selectedAccount}`);
+    });
+    $$('[data-account-page]').forEach((el) =>
+      el.addEventListener("click", (e) => {
+        e.stopPropagation();
+        goAccount(el.dataset.accountPage);
+      })
+    );
     $('#copyHttpsBtn')?.addEventListener("click", () => {
       const repo = repoList().find((r) => r.name === state.selectedProject);
       if (!repo) return;
@@ -2015,6 +2169,7 @@
       `Public work from ${accountList().map((a) => "@" + a).join(" and ") || "GitHub"} · ${repos.length} repositories${state.accountFilter === "all" ? "" : " · @" + state.accountFilter}`,
       actions,
       `${heroPanel()}
+       ${nowStrip()}
        <div class="bento" style="margin-top:18px">
          ${statCard("Public Repos", fmtNum(repos.length), `${languages.size} languages`, "var(--cyan)", ICONS.repos)}
          ${statCard("Stars", fmtNum(stars), "developer appreciation", "var(--amber)", ICONS.star)}
@@ -2082,6 +2237,7 @@
               <span><b>${a.followers != null ? fmtNum(a.followers) : "—"}</b> followers</span>
               <span>last push ${fmtAgo(a.latestPush || own[0]?.pushedAt)}</span>
             </div>
+            <button class="btn btn-sm account-page-btn" data-account-page="${esc(a.login)}">Open @${esc(a.login)}'s page →</button>
           </div>
         </div>`;
       })
@@ -2257,9 +2413,10 @@
      Merges every featured account (or just the filtered one) into a 53-week
      grid with exact counts, streaks and totals. Falls back to a derived view
      when the calendar is unavailable. */
-  function contributionDays() {
+  function contributionDays(scope) {
     const all = state.snapshot?.contributions || {};
-    const logins = state.accountFilter === "all" ? Object.keys(all) : [state.accountFilter];
+    const filter = scope || state.accountFilter;
+    const logins = filter === "all" ? Object.keys(all) : [filter];
     const counts = new Map();
     let covered = false;
     for (const login of logins) {
@@ -2290,8 +2447,8 @@
 
   const levelFor = (count) => (count <= 0 ? 0 : count <= 1 ? 1 : count <= 4 ? 2 : count <= 9 ? 3 : 4);
 
-  function contributionHeatmapWidget() {
-    const data = contributionDays();
+  function contributionHeatmapWidget(scope) {
+    const data = contributionDays(scope);
     if (!data) return commitHeatmapWidget(); // graceful fallback
     const cells = data.days
       .map(
@@ -3559,6 +3716,17 @@
     toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
   }
 
+  function goAccount(login) {
+    if (!login) return;
+    state.selectedAccount = login;
+    window.PulseQuests?.visit("account");
+    try {
+      const target = `#/account/${encodeURIComponent(login)}`;
+      if (location.hash !== target) history.replaceState(null, "", target);
+    } catch {}
+    go("account", { keepHash: true });
+  }
+
   function goProject(name) {
     state.selectedProject = name;
     window.PulseQuests?.openProject(name);
@@ -3656,6 +3824,12 @@
     if (view === "project" && arg) {
       state.selectedProject = decodeURIComponent(arg);
       go("project", { keepHash: true });
+      return;
+    }
+    // Shareable account pages: #/account/<login>
+    if (view === "account" && arg) {
+      state.selectedAccount = decodeURIComponent(arg).replace(/^@/, "");
+      go("account", { keepHash: true });
       return;
     }
     // Legacy links (#/command, #/repos, #/ci, #/profile...) map to new views.

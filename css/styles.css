@@ -2508,3 +2508,67 @@ summary:focus-visible {
   .skip-link { transition: none; }
   html { scroll-behavior: auto !important; }
 }
+
+/* ------------------------------------------------------------------
+   "RIGHT NOW" STRIP + PER-ACCOUNT PAGES
+   ------------------------------------------------------------------ */
+.now-strip {
+  margin-top: 18px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 14px 18px;
+  border-radius: var(--radius);
+  border: 1px solid var(--stroke);
+  background: linear-gradient(120deg, color-mix(in srgb, var(--cyan) 8%, transparent), transparent 60%), var(--glass);
+}
+.now-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  color: var(--cyan);
+  white-space: nowrap;
+}
+.now-title svg { width: 14px; height: 14px; }
+.now-chips { display: flex; gap: 10px; flex-wrap: wrap; flex: 1; }
+.now-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  overflow: hidden;
+  border-radius: 999px;
+  border: 1px solid var(--stroke);
+  background: var(--glass-strong);
+  font-size: 12.5px;
+  color: var(--text);
+  white-space: nowrap;
+  max-width: 100%;
+}
+.now-chip .stat-icon { width: 15px; height: 15px; flex-shrink: 0; }
+.now-value { font-weight: 800; color: var(--text-bright); overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.now-label { color: var(--faint); font-family: var(--mono); font-size: 11px; overflow: hidden; text-overflow: ellipsis; }
+
+.account-hero { display: flex; gap: 18px; align-items: flex-start; flex-wrap: wrap; }
+.account-hero > img {
+  width: 88px;
+  height: 88px;
+  border-radius: 22px;
+  border: 1px solid var(--stroke);
+  flex-shrink: 0;
+}
+.account-hero .account-meta { min-width: 0; flex: 1; }
+.account-hero .account-name { font-size: 22px; }
+.account-hero .account-stats { margin-top: 10px; gap: 16px; font-size: 12px; }
+.account-page-btn { margin-top: 10px; width: 100%; justify-content: center; }
+
+@media (max-width: 720px) {
+  .now-strip { padding: 12px 14px; gap: 12px; }
+  .now-chips { gap: 8px; }
+  .now-chip { flex: 1 1 100%; justify-content: flex-start; }
+  .account-page-btn { width: 100%; }
+}

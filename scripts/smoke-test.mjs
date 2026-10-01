@@ -246,6 +246,26 @@ assert("sound sheet opens with both moods", /Cinematic/.test(soundSheet) && /Pho
 assert("sound sheet explains the synth approach", /generated in your browser/i.test(soundSheet));
 assert("no copyrighted audio is bundled", !/\.mp3|\.wav/i.test(doc.documentElement.innerHTML));
 
+// ---- "Right now" strip + per-account pages ----
+dom.window.location.hash = "#/overview";
+dom.window.dispatchEvent(new dom.window.HashChangeEvent("hashchange"));
+await wait(500);
+const overviewText = doc.querySelector("#stage")?.textContent || "";
+assert("Right now strip renders", /RIGHT NOW/.test(overviewText));
+assert("now strip shows the current streak", /current streak/.test(overviewText));
+assert("now strip shows the week's pushes", /pushed this week/.test(overviewText));
+
+dom.window.location.hash = "#/account/oliver4441";
+dom.window.dispatchEvent(new dom.window.HashChangeEvent("hashchange"));
+await wait(700);
+const acctText = doc.querySelector("#stage")?.textContent || "";
+assert("account page opens from a deep link", /oliver4441/.test(acctText));
+assert("account page shows its own metrics", /Contributions/.test(acctText) && /Active Days/.test(acctText));
+assert("account page shows their stack", /Stack/.test(acctText));
+assert("account page lists their own repos", doc.querySelectorAll("#stage .hl-card").length > 0);
+assert("account page can filter the dashboard", !!doc.querySelector("#accountFilterBtn"));
+assert("account page title is per-account", /oliver4441/.test(doc.title));
+
 // ---- share cards / SEO ----
 assert("canonical link is absolute", /^https:\/\/[^"]+$/.test(doc.querySelector('link[rel="canonical"]')?.getAttribute("href") || ""));
 assert("og:image points at a real card", /icons\/og\.png$/.test(doc.querySelector('meta[property="og:image"]')?.getAttribute("content") || ""));

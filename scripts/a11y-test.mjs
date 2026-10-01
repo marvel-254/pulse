@@ -68,6 +68,12 @@ window.dispatchEvent(new window.HashChangeEvent("hashchange"));
 await wait(1400);
 await audit("project");
 
+/* A per-account page. */
+window.location.hash = "#/account/oliver4441";
+window.dispatchEvent(new window.HashChangeEvent("hashchange"));
+await wait(900);
+await audit("account");
+
 window.document.querySelector("#soundToggleBtn")?.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
 await wait(100);
 window.document.querySelector("#soundToggleBtn")?.dispatchEvent(new window.MouseEvent("contextmenu", { bubbles: true }));

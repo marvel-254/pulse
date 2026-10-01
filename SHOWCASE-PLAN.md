@@ -231,7 +231,7 @@ Visitor sees fresh data even if the snapshot is hours old
       subset (badges, banners, centred blocks) now renders instead of raw markup.
 
 ### Phase 3b — gamification — ✅ SHIPPED
-- [x] `js/game.js` (Pulse Quests): 27 badges, XP, levels and 7 ranks stored
+- [x] `js/game.js` (Pulse Quests): 32 badges, XP, levels and 7 ranks stored
       entirely in `localStorage` — no account, no server, no tracking.
 - [x] Exploration badges (sections visited, projects opened, ⌘K, account filter,
       theme, refresh, suggest, share, 3D toggle, contact links) and showcase
@@ -261,7 +261,15 @@ Visitor sees fresh data even if the snapshot is hours old
 - Self-hosted fonts. ✅ Inter + JetBrains Mono variable subsets in `fonts/`
   (OFL) — zero third-party requests now.
 - Minification. ⏳ still open (Pages serves the repo as-is; needs a build step).
-- Curated case studies, a "Now" strip and share cards as images. ⏳ still open
+- "Right now" strip on Overview (streak, week's pushes, last commit, newest
+  release, latest CI run). ✅
+- Per-account pages (`#/account/<login>`) with their own calendar, metrics,
+  language mix and top work. ✅
+- Curated case studies and share cards as images. ⏳ still open — case studies
+  need your own words about each project (`data/curated.json` is designed for
+  it); image share cards need a canvas pass.
+- Quest extensions for the new surfaces (per-account pages, sharing, spotlight). ✅
+  32 badges / 615 XP.
 
 ### Phase 5b — optional
 - Embeddable widget (`<iframe src="…/#/project/stor1">`).
