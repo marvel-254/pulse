@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-01T12:39:03.607Z",
+  "generatedAt": "2026-10-01T12:47:13.811Z",
   "account": "marvel-254",
   "user": {
     "login": "marvel-254",
@@ -41,7 +41,8 @@
       "size": 19260,
       "createdAt": "2026-09-18T12:12:24Z",
       "updatedAt": "2026-10-01T12:25:14Z",
-      "pushedAt": "2026-10-01T12:25:09Z"
+      "pushedAt": "2026-10-01T12:25:09Z",
+      "readmeExcerpt": "STOR1 A modern marketplace platform for discovering, buying, and managing products in one place."
     },
     {
       "name": "forge-omix",
@@ -62,7 +63,8 @@
       "size": 51500,
       "createdAt": "2026-09-17T22:06:25Z",
       "updatedAt": "2026-09-28T20:32:38Z",
-      "pushedAt": "2026-09-28T20:32:33Z"
+      "pushedAt": "2026-09-28T20:32:33Z",
+      "readmeExcerpt": "forge@omix — Omix Builder AI-native visual software builder. Design, structure, and ship production applications from a visual canvas. Vision Omix Builder is not a mockup tool."
     },
     {
       "name": "pulse",
@@ -83,7 +85,8 @@
       "size": 137,
       "createdAt": "2026-09-27T21:20:01Z",
       "updatedAt": "2026-09-28T09:18:40Z",
-      "pushedAt": "2026-09-28T09:18:36Z"
+      "pushedAt": "2026-09-28T09:18:36Z",
+      "readmeExcerpt": "Pulse — Personal GitHub Command Center A personal, mobile-first developer operations cockpit powered by GitHub."
     },
     {
       "name": "threadmymail",
@@ -104,7 +107,8 @@
       "size": 54,
       "createdAt": "2026-09-27T08:44:58Z",
       "updatedAt": "2026-09-27T22:06:56Z",
-      "pushedAt": "2026-09-27T22:06:52Z"
+      "pushedAt": "2026-09-27T22:06:52Z",
+      "readmeExcerpt": "ThreadMyMail - AI Email Harness Personal AI-powered email management platform. BYOK (Bring Your Own Key). Host on Render. Android APK with push notifications."
     },
     {
       "name": "kericho-voting",
@@ -146,7 +150,8 @@
       "size": 65,
       "createdAt": "2026-09-16T10:57:38Z",
       "updatedAt": "2026-09-16T17:33:30Z",
-      "pushedAt": "2026-09-26T22:19:36Z"
+      "pushedAt": "2026-09-26T22:19:36Z",
+      "readmeExcerpt": "OrionOS 🐑 Lightweight, self-hosted web dashboard for monitoring AI agents. What is OrionOS?"
     },
     {
       "name": "bro",
@@ -167,7 +172,8 @@
       "size": 5214,
       "createdAt": "2026-09-16T10:37:33Z",
       "updatedAt": "2026-09-16T14:30:58Z",
-      "pushedAt": "2026-09-27T22:02:27Z"
+      "pushedAt": "2026-09-27T22:02:27Z",
+      "readmeExcerpt": "BRO — TALK. CONNECT. EXIST. BRO is a free and open-source social communication platform for Android. It is a living communication environment built around conversations, people, spaces, and presence."
     },
     {
       "name": "orion",
@@ -209,7 +215,8 @@
       "size": 5,
       "createdAt": "2026-09-06T18:43:03Z",
       "updatedAt": "2026-09-08T22:37:06Z",
-      "pushedAt": "2026-09-08T22:37:02Z"
+      "pushedAt": "2026-09-08T22:37:02Z",
+      "readmeExcerpt": "--- --- --- Hi, I'm Kipkirui Gideon Building practical, offline-first web apps for Kenyan businesses — POS, inventory, and analytics that work without a reliable connection."
     }
   ],
   "events": [

@@ -59,8 +59,8 @@ assert("stage rendered content", (doc.querySelector("#stage")?.textContent || ""
 assert("account shown in brand", /@marvel-254/.test(doc.querySelector(".brand")?.textContent || ""));
 assert("GitHub profile link present", !!doc.querySelector("#githubProfileBtn, #sidebarGithubBtn"));
 assert("no stored credential left behind", dom.window.localStorage.getItem("pulse-gh-token") === null);
-// Walk every dashboard view and confirm each one renders real content.
-const views = ["command", "repos", "activity", "ci", "community", "health", "xp", "profile"];
+// Walk every showcase view and confirm each one renders real content.
+const views = ["overview", "highlights", "numbers", "activity", "projects", "craft", "about"];
 for (const view of views) {
   dom.window.location.hash = "#/" + view;
   dom.window.dispatchEvent(new dom.window.HashChangeEvent("hashchange"));
@@ -70,6 +70,33 @@ for (const view of views) {
   const hasError = /undefined|NaN|\[object Object\]/.test(stage?.textContent || "");
   assert(`view "${view}" renders (${len} chars)`, len > 150 && !hasError);
 }
+
+// Shareable project page (#/project/<name>) — deep link + README render.
+dom.window.location.hash = "#/projects";
+dom.window.dispatchEvent(new dom.window.HashChangeEvent("hashchange"));
+await wait(600);
+const projectCards = doc.querySelectorAll("#stage [data-project]");
+assert("projects view lists cards", projectCards.length >= 3);
+const firstProject = projectCards[0]?.dataset.project;
+assert("a project card exists", !!firstProject);
+if (firstProject) {
+  dom.window.location.hash = "#/project/" + firstProject;
+  dom.window.dispatchEvent(new dom.window.HashChangeEvent("hashchange"));
+  await wait(1200);
+  const projectText = doc.querySelector("#stage")?.textContent || "";
+  assert("project page opens from deep link", new RegExp(firstProject, "i").test(projectText));
+  assert("project page shows clone URLs", /Clone/.test(projectText));
+  assert("project page has a back link", !!doc.querySelector("#projectBackBtn"));
+}
+
+// Home-view assertions for the public showcase.
+dom.window.location.hash = "#/overview";
+dom.window.dispatchEvent(new dom.window.HashChangeEvent("hashchange"));
+await wait(500);
+const home = doc.querySelector("#stage")?.textContent || "";
+assert("hero shows the account", /@marvel-254/.test(home));
+assert("hero links to the portfolio", !!doc.querySelector('.hero-actions a[href*="omixsystems"]'));
+assert("hero has a suggest action", !!doc.querySelector("#heroSuggestBtn"));
 
 // Public interactions: palette, repo selector, widget modal, suggest modal.
 const click = (sel) => doc.querySelector(sel)?.dispatchEvent(new dom.window.MouseEvent("click", { bubbles: true }));

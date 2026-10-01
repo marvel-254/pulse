@@ -10,14 +10,20 @@ source on GitHub. Nothing is stored, nothing is written, nothing private is read
 
 ## What it shows
 
-- **Overview** — identity, highlights and live status in one screen.
-- **Repositories** — every public repo with real GitHub statistics.
-- **Activity** — public event feed, workflow runs and releases.
-- **CI & Workflows** — pipeline health, best-effort live from the public API.
-- **Community** — stars, forks and reach.
-- **Health** — maintenance recency across projects.
-- **XP & Rewards** — shipping momentum, gamified for fun.
-- **Profile** — the account's GitHub profile README, rendered.
+Visitor-first sections, each with its own shareable URL:
+
+| Section | Route | What it answers |
+| --- | --- | --- |
+| **Overview** | `#/overview` | Who is this, what do they build, are they active? |
+| **Highlights** | `#/highlights` | Auto-ranked best work (recency + reach + completeness) |
+| **Numbers** | `#/numbers` | Repos, stars, forks, releases, CI pass rate, timeline |
+| **Activity** | `#/activity` | Public event feed, workflow runs, releases |
+| **Projects** | `#/projects` | Every repo, grouped Active / Quiet / Archived |
+| **How I build** | `#/craft` | Pipeline health, stack and release cadence |
+| **About** | `#/about` | Profile README, links and contact |
+| **Project page** | `#/project/<name>` | One page per project: README, stats, clone URLs, CI |
+
+Highlights are derived automatically — no hand-curated list to go stale.
 
 ## How the data works
 
@@ -71,9 +77,15 @@ existing snapshot rather than publishing an empty one.
 
 ## Roadmap
 
-The current UI still carries its "personal cockpit" navigation. The plan to
-restructure it into a visitor-first public showcase — sections, data sources,
-phases and decisions — is in [`SHOWCASE-PLAN.md`](SHOWCASE-PLAN.md).
+The visitor-first restructure (Phase 1) has shipped. Remaining work — a 52-week
+contribution heatmap, authored PR/issue counts, language statistics by bytes,
+Open Graph share cards — is tracked in [`SHOWCASE-PLAN.md`](SHOWCASE-PLAN.md).
+
+## Smoke test
+
+`npm run smoke` boots the real page in jsdom against the real snapshot, walks
+every section, opens the project page, palette and suggest modal, and asserts
+that no login/token UI exists and no uncaught errors occur.
 
 ## Tech
 

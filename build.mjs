@@ -70,6 +70,31 @@ const EVENT_VERBS = {
   PublicEvent: () => ["made public", ""],
 };
 
+/** Reduce a README to a short plain-text pitch for highlight cards. */
+function readmeExcerpt(markdown, limit = 220) {
+  if (!markdown) return "";
+  const text = markdown
+    .replace(/^\s*<!--[\s\S]*?-->\s*$/gm, " ") // html comments
+    .replace(/```[\s\S]*?```/g, " ") // code blocks
+    .replace(/<[^>]+>/g, " ") // html tags
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, " ") // images
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1") // links -> text
+    .replace(/^\s*#{1,6}\s*/gm, " ") // headings
+    .replace(/^\s*[-*+]\s+/gm, " ") // bullets
+    .replace(/[`*_>|]/g, " ") // markdown punctuation
+    .replace(/^\s*(badge|shields|\[!\[)[^\n]*$/gim, " ")
+    .replace(/https?:\/\/\S+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  const sentences = text.split(/(?<=[.!?])\s+/);
+  let out = "";
+  for (const s of sentences) {
+    if ((out + " " + s).trim().length > limit) break;
+    out = (out + " " + s).trim();
+  }
+  return (out || text.slice(0, limit)).trim();
+}
+
 function enrichRepo(r) {
   return {
     name: r.name,
@@ -152,10 +177,11 @@ const deepRepos = repos.slice(0, DEEP);
 const extras = [];
 for (const repo of deepRepos) {
   const full = repo.fullName;
-  const [releasesRaw, runsRaw, workflowsRaw] = await Promise.all([
+  const [releasesRaw, runsRaw, workflowsRaw, readmeRaw] = await Promise.all([
     api(`/repos/${full}/releases?per_page=5`),
     api(`/repos/${full}/actions/runs?per_page=10`),
     TOKEN ? api(`/repos/${full}/actions/workflows?per_page=20`) : Promise.resolve(null),
+    api(`/repos/${full}/readme`),
   ]);
 
   const releases = (Array.isArray(releasesRaw) ? releasesRaw : []).map((rel) => ({
@@ -196,6 +222,13 @@ for (const repo of deepRepos) {
   }));
 
   extras.push({ fullName: full, releases, runs, workflows });
+
+  // Attach a plain-text README excerpt to the repo itself (used by Highlights).
+  if (readmeRaw?.content) {
+    repo.readmeExcerpt = readmeExcerpt(
+      Buffer.from(readmeRaw.content, "base64").toString("utf8")
+    );
+  }
 }
 
 const profile = profileReadme?.content

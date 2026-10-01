@@ -61,6 +61,7 @@
     langDistribution: true,
     recentActivity: true,
     topRepos: true,
+    highlights: true,
   };
 
   const getSavedWidgets = () => {
@@ -75,7 +76,7 @@
   const state = {
     snapshot: null,
     selectedRepo: "all",
-    view: "command",
+    view: "overview",
     api: { rateLimit: 60, rateRemaining: null },
     theme: localStorage.getItem("pulse-theme") || "dark",
     repoSearchQuery: "",
@@ -87,6 +88,8 @@
     paletteSelectedIndex: 0,
     filteredPaletteItems: [],
     ciFilter: "all",
+    selectedProject: null,
+    readmeCache: {},
     live: { lastFetchAt: null, isPolling: false, error: null },
     _pollTimer: null,
   };
@@ -140,6 +143,8 @@
 
   const fmtNum = (n) => (n == null ? "0" : Number(n).toLocaleString());
 
+  const plural = (n, word) => `${fmtNum(n)} ${word}${Number(n) === 1 ? "" : "s"}`;
+
   const fmtAgo = (iso) => {
     if (!iso) return "—";
     const ms = Date.now() - new Date(iso).getTime();
@@ -186,17 +191,82 @@
     return list.filter((r) => r.name === state.selectedRepo);
   };
 
+  /* ---- PUBLIC SHOWCASE HELPERS ---- */
+  const displayConfig = () => (window.PULSE_CONFIG && window.PULSE_CONFIG.display) || {};
+
+  const displayLinks = () =>
+    (displayConfig().links || []).filter((l) => l && l.label && l.url);
+
+  const profileUrl = () => {
+    const login = ghAccount();
+    return login ? `https://github.com/${encodeURIComponent(login)}` : "https://github.com";
+  };
+
+  const daysSince = (iso) => (iso ? Math.floor((Date.now() - new Date(iso).getTime()) / 864e5) : Infinity);
+
+  const accountYears = () => {
+    const created = state.snapshot?.user?.createdAt;
+    if (!created) return null;
+    return Math.max(0, Math.round((Date.now() - new Date(created).getTime()) / (365.25 * 864e5) * 10) / 10);
+  };
+
+  // Momentum is derived from public push timestamps (works without any API auth).
+  const momentum = () => {
+    const repos = repoList();
+    return {
+      week: repos.filter((r) => daysSince(r.pushedAt) <= 7).length,
+      month: repos.filter((r) => daysSince(r.pushedAt) <= 30).length,
+      latest: repos[0] || null,
+    };
+  };
+
+  const repoStatus = (r) => (r.archived ? "archived" : daysSince(r.pushedAt) <= 90 ? "active" : "quiet");
+
+  /* Auto-derived highlights — no hand-written content required.
+     Recent work first, then reach (stars/forks), then how complete the repo
+     looks (description, live site, topics, license). */
+  const featuredRepos = (limit = 6) => {
+    const score = (r) => {
+      const age = daysSince(r.pushedAt);
+      const recency = age <= 1 ? 60 : age <= 7 ? 45 : age <= 30 ? 30 : age <= 90 ? 15 : 4;
+      return (
+        recency +
+        (r.stars || 0) * 12 +
+        (r.forks || 0) * 6 +
+        (r.description ? 6 : 0) +
+        (r.homepage ? 6 : 0) +
+        ((r.topics || []).length ? 4 : 0) +
+        (r.license ? 2 : 0) -
+        (r.archived ? 40 : 0)
+      );
+    };
+    return repoList().slice().sort((a, b) => score(b) - score(a)).slice(0, limit);
+  };
+
+  const extrasFor = (fullName) => (state.snapshot?.extras || []).find((x) => x.fullName === fullName) || null;
+
+  const allReleases = () =>
+    (state.snapshot?.extras || [])
+      .flatMap((x) => (x.releases || []).map((r) => ({ ...r, repo: x.fullName })))
+      .sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+
+  const allWorkflowRuns = () =>
+    (state.snapshot?.extras || []).flatMap((x) => (x.runs || []).map((r) => ({ ...r, repo: x.fullName })));
+
   /* ---- navigation items ---- */
+  /* ---- INFORMATION ARCHITECTURE (visitor-first) ----
+     Overview -> Highlights -> Numbers -> Activity -> Projects -> How I build -> About
+     Plus a shareable per-project route: #/project/<name> */
   const NAV = [
-    { id: "command", label: "COMMAND", ic: ICONS.command, badge: () => filteredRepos().length },
-    { id: "repos", label: "REPOSITORIES", ic: ICONS.repos, badge: () => repoList().length },
+    { id: "overview", label: "OVERVIEW", ic: ICONS.command, badge: () => null },
+    { id: "highlights", label: "HIGHLIGHTS", ic: ICONS.zap, badge: () => featuredRepos().length || null },
+    { id: "numbers", label: "NUMBERS", ic: ICONS.award, badge: () => null },
     { id: "activity", label: "ACTIVITY", ic: ICONS.activity, badge: () => null },
-    { id: "ci", label: "CI & PIPELINES", ic: ICONS.pipeline, badge: () => "OK" },
-    { id: "community", label: "COMMUNITY", ic: ICONS.community, badge: () => state.snapshot?.totalStars || null },
-    { id: "health", label: "HEALTH", ic: ICONS.health, badge: () => null },
-    { id: "xp", label: "XP & REWARDS", ic: ICONS.xp, badge: () => "LVL" },
-    { id: "profile", label: "PROFILE", ic: ICONS.user, badge: () => null },
+    { id: "projects", label: "PROJECTS", ic: ICONS.repos, badge: () => repoList().length },
+    { id: "craft", label: "HOW I BUILD", ic: ICONS.pipeline, badge: () => null },
+    { id: "about", label: "ABOUT", ic: ICONS.user, badge: () => null },
   ];
+  const VIEW_IDS = [...NAV.map((n) => n.id), "project"];
 
   /* ---- THEME HANDLING ---- */
   function applyTheme(theme) {
@@ -261,7 +331,7 @@
 
     $('#brandBtn')?.addEventListener("click", () => {
       state.selectedRepo = "all";
-      go("command");
+      go("overview");
     });
     $('#topbarSearchTrigger')?.addEventListener("click", openCommandPalette);
     $('#themeToggleBtn')?.addEventListener("click", toggleTheme);
@@ -337,8 +407,8 @@
     if (!mobilenav) return;
 
     const m = [
-      { id: "command", label: "HOME", svg: ICONS.command },
-      { id: "repos", label: "REPOS", svg: ICONS.repos },
+      { id: "overview", label: "HOME", svg: ICONS.command },
+      { id: "projects", label: "PROJECTS", svg: ICONS.repos },
       { id: "activity", label: "ACTIVITY", svg: ICONS.activity },
       { id: "palette", label: "SEARCH", svg: ICONS.search },
       { id: "more", label: "MORE", svg: ICONS.layers },
@@ -518,127 +588,6 @@
     window.open(`https://github.com/${encodeURIComponent(login)}`, "_blank", "noopener,noreferrer");
   }
 
-  /* ---- REPO INSPECTOR MODAL ---- */
-  function openInspector(repoName) {
-    const repo = repoList().find((r) => r.name === repoName);
-    if (!repo) return;
-
-    const overlay = $('#inspectorOverlay');
-    const sheet = $('#inspectorSheet');
-    const langColor = getLangColor(repo.language);
-    const httpsClone = `https://github.com/${repo.fullName}.git`;
-    const sshClone = `git@github.com:${repo.fullName}.git`;
-
-    sheet.innerHTML = `
-      <div class="sheet-head">
-        <div>
-          <div class="inspector-title">${esc(repo.name)}</div>
-          <div class="sheet-sub">${esc(repo.fullName)}</div>
-        </div>
-        <button class="sheet-close" id="closeInspectorBtn">✕</button>
-      </div>
-
-      <div class="inspector-tags" style="margin-bottom:16px">
-        <span class="status ${repo.archived ? "warn" : "ok"}">
-          <span class="sdot"></span>
-          ${repo.archived ? "ARCHIVED" : "ACTIVE"}
-        </span>
-        <span class="status ok"><span class="sdot"></span>PUBLIC</span>
-        ${repo.language ? `<span class="lang-tag" style="background:${langColor}22;color:${langColor}">${esc(repo.language)}</span>` : ""}
-        <span class="priv-tag" style="display:inline-flex;align-items:center;gap:4px">
-          <span class="stat-icon" style="width:12px;height:12px">${ICONS.branch}</span>
-          ${esc(repo.defaultBranch || "main")}
-        </span>
-        ${repo.license ? `<span class="priv-tag" style="display:inline-flex;align-items:center;gap:4px"><span class="stat-icon" style="width:12px;height:12px">${ICONS.shield}</span>${esc(repo.license)}</span>` : ""}
-        ${repo.homepage ? `<a class="priv-tag" style="display:inline-flex;align-items:center;gap:4px" href="${esc(repo.homepage)}" target="_blank" rel="noopener noreferrer"><span class="stat-icon" style="width:12px;height:12px">${ICONS.globe}</span>Live site ↗</a>` : ""}
-      </div>
-
-      <p style="font-size:14px;color:var(--text);margin-bottom:18px;line-height:1.5">
-        ${esc(repo.description || "No repository description provided.")}
-      </p>
-
-      <div class="inspector-grid">
-        <div class="inspector-stat">
-          <div class="label">Stars</div>
-          <div class="val" style="color:var(--amber)">
-            <span style="color:var(--amber)">${ICONS.star}</span>
-            <span>${fmtNum(repo.stars)}</span>
-          </div>
-        </div>
-        <div class="inspector-stat">
-          <div class="label">Forks</div>
-          <div class="val" style="color:var(--violet)">
-            <span style="color:var(--violet)">${ICONS.fork}</span>
-            <span>${fmtNum(repo.forks)}</span>
-          </div>
-        </div>
-        <div class="inspector-stat">
-          <div class="label">Open Issues</div>
-          <div class="val" style="color:var(--cyan)">
-            <span style="color:var(--cyan)">${ICONS.issue}</span>
-            <span>${fmtNum(repo.openIssues)}</span>
-          </div>
-        </div>
-        <div class="inspector-stat">
-          <div class="label">Watchers</div>
-          <div class="val" style="color:var(--green)">
-            <span style="color:var(--green)">${ICONS.eye}</span>
-            <span>${fmtNum(repo.watchers)}</span>
-          </div>
-        </div>
-      </div>
-
-      <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--faint);margin-bottom:8px">Clone via HTTPS</div>
-      <div class="clone-box">
-        <code>${esc(httpsClone)}</code>
-        <button class="btn btn-sm" id="copyHttpsBtn">${ICONS.copy} Copy</button>
-      </div>
-
-      <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--faint);margin-bottom:8px">Clone via SSH</div>
-      <div class="clone-box">
-        <code>${esc(sshClone)}</code>
-        <button class="btn btn-sm" id="copySshBtn">${ICONS.copy} Copy</button>
-      </div>
-
-      <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">
-        <button class="btn btn-primary" id="focusRepoBtn">
-          ${ICONS.command} Focus Command Center
-        </button>
-        <a class="btn" href="${esc(repo.htmlUrl)}" target="_blank" rel="noopener noreferrer">
-          ${ICONS.externalLink} View on GitHub
-        </a>
-        <a class="btn" href="${esc(repo.htmlUrl)}/issues" target="_blank" rel="noopener noreferrer">
-          ${ICONS.issue} Issues (${repo.openIssues})
-        </a>
-      </div>`;
-
-    $('#closeInspectorBtn')?.addEventListener("click", () => {
-      overlay.classList.remove("open");
-      overlay.setAttribute("aria-hidden", "true");
-    });
-
-    $('#copyHttpsBtn')?.addEventListener("click", () => {
-      navigator.clipboard.writeText(httpsClone);
-      toast("Copied HTTPS clone URL");
-    });
-
-    $('#copySshBtn')?.addEventListener("click", () => {
-      navigator.clipboard.writeText(sshClone);
-      toast("Copied SSH clone URL");
-    });
-
-    $('#focusRepoBtn')?.addEventListener("click", () => {
-      state.selectedRepo = repo.name;
-      overlay.classList.remove("open");
-      overlay.setAttribute("aria-hidden", "true");
-      go("command");
-      toast(`Focused on ${repo.name}`);
-    });
-
-    overlay.classList.add("open");
-    overlay.setAttribute("aria-hidden", "false");
-  }
-
   /* ---- COMMAND PALETTE (CMD+K) ---- */
   function openCommandPalette() {
     const overlay = $('#paletteOverlay');
@@ -703,7 +652,7 @@
           icon: ICONS.command,
           action: () => {
             state.selectedRepo = "all";
-            go("command");
+            go("overview");
           },
         },
         {
@@ -734,7 +683,7 @@
             title: r.name,
             sub: `${r.language || "code"} · ★${r.stars}`,
             icon: ICONS.repos,
-            action: () => openInspector(r.name),
+            action: () => goProject(r.name),
           });
         }
       });
@@ -825,12 +774,13 @@
       { key: "issues", label: "Open Issues Metric" },
       { key: "active", label: "Active Repositories (7d)" },
       { key: "primaryLang", label: "Primary Language Card" },
-      { key: "privateCount", label: "Private Repositories Count" },
+      { key: "privateCount", label: "Followers Metric" },
       { key: "pulseChart", label: "Commit Pulse Bar Chart" },
       { key: "heatmap", label: "12-Week Activity Heatmap" },
       { key: "langDistribution", label: "Language Breakdown Stack" },
       { key: "recentActivity", label: "Recent Activity Feed" },
       { key: "topRepos", label: "Top Repositories Leaderboard" },
+      { key: "highlights", label: "Auto Highlights (Overview)" },
     ];
 
     sheet.innerHTML = `
@@ -1070,56 +1020,65 @@
     return html;
   }
 
-  function renderProfile() {
+  /* ---- 8. ABOUT (identity, links, profile README, timeline) ---- */
+  function renderAbout() {
     const s = state.snapshot || {};
     const u = s.user || {};
     const p = s.profile;
-    const has = p && p.raw;
+    const login = u.login || ghAccount();
+    const links = displayLinks();
+    const repos = repoList();
+    const years = accountYears();
 
-    if (!has) {
-      const editPath = `${u.login || "yourname"}/${u.login || "yourname"}`;
-      return section(
-        "Profile",
-        "Your GitHub profile README",
-        pill(),
-        `<div class="bento">
-          <div class="card col2">
-            <div class="card-head">
-              <div class="card-title"><span class="stat-icon" style="color:var(--cyan)">${ICONS.readme}</span> No Profile README Yet</div>
-            </div>
-            <div style="font-size:14px;color:var(--text);line-height:1.7">
-              <p><b>@${esc(u.login || "you")}</b> doesn't have a profile README yet. Create a repository named <code>${esc(editPath)}</code> with a <code>README.md</code> to customize your GitHub profile.</p>
-              <p>Once it exists, Pulse will render it here — including shields.io badges, github-readme-stats cards and Capsule Render banners.</p>
-            </div>
-            <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
-              <a class="btn btn-primary" href="https://github.com/new" target="_blank" rel="noopener noreferrer">${ICONS.externalLink} Create Profile Repo</a>
-              <button class="btn" id="refreshProfileBtn">${ICONS.refresh} Sync README</button>
-            </div>
+    const contactRows = [
+      `<a class="btn btn-primary" href="${profileUrl()}" target="_blank" rel="noopener noreferrer">${ICONS.github} GitHub</a>`,
+      ...links.map(
+        (l) => `<a class="btn" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${ICONS.externalLink} ${esc(l.label)}</a>`
+      ),
+      u.blog ? `<a class="btn" href="${esc(u.blog.startsWith("http") ? u.blog : "https://" + u.blog)}" target="_blank" rel="noopener noreferrer">${ICONS.globe} Website</a>` : "",
+      `<button class="btn" id="refreshProfileBtn">${ICONS.refresh} Sync README</button>`,
+    ].filter(Boolean).join("");
+
+    const identityCard = `
+      <div class="card col2 profile-card">
+        <div class="profile-head">
+          ${u.avatar ? `<img class="profile-avatar" src="${esc(u.avatar)}" alt="" />` : ""}
+          <div>
+            <div class="profile-name">${esc(u.name || login || "")}</div>
+            <div class="profile-login">@${esc(login || "")}${u.location ? " · " + esc(u.location) : ""}${u.followers != null ? " · " + plural(u.followers, "follower") : ""}</div>
           </div>
-        </div>`
-      );
-    }
+        </div>
+        ${u.bio ? `<p class="about-bio">${esc(u.bio)}</p>` : ""}
+        <div class="hero-actions" style="margin-top:14px">${contactRows}</div>
+        <div class="about-facts">
+          <div><span>Public repos</span><b>${fmtNum(repos.length)}</b></div>
+          <div><span>Stars earned</span><b>${fmtNum(repos.reduce((a, r) => a + r.stars, 0))}</b></div>
+          <div><span>On GitHub</span><b>${years != null ? years + "y" : "—"}</b></div>
+          <div><span>Latest push</span><b>${repos[0] ? fmtAgo(repos[0].pushedAt) : "—"}</b></div>
+        </div>
+      </div>`;
+
+    const readmeCard = `
+      <div class="card col2">
+        <div class="card-head">
+          <div class="card-title"><span class="stat-icon" style="color:var(--cyan)">${ICONS.readme}</span> Profile README</div>
+          ${p?.url ? `<a class="btn btn-sm" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer">${ICONS.repos} Source repo</a>` : ""}
+        </div>
+        ${
+          p && p.raw
+            ? `<div class="md-body">${renderMarkdown(p.raw)}</div>`
+            : `<div style="font-size:14px;color:var(--muted);line-height:1.7">
+                 <p><b>@${esc(login || "this account")}</b> has no profile README yet, so GitHub's own profile page is the source of truth.</p>
+                 <p>Create a repository named <code>${esc(login || "login")}/${esc(login || "login")}</code> with a <code>README.md</code> and it will be rendered here automatically.</p>
+               </div>`
+        }
+      </div>`;
 
     return section(
-      "Profile",
-      `${esc(u.login || "")} · GitHub profile README`,
-      pill(),
-      `<div class="bento">
-        <div class="card col2 profile-card">
-          <div class="profile-head">
-            ${u.avatar ? `<img class="profile-avatar" src="${esc(u.avatar)}" alt="" />` : ""}
-            <div>
-              <div class="profile-name">${esc(u.name || u.login || "")}</div>
-              <div class="profile-login">@${esc(u.login || "")} · ${fmtNum(u.followers || 0)} followers</div>
-            </div>
-            <div style="margin-left:auto;display:flex;gap:8px">
-              <button class="btn btn-sm" id="refreshProfileBtn">${ICONS.refresh} Sync</button>
-              <a class="btn btn-sm" href="${esc(p.url || "")}" target="_blank" rel="noopener noreferrer">${ICONS.repos} Repo</a>
-            </div>
-          </div>
-          <div class="md-body">${renderMarkdown(p.raw)}</div>
-        </div>
-      </div>`
+      "About",
+      `${esc(u.name || login || "")} · public GitHub profile`,
+      `<a class="btn btn-sm" href="${profileUrl()}" target="_blank" rel="noopener noreferrer">${ICONS.github} Follow on GitHub</a>`,
+      `<div class="bento">${identityCard}${readmeCard}</div>`
     );
   }
 
@@ -1131,23 +1090,39 @@
     const stage = $('#stage');
 
     const views = {
-      command: renderCommand,
-      repos: renderRepos,
+      overview: renderOverview,
+      highlights: renderHighlights,
+      numbers: renderNumbers,
       activity: renderActivity,
-      ci: renderCI,
-      community: renderCommunity,
-      health: renderHealth,
-      xp: renderXP,
-      profile: renderProfile,
+      projects: renderProjects,
+      project: renderProject,
+      craft: renderCraft,
+      about: renderAbout,
     };
 
-    const fn = views[state.view] || renderCommand;
+    const fn = views[state.view] || renderOverview;
     stage.innerHTML = '<div class="loading"><div class="pulse-ring"></div><span>SYNCHRONIZING</span></div>';
     requestAnimationFrame(() => {
       stage.innerHTML = fn();
       bindStage(stage);
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function bindProjectLinks(root) {
+    $$('[data-project]', root || document).forEach((card) =>
+      card.addEventListener("click", (e) => {
+        if (e.target.closest("a")) return; // let real links win
+        goProject(card.dataset.project);
+      })
+    );
+  }
+
+  function updateReposGrid() {
+    const container = $("#reposGridContainer");
+    if (!container) return;
+    container.innerHTML = getFilteredReposHtml();
+    bindProjectLinks(container);
   }
 
   function bindStage(stage) {
@@ -1158,11 +1133,25 @@
       })
     );
 
-    $$('#stage [data-inspect]').forEach((card) =>
-      card.addEventListener("click", () => {
-        openInspector(card.dataset.inspect);
-      })
+    bindProjectLinks(stage);
+
+    $('#heroSuggestBtn')?.addEventListener("click", () => openSuggestModal());
+    $$('#stage [data-nav-jump]').forEach((b) =>
+      b.addEventListener("click", () => go(b.dataset.navJump))
     );
+    $('#projectBackBtn')?.addEventListener("click", () => go("projects"));
+    $('#copyHttpsBtn')?.addEventListener("click", () => {
+      const repo = repoList().find((r) => r.name === state.selectedProject);
+      if (!repo) return;
+      navigator.clipboard.writeText(`https://github.com/${repo.fullName}.git`);
+      toast("Copied HTTPS clone URL");
+    });
+    $('#copySshBtn')?.addEventListener("click", () => {
+      const repo = repoList().find((r) => r.name === state.selectedProject);
+      if (!repo) return;
+      navigator.clipboard.writeText(`git@github.com:${repo.fullName}.git`);
+      toast("Copied SSH clone URL");
+    });
 
     $('#customizeWidgetsTrigger')?.addEventListener("click", openWidgetModal);
     $('#exportSummaryTrigger')?.addEventListener("click", copyMarkdownSummary);
@@ -1212,14 +1201,16 @@
     });
   }
 
-  function go(view) {
+  function go(view, opts = {}) {
     state.view = view;
     // Keep the address bar in sync so any view is directly linkable.
-    try {
-      const target = "#/" + view;
-      if (location.hash !== target) history.replaceState(null, "", target);
-    } catch {}
-    if (view === "ci") {
+    if (!opts.keepHash) {
+      try {
+        const target = "#/" + view;
+        if (location.hash !== target) history.replaceState(null, "", target);
+      } catch {}
+    }
+    if (view === "craft" || view === "project") {
       if (!state._pollTimer) scheduleWorkflowPoll();
     } else {
       if (state._pollTimer) stopWorkflowPoll();
@@ -1245,129 +1236,243 @@
       <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </button>`;
 
-  /* ---- 1. COMMAND VIEW ---- */
-  function renderCommand() {
-    const repos = filteredRepos();
+  /* ---- HERO: identity, links and live public status ---- */
+  function heroPanel() {
+    const u = state.snapshot?.user || {};
+    const repos = repoList();
+    const m = momentum();
+    const links = displayLinks();
+    const login = u.login || ghAccount();
+    const joinedYear = u.createdAt ? new Date(u.createdAt).getFullYear() : null;
+    const chips = [
+      u.location ? `<span class="chip">${ICONS.globe}${esc(u.location)}</span>` : "",
+      u.company ? `<span class="chip">${ICONS.layers}${esc(u.company)}</span>` : "",
+      joinedYear ? `<span class="chip">${ICONS.award}On GitHub since ${joinedYear}</span>` : "",
+      u.followers != null ? `<span class="chip">${ICONS.community}${plural(u.followers, "follower")}</span>` : "",
+      `<span class="chip">${ICONS.repos}${repos.length} public repos</span>`,
+    ].join("");
+
+    const actions = [
+      `<a class="btn btn-primary" href="${profileUrl()}" target="_blank" rel="noopener noreferrer">${ICONS.github} GitHub Profile</a>`,
+      ...links.map(
+        (l) => `<a class="btn" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${ICONS.externalLink} ${esc(l.label)}</a>`
+      ),
+      `<button class="btn" id="heroSuggestBtn">${ICONS.issue} Suggest Something</button>`,
+    ].join("");
+
+    return `
+      <div class="card hero">
+        <div class="hero-main">
+          <img class="hero-avatar" src="${esc(u.avatar || "icons/icon.svg")}" alt="${esc(login || "GitHub")}" />
+          <div class="hero-id">
+            <div class="hero-name">${esc(u.name || login || "GitHub account")}</div>
+            <a class="hero-handle" href="${profileUrl()}" target="_blank" rel="noopener noreferrer">@${esc(login || "github")}</a>
+            <p class="hero-bio">${esc(u.bio || displayConfig().tagline || "Public repositories, activity and release history — read straight from GitHub, no login required.")}</p>
+            <div class="hero-chips">${chips}</div>
+          </div>
+        </div>
+        <div class="hero-side">
+          <div class="hero-live">
+            <span class="status ok"><span class="sdot"></span>${m.latest ? "LAST PUSH " + fmtAgo(m.latest.pushedAt).toUpperCase() : "AWAITING DATA"}</span>
+            <div class="hero-live-sub">${m.latest ? `Most recently active: <b>${esc(m.latest.name)}</b>` : "Repository data is still loading"}</div>
+            <div class="hero-momentum">
+              <span><b>${fmtNum(m.week)}</b> repos active this week</span>
+              <span><b>${fmtNum(m.month)}</b> this month</span>
+            </div>
+          </div>
+          <div class="hero-actions">${actions}</div>
+        </div>
+      </div>`;
+  }
+
+  /* ---- HIGHLIGHT CARD (auto-derived, no hand-written content needed) ---- */
+  function highlightCard(r, index) {
+    const langCol = getLangColor(r.language);
+    const st = repoStatus(r);
+    const summary = (r.readmeExcerpt || r.description || "No description yet — open the project for the full picture.").slice(0, 240);
+    const topics = (r.topics || []).slice(0, 3);
+    return `
+      <div class="card hl-card" data-project="${esc(r.name)}" title="Open ${esc(r.name)}">
+        <div class="hl-head">
+          <span class="hl-rank">${String(index + 1).padStart(2, "0")}</span>
+          <span class="status ${st === "active" ? "ok" : st === "archived" ? "warn" : "run"}"><span class="sdot"></span>${st.toUpperCase()}</span>
+        </div>
+        <div class="hl-title">${esc(r.name)}</div>
+        <p class="hl-pitch">${esc(summary)}</p>
+        <div class="hl-stack">
+          ${r.language ? `<span class="lang-tag" style="background:${langCol}22;color:${langCol}">${esc(r.language)}</span>` : ""}
+          ${topics.map((t) => `<span class="priv-tag">${esc(t)}</span>`).join("")}
+        </div>
+        <div class="hl-foot">
+          <span><span class="stat-icon" style="color:var(--amber)">${ICONS.star}</span>${fmtNum(r.stars)}</span>
+          <span><span class="stat-icon" style="color:var(--violet)">${ICONS.fork}</span>${fmtNum(r.forks)}</span>
+          <span><span class="stat-icon" style="color:var(--cyan)">${ICONS.gitCommit}</span>${fmtAgo(r.pushedAt)}</span>
+          <span class="hl-open">Open project →</span>
+        </div>
+      </div>`;
+  }
+
+  function statCard(label, value, sub, color, icon) {
+    return `
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title"><span class="stat-icon" style="color:${color}">${icon}</span> ${label}</div>
+        </div>
+        <div class="metric" style="color:${color}">${value}</div>
+        <div class="metric-sub">${sub}</div>
+      </div>`;
+  }
+
+  /* ---- 1. OVERVIEW ---- */
+  function renderOverview() {
+    const repos = repoList();
+    const u = state.snapshot?.user || {};
+    const m = momentum();
+    const stars = repos.reduce((a, r) => a + r.stars, 0);
+    const forks = repos.reduce((a, r) => a + r.forks, 0);
+    const languages = new Set(repos.filter((r) => r.language).map((r) => r.language));
+    const topLang = Object.entries(
+      repos.reduce((acc, r) => (r.language ? { ...acc, [r.language]: (acc[r.language] || 0) + 1 } : acc), {})
+    ).sort((a, b) => b[1] - a[1])[0]?.[0];
+    const w = state.widgets;
+    const featured = featuredRepos(3);
+
+    const actions = `
+      ${pill()}
+      <button class="btn btn-sm" id="customizeWidgetsTrigger" title="Customize cards">${ICONS.settings} Widgets</button>
+      <button class="btn btn-sm" id="exportSummaryTrigger" title="Copy a markdown summary">${ICONS.share} Share</button>`;
+
+    return section(
+      "Overview",
+      `Public work from @${ghAccount() || "GitHub"} · ${repos.length} repositories`,
+      actions,
+      `${heroPanel()}
+       <div class="bento" style="margin-top:18px">
+         ${statCard("Public Repos", fmtNum(repos.length), `${languages.size} languages`, "var(--cyan)", ICONS.repos)}
+         ${statCard("Stars", fmtNum(stars), "developer appreciation", "var(--amber)", ICONS.star)}
+         ${statCard("Forks", fmtNum(forks), "community reuse", "var(--violet)", ICONS.fork)}
+         ${statCard("Active This Week", fmtNum(m.week), m.month ? `${m.month} in the last 30 days` : "no recent pushes", "var(--green)", ICONS.zap)}
+         ${statCard("Primary Stack", esc(topLang || "—"), "most used language", "var(--blue)", ICONS.code)}
+         ${statCard("Followers", u.followers != null ? fmtNum(u.followers) : "—", u.following != null ? `following ${fmtNum(u.following)}` : "public profile", "var(--red)", ICONS.community)}
+       </div>
+       <div style="height:18px"></div>
+       <div class="bento">
+         <div class="card col2 overview-featured">
+           <div class="card-head">
+             <div class="card-title"><span class="stat-icon" style="color:var(--cyan)">${ICONS.zap}</span> What I've Been Building</div>
+             <button class="btn btn-sm" data-nav-jump="highlights">All highlights →</button>
+           </div>
+           <div class="hl-grid compact">${featured.map((r, i) => highlightCard(r, i)).join("")}</div>
+         </div>
+         ${w.recentActivity ? recentActivityWidget() : ""}
+         ${w.pulseChart ? commitPulseWidget() : ""}
+         ${w.langDistribution ? languageDistributionWidget() : ""}
+         ${w.topRepos ? topRepositoriesWidget() : ""}
+       </div>`
+    );
+  }
+
+  /* ---- 2. HIGHLIGHTS ---- */
+  function renderHighlights() {
+    const featured = featuredRepos(6);
+    return section(
+      "Highlights",
+      "The work that best represents what I build",
+      pill(),
+      `<div class="callout-box" style="margin-bottom:16px">
+        These are derived automatically from public GitHub signals — recency of work,
+        reach (stars/forks) and how complete each repository looks (description, live
+        site, topics, license). No hand-curated list to go stale.
+      </div>
+      <div class="hl-grid">
+        ${featured.map((r, i) => highlightCard(r, i)).join("") ||
+          '<div class="card" style="padding:32px;text-align:center;color:var(--faint)">No public repositories to highlight yet.</div>'}
+      </div>`
+    );
+  }
+
+  /* ---- 3. NUMBERS ---- */
+  function renderNumbers() {
+    const repos = repoList();
+    const u = state.snapshot?.user || {};
+    const releases = allReleases();
+    const runs = allWorkflowRuns();
+    const completed = runs.filter((r) => r.status === "completed");
+    const passed = completed.filter((r) => r.conclusion === "success");
+    const passRate = completed.length ? Math.round((passed.length / completed.length) * 100) : null;
     const stars = repos.reduce((a, r) => a + r.stars, 0);
     const forks = repos.reduce((a, r) => a + r.forks, 0);
     const issues = repos.reduce((a, r) => a + r.openIssues, 0);
-    const followers = state.snapshot?.user?.followers;
+    const years = accountYears();
 
-    const langs = {};
-    repos.forEach((r) => {
-      if (r.language) langs[r.language] = (langs[r.language] || 0) + 1;
-    });
-    const topLang = Object.entries(langs).sort((a, b) => b[1] - a[1])[0]?.[0] || "—";
-    const active = repos.filter((r) => Date.now() - new Date(r.pushedAt).getTime() < 7 * 864e5).length;
+    const leaderboard = repos
+      .slice()
+      .sort((a, b) => b.stars - a.stars || new Date(b.pushedAt) - new Date(a.pushedAt))
+      .slice(0, 6)
+      .map(
+        (r, i) => `
+      <div class="mini-row" data-project="${esc(r.name)}" title="Open ${esc(r.name)}">
+        <div class="av" style="background:linear-gradient(135deg,var(--amber),var(--violet))">${i + 1}</div>
+        <div class="meta">
+          <div class="t">${esc(r.name)}</div>
+          <div class="s">${esc(r.language || "stack")} · ${fmtNum(r.forks)} forks · ${fmtAgo(r.pushedAt)}</div>
+        </div>
+        <div class="r" style="display:flex;align-items:center;gap:3px;color:var(--amber)">
+          <span class="stat-icon" style="color:var(--amber)">${ICONS.star}</span>
+          <span>${fmtNum(r.stars)}</span>
+        </div>
+      </div>`
+      )
+      .join("");
 
-    const w = state.widgets;
-
-    // Header actions
-    const actions = `
-      ${pill()}
-      <button class="btn btn-sm" id="customizeWidgetsTrigger" title="Customize Cards">
-        ${ICONS.settings} Widgets
-      </button>
-      <button class="btn btn-sm" id="exportSummaryTrigger" title="Export Markdown">
-        ${ICONS.share} Share
-      </button>`;
-
-    // Metric cards
-    let metricCardsHtml = "";
-    if (w.stars) {
-      metricCardsHtml += `
-        <div class="card">
-          <div class="glow" style="background:var(--cyan)"></div>
-          <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--cyan)">${ICONS.star}</span>
-              Total Stars
-            </div>
-          </div>
-          <div class="metric" style="color:var(--cyan)">${fmtNum(stars)}</div>
-          <div class="metric-sub">across ${repos.length} repos</div>
-        </div>`;
-    }
-    if (w.forks) {
-      metricCardsHtml += `
-        <div class="card">
-          <div class="glow" style="background:var(--violet)"></div>
-          <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--violet)">${ICONS.fork}</span>
-              Forks
-            </div>
-          </div>
-          <div class="metric" style="color:var(--violet)">${fmtNum(forks)}</div>
-          <div class="metric-sub">community reuse</div>
-        </div>`;
-    }
-    if (w.issues) {
-      metricCardsHtml += `
-        <div class="card">
-          <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--amber)">${ICONS.issue}</span>
-              Open Issues
-            </div>
-          </div>
-          <div class="metric" style="color:var(--amber)">${fmtNum(issues)}</div>
-          <div class="metric-sub">${issues === 0 ? "clean queue" : "action required"}</div>
-        </div>`;
-    }
-    if (w.active) {
-      metricCardsHtml += `
-        <div class="card">
-          <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--green)">${ICONS.zap}</span>
-              Active Repos
-            </div>
-          </div>
-          <div class="metric" style="color:var(--green)">${fmtNum(active)}<small>/ ${repos.length}</small></div>
-          <div class="metric-sub">pushed past 7 days</div>
-        </div>`;
-    }
-    if (w.primaryLang) {
-      metricCardsHtml += `
-        <div class="card">
-          <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--blue)">${ICONS.code}</span>
-              Primary Stack
-            </div>
-          </div>
-          <div class="metric" style="font-size:24px;text-transform:uppercase;color:var(--blue)">${esc(topLang)}</div>
-          <div class="metric-sub">most used language</div>
-        </div>`;
-    }
-    if (w.privateCount) {
-      metricCardsHtml += `
-        <div class="card">
-          <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--red)">${ICONS.community}</span>
-              Followers
-            </div>
-          </div>
-          <div class="metric" style="color:var(--red)">${followers != null ? fmtNum(followers) : "—"}</div>
-          <div class="metric-sub">${repos.length} public repositories</div>
-        </div>`;
-    }
+    const milestones = [
+      u.createdAt ? ["Joined GitHub", new Date(u.createdAt).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })] : null,
+      years != null ? ["Account age", `${years} years`] : null,
+      repos.length ? ["First public repo", repos[repos.length - 1]?.name] : null,
+      repos.length ? ["Newest public repo", repos[0]?.name] : null,
+      releases.length ? ["Latest release", releases[0]?.tag] : null,
+    ].filter(Boolean);
 
     return section(
-      "Command Center",
-      state.selectedRepo === "all" ? `Live telemetry across ${repos.length} repositories` : `Focus Mode · ${state.selectedRepo}`,
-      actions,
-      `<div class="bento">${metricCardsHtml}</div>
-       <div style="height:18px"></div>
-       <div class="bento">
-         ${w.pulseChart ? commitPulseWidget() : ""}
-         ${w.heatmap ? commitHeatmapWidget() : ""}
-         ${w.langDistribution ? languageDistributionWidget() : ""}
-         ${w.recentActivity ? recentActivityWidget() : ""}
-         ${w.topRepos ? topRepositoriesWidget() : ""}
-       </div>`
+      "Numbers",
+      "The measurable footprint of this account",
+      pill(),
+      `<div class="bento">
+        ${statCard("Public Repos", fmtNum(repos.length), "on GitHub", "var(--cyan)", ICONS.repos)}
+        ${statCard("Stars", fmtNum(stars), "across all repos", "var(--amber)", ICONS.star)}
+        ${statCard("Forks", fmtNum(forks), "community copies", "var(--violet)", ICONS.fork)}
+        ${statCard("Open Issues", fmtNum(issues), issues === 0 ? "clean queue" : "tracked work", "var(--red)", ICONS.issue)}
+        ${statCard("Releases", fmtNum(releases.length), "published tags", "var(--green)", ICONS.award)}
+        ${statCard("Followers", u.followers != null ? fmtNum(u.followers) : "—", `${plural(u.following || 0, "following")}`, "var(--blue)", ICONS.community)}
+        ${statCard("Workflow Runs", fmtNum(runs.length), passRate != null ? `${passRate}% passing` : "tracked recent runs", "var(--blue)", ICONS.pipeline)}
+        ${statCard("Account Age", years != null ? `${years}y` : "—", "since first commit here", "var(--cyan)", ICONS.clock || ICONS.activity)}
+      </div>
+      <div style="height:18px"></div>
+      <div class="bento">
+        <div class="card col2">
+          <div class="card-head">
+            <div class="card-title"><span class="stat-icon" style="color:var(--amber)">${ICONS.award}</span> Most Starred</div>
+            <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">top ${Math.min(6, repos.length)}</span>
+          </div>
+          <div class="mini-list">${leaderboard || '<div style="color:var(--faint);font-size:13px;padding:8px 0">No repositories yet</div>'}</div>
+        </div>
+        <div class="card col2">
+          <div class="card-head">
+            <div class="card-title"><span class="stat-icon" style="color:var(--cyan)">${ICONS.clock || ICONS.activity}</span> Timeline</div>
+          </div>
+          <div class="mini-list">
+            ${milestones
+              .map(
+                ([label, value]) => `
+              <div class="mini-row">
+                <div class="av" style="background:linear-gradient(135deg,var(--cyan),var(--blue))">${ICONS.pulse}</div>
+                <div class="meta"><div class="t">${esc(String(value ?? "—"))}</div><div class="s">${esc(label)}</div></div>
+              </div>`
+              )
+              .join("")}
+          </div>
+        </div>
+      </div>`
     );
   }
 
@@ -1520,7 +1625,7 @@
   function recentActivityWidget() {
     const repos = filteredRepos();
     const rows = repos.slice(0, 5).map((r, i) => `
-      <div class="mini-row" data-inspect="${esc(r.name)}" title="Inspect repository">
+      <div class="mini-row" data-project="${esc(r.name)}" title="Open project">
         <div class="av">${initials(r.name)}</div>
         <div class="meta">
           <div class="t">${esc(r.name.replace(/[-_]/g, " "))}</div>
@@ -1546,7 +1651,7 @@
   function topRepositoriesWidget() {
     const repos = filteredRepos().slice().sort((a, b) => b.stars - a.stars).slice(0, 4);
     const rows = repos.map((r, i) => `
-      <div class="mini-row" data-inspect="${esc(r.name)}" title="Inspect repository">
+      <div class="mini-row" data-project="${esc(r.name)}" title="Open project">
         <div class="av" style="background:linear-gradient(135deg,var(--violet),var(--blue))">${i + 1}</div>
         <div class="meta">
           <div class="t">${esc(r.name)}</div>
@@ -1571,19 +1676,61 @@
       </div>`;
   }
 
-  /* ---- 2. REPOSITORIES VIEW WITH FILTER & SEARCH ---- */
-  function renderRepos() {
+  /* ---- PROJECT CARD (links to a shareable project page) ---- */
+  function projectCard(r) {
+    const langCol = getLangColor(r.language);
+    const st = repoStatus(r);
+    const topics = (r.topics || []).slice(0, 3);
+    return `
+      <div class="card repo-card" data-project="${esc(r.name)}" title="Open ${esc(r.name)}">
+        <div class="card-head">
+          <div class="name">
+            <span class="dot" style="background:${st === "archived" ? "var(--amber)" : st === "active" ? "var(--green)" : "var(--faint)"}"></span>
+            ${esc(r.name)}
+          </div>
+          <span class="priv-tag" style="display:inline-flex;align-items:center;gap:3px">
+            <span class="stat-icon" style="width:11px;height:11px">${r.archived ? ICONS.lock : ICONS.globe}</span>
+            ${st.toUpperCase()}
+          </span>
+        </div>
+        <div class="desc">${esc(r.description || "No description provided.")}</div>
+        ${topics.length ? `<div class="hl-stack">${topics.map((t) => `<span class="priv-tag">${esc(t)}</span>`).join("")}</div>` : ""}
+        <div class="stats">
+          <span style="display:inline-flex;align-items:center;gap:3px">
+            <span class="stat-icon" style="color:var(--amber)">${ICONS.star}</span>
+            <b>${fmtNum(r.stars)}</b>
+          </span>
+          <span style="display:inline-flex;align-items:center;gap:3px">
+            <span class="stat-icon" style="color:var(--violet)">${ICONS.fork}</span>
+            <b>${fmtNum(r.forks)}</b>
+          </span>
+          <span style="display:inline-flex;align-items:center;gap:3px">
+            <span class="stat-icon" style="color:var(--cyan)">${ICONS.issue}</span>
+            <b>${fmtNum(r.openIssues)}</b>
+          </span>
+        </div>
+        <div class="foot">
+          <span class="lang-tag" style="background:${langCol}22;color:${langCol}">${esc(r.language || "—")}</span>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--faint)">${fmtAgo(r.pushedAt)}</span>
+        </div>
+      </div>`;
+  }
+
+  /* ---- 5. PROJECTS ---- */
+  function renderProjects() {
     const all = repoList();
     const languages = ["all", ...new Set(all.map((r) => r.language).filter(Boolean))];
 
     return section(
-      "Repositories",
-      state.selectedRepo === "all" ? `Tracking ${all.length} repositories with full metrics` : `Focus · ${state.selectedRepo}`,
+      "Projects",
+      state.selectedRepo === "all"
+        ? `Every public repository, grouped by activity · ${all.length} projects`
+        : `Focus · ${state.selectedRepo}`,
       pill(),
       `<div class="control-bar">
         <div class="search-box">
           <span class="search-icon">${ICONS.search}</span>
-          <input type="text" id="repoSearchInput" placeholder="Search repos by name or description..." value="${esc(state.repoSearchQuery)}" />
+          <input type="text" id="repoSearchInput" placeholder="Search projects by name, description or topic..." value="${esc(state.repoSearchQuery)}" />
         </div>
 
         <div style="display:flex;gap:10px;align-items:center">
@@ -1604,7 +1751,7 @@
         </div>
       </div>
 
-      <div class="repos-grid" id="reposGridContainer">
+      <div id="reposGridContainer">
         ${getFilteredReposHtml()}
       </div>`
     );
@@ -1616,7 +1763,10 @@
 
     if (q) {
       repos = repos.filter(
-        (r) => r.name.toLowerCase().includes(q) || (r.description || "").toLowerCase().includes(q)
+        (r) =>
+          r.name.toLowerCase().includes(q) ||
+          (r.description || "").toLowerCase().includes(q) ||
+          (r.topics || []).some((t) => t.toLowerCase().includes(q))
       );
     }
 
@@ -1632,58 +1782,177 @@
     else repos.sort((a, b) => new Date(b.pushedAt) - new Date(a.pushedAt));
 
     if (repos.length === 0) {
-      return `<div class="card col4" style="text-align:center;padding:48px 24px;color:var(--faint)">
-        <div style="font-size:28px;margin-bottom:8px">${ICONS.search}</div>
-        <div style="font-size:16px;font-weight:700;color:var(--text)">No repositories matched your filters</div>
-        <div style="font-size:13px;margin-top:4px">Try adjusting search terms or language selections.</div>
+      return `<div class="card" style="text-align:center;padding:48px 24px;color:var(--faint)">
+        <div style="font-size:28px;margin-bottom:8px;display:flex;justify-content:center;width:32px;margin:0 auto 8px">${ICONS.search}</div>
+        <div style="font-size:16px;font-weight:700;color:var(--text)">No projects matched your filters</div>
+        <div style="font-size:13px;margin-top:4px">Try adjusting the search or language selection.</div>
       </div>`;
     }
 
-    return repos
-      .map((r) => {
-        const langCol = getLangColor(r.language);
-        return `
-        <div class="card repo-card" data-inspect="${esc(r.name)}">
-          <div class="card-head">
-            <div class="name">
-              <span class="dot" style="background:${r.archived ? "var(--amber)" : "var(--green)"}"></span>
-              ${esc(r.name)}
-            </div>
-            <span class="priv-tag" style="display:inline-flex;align-items:center;gap:3px">
-              <span class="stat-icon" style="width:11px;height:11px">${r.archived ? ICONS.lock : ICONS.globe}</span>
-              ${r.archived ? "ARCHIVED" : "PUBLIC"}
-            </span>
-          </div>
-          <div class="desc">${esc(r.description || "No description provided.")}</div>
-          <div class="stats">
-            <span style="display:inline-flex;align-items:center;gap:3px">
-              <span class="stat-icon" style="color:var(--amber)">${ICONS.star}</span>
-              <b>${fmtNum(r.stars)}</b>
-            </span>
-            <span style="display:inline-flex;align-items:center;gap:3px">
-              <span class="stat-icon" style="color:var(--violet)">${ICONS.fork}</span>
-              <b>${fmtNum(r.forks)}</b>
-            </span>
-            <span style="display:inline-flex;align-items:center;gap:3px">
-              <span class="stat-icon" style="color:var(--cyan)">${ICONS.issue}</span>
-              <b>${fmtNum(r.openIssues)}</b>
-            </span>
-          </div>
-          <div class="foot">
-            <span class="lang-tag" style="background:${langCol}22;color:${langCol}">${esc(r.language || "—")}</span>
-            <span style="font-family:var(--mono);font-size:11px;color:var(--faint)">${fmtAgo(r.pushedAt)}</span>
-          </div>
-        </div>`;
-      })
+    // Group into a story: what's active, what's resting, what's archived.
+    const groups = { active: [], quiet: [], archived: [] };
+    repos.forEach((r) => groups[repoStatus(r)].push(r));
+
+    const blocks = [
+      ["active", "Active", "Pushed within the last 90 days"],
+      ["quiet", "Quiet", "Complete, but no recent pushes"],
+      ["archived", "Archived", "Kept for history"],
+    ]
+      .filter(([key]) => groups[key].length)
+      .map(
+        ([key, title, sub]) => `
+        <div class="group-head">
+          <h2>${title}</h2>
+          <span>${sub} · ${groups[key].length}</span>
+        </div>
+        <div class="repos-grid">${groups[key].map(projectCard).join("")}</div>`
+      )
       .join("");
+
+    return blocks;
   }
 
-  function updateReposGrid() {
-    const container = $('#reposGridContainer');
-    if (!container) return;
-    container.innerHTML = getFilteredReposHtml();
-    $$('#reposGridContainer [data-inspect]').forEach((card) =>
-      card.addEventListener("click", () => openInspector(card.dataset.inspect))
+  /* ---- README LOADER (public sources only) ---- */
+  async function loadReadme(repo) {
+    try {
+      const res = await fetch(`https://raw.githubusercontent.com/${repo.fullName}/HEAD/README.md`);
+      if (res.ok) {
+        const text = await res.text();
+        if (text.trim()) return text;
+      }
+    } catch (e) {
+      /* fall through to the API */
+    }
+    try {
+      const res = await fetch(`https://api.github.com/repos/${repo.fullName}/readme`, {
+        headers: { Accept: "application/vnd.github.raw" },
+      });
+      if (res.ok) {
+        const text = await res.text();
+        if (text.trim()) return text;
+      }
+    } catch (e) {}
+    return repo.readmeExcerpt || "";
+  }
+
+  /* ---- 6. PROJECT DETAIL (#/project/<name>) ---- */
+  function renderProject() {
+    const repos = repoList();
+    const repo =
+      repos.find((r) => (r.name || "").toLowerCase() === String(state.selectedProject || "").toLowerCase()) ||
+      repos.find((r) => (r.fullName || "").toLowerCase() === String(state.selectedProject || "").toLowerCase()) ||
+      repos[0];
+
+    if (!repo) {
+      return section(
+        "Project",
+        "Nothing to show",
+        pill(),
+        `<div class="card" style="padding:32px;text-align:center;color:var(--faint)">No public repositories available.</div>`
+      );
+    }
+
+    state.selectedProject = repo.name;
+    const extras = extrasFor(repo.fullName) || {};
+    const runs = (extras.runs || []).slice(0, 5);
+    const releases = (extras.releases || []).slice(0, 4);
+    const langCol = getLangColor(repo.language);
+    const httpsClone = `https://github.com/${repo.fullName}.git`;
+    const sshClone = `git@github.com:${repo.fullName}.git`;
+    const st = repoStatus(repo);
+    const topics = repo.topics || [];
+
+    // README is fetched live and cached for the session.
+    // Chain: raw.githubusercontent.com -> public GitHub API -> snapshot excerpt.
+    const cached = state.readmeCache[repo.fullName];
+    if (!cached) {
+      state.readmeCache[repo.fullName] = { loading: true };
+      loadReadme(repo).then((raw) => {
+        state.readmeCache[repo.fullName] = { raw: raw || "" };
+        if (state.view === "project" && state.selectedProject === repo.name) render();
+      });
+    }
+
+    const readmeHtml = !cached || cached.loading
+      ? `<div class="readme-loading"><div class="pulse-ring"></div><span>LOADING README</span></div>`
+      : cached.raw
+      ? `<div class="md-body">${renderMarkdown(cached.raw)}</div>`
+      : repo.readmeExcerpt
+      ? `<p class="project-pitch">${esc(repo.readmeExcerpt)}…</p>
+         <a class="btn btn-sm" href="${esc(repo.htmlUrl)}#readme" target="_blank" rel="noopener noreferrer">${ICONS.github} Read the full README on GitHub</a>`
+      : `<div style="color:var(--faint);font-size:13.5px;padding:8px 0">This repository has no README yet — the source code is the documentation.</div>`;
+
+    return section(
+      repo.name,
+      `${repo.fullName} · ${st} · last push ${fmtAgo(repo.pushedAt)}`,
+      `<button class="btn btn-sm" id="projectBackBtn">${ICONS.back || ICONS.command} All projects</button>
+       <a class="btn btn-sm" href="${esc(repo.htmlUrl)}" target="_blank" rel="noopener noreferrer">${ICONS.github} Repository</a>
+       ${repo.homepage ? `<a class="btn btn-sm btn-primary" href="${esc(repo.homepage)}" target="_blank" rel="noopener noreferrer">${ICONS.externalLink} Live site</a>` : ""}`,
+      `<div class="card">
+        <div class="hl-head">
+          <span class="status ${st === "active" ? "ok" : st === "archived" ? "warn" : "run"}"><span class="sdot"></span>${st.toUpperCase()}</span>
+          ${repo.language ? `<span class="lang-tag" style="background:${langCol}22;color:${langCol}">${esc(repo.language)}</span>` : ""}
+          ${repo.license ? `<span class="priv-tag">${esc(repo.license)}</span>` : ""}
+          <span class="priv-tag">${esc(repo.defaultBranch || "main")}</span>
+        </div>
+        <p class="project-pitch">${esc(repo.description || "No repository description provided.")}</p>
+        ${topics.length ? `<div class="hl-stack">${topics.map((t) => `<span class="priv-tag">${esc(t)}</span>`).join("")}</div>` : ""}
+      </div>
+
+      <div style="height:18px"></div>
+      <div class="bento">
+        ${statCard("Stars", fmtNum(repo.stars), "appreciation", "var(--amber)", ICONS.star)}
+        ${statCard("Forks", fmtNum(repo.forks), "derivations", "var(--violet)", ICONS.fork)}
+        ${statCard("Open Issues", fmtNum(repo.openIssues), "tracked work", "var(--cyan)", ICONS.issue)}
+        ${statCard("Size", repo.size ? `${fmtNum(Math.round((repo.size || 0) / 1024 * 10) / 10)} MB` : "—", "repository size", "var(--blue)", ICONS.layers)}
+      </div>
+
+      <div style="height:18px"></div>
+      <div class="bento">
+        <div class="card col2">
+          <div class="card-head"><div class="card-title"><span class="stat-icon" style="color:var(--cyan)">${ICONS.readme}</span> README</div></div>
+          ${readmeHtml}
+        </div>
+        <div class="card col2">
+          <div class="card-head"><div class="card-title"><span class="stat-icon" style="color:var(--blue)">${ICONS.terminal}</span> Clone</div></div>
+          <div class="clone-box">
+            <code>${esc(httpsClone)}</code>
+            <button class="btn btn-sm" id="copyHttpsBtn">${ICONS.copy} Copy</button>
+          </div>
+          <div class="clone-box">
+            <code>${esc(sshClone)}</code>
+            <button class="btn btn-sm" id="copySshBtn">${ICONS.copy} Copy</button>
+          </div>
+
+          <div class="card-head" style="margin-top:18px">
+            <div class="card-title"><span class="stat-icon" style="color:var(--amber)">${ICONS.award}</span> Releases</div>
+          </div>
+          <div class="mini-list">
+            ${releases.length
+              ? releases.map((r) => `
+                <div class="mini-row">
+                  <div class="av" style="background:linear-gradient(135deg,var(--amber),var(--violet))">${ICONS.award}</div>
+                  <div class="meta"><div class="t">${esc(r.tag)}</div><div class="s">${fmtAgo(r.publishedAt)}${r.prerelease ? " · pre-release" : ""}</div></div>
+                  <a class="btn btn-sm btn-icon" href="${esc(r.htmlUrl)}" target="_blank" rel="noopener noreferrer">${ICONS.externalLink}</a>
+                </div>`).join("")
+              : '<div style="color:var(--faint);font-size:13px;padding:8px 0">No releases published.</div>'}
+          </div>
+
+          <div class="card-head" style="margin-top:18px">
+            <div class="card-title"><span class="stat-icon" style="color:var(--blue)">${ICONS.ci}</span> Recent Workflow Runs</div>
+          </div>
+          <div class="mini-list">
+            ${runs.length
+              ? runs.map((r) => `
+                <div class="mini-row">
+                  <div class="av" style="background:linear-gradient(135deg,var(--blue),var(--green))">${initials(repo.name)}</div>
+                  <div class="meta"><div class="t">${esc(r.displayTitle || r.name || "workflow")}</div><div class="s">${esc(r.headBranch || "")} · ${fmtAgo(r.updatedAt || r.createdAt)}</div></div>
+                  <span class="status ${runStatusClass(r)}"><span class="sdot"></span>${runStatusLabel(r)}</span>
+                </div>`).join("")
+              : '<div style="color:var(--faint);font-size:13px;padding:8px 0">No workflow runs recorded.</div>'}
+          </div>
+        </div>
+      </div>`
     );
   }
 
@@ -1964,7 +2233,7 @@
     const h = Math.floor(m / 60);
     return h + "h " + (m % 60) + "m";
   }
-  function renderCI() {
+  function renderCraft() {
     const allRuns = getAllLiveRuns();
     const live = state.live || {};
     const running = allRuns.filter((r) => ["in_progress", "queued", "waiting", "requested"].includes(r.status));
@@ -2004,8 +2273,8 @@
       <button class="filter-pill${f === k ? " active" : ""}" data-ci-filter="${k}">${k === "all" ? "All" : k === "running" ? `Running (${running.length})` : k === "failed" ? `Failed (${failed.length})` : `Passed (${passed.length})`}</button>
     `).join("");
     return section(
-      "CI & Workflows",
-      `Realtime pipeline health · last sync ${lastSync}`,
+      "How I Build",
+      `Pipeline health, stack and release cadence · last sync ${lastSync}`,
       `${pill()}`,
       `<div class="bento">
         <div class="card">
@@ -2036,203 +2305,31 @@
           <div class="filter-pills" style="margin-top:12px">${filterPills}</div>
           <div class="mini-list">${rows || '<div style="color:var(--faint);font-size:13px;padding:8px 0">No workflow runs yet — GitHub Actions activity will appear here once a run is triggered.</div>'}</div>
         </div>
-      </div>`
-    );
-  }
-
-  /* ---- 5. COMMUNITY VIEW ---- */
-  function renderCommunity() {
-    const repos = filteredRepos().slice().sort((a, b) => b.stars - a.stars).slice(0, 6);
-    const rows = repos
-      .map(
-        (r, i) => `
-      <div class="mini-row" data-inspect="${esc(r.name)}">
-        <div class="av" style="background:linear-gradient(135deg,var(--amber),var(--violet))">${i + 1}</div>
-        <div class="meta">
-          <div class="t">${esc(r.name)}</div>
-          <div class="s">${esc(r.language || "stack")} · ${fmtNum(r.forks)} forks</div>
-        </div>
-        <div class="r" style="display:flex;align-items:center;gap:3px;color:var(--amber)">
-          <span class="stat-icon" style="color:var(--amber)">${ICONS.star}</span>
-          <span>${fmtNum(r.stars)}</span>
-        </div>
-      </div>`
-      )
-      .join("");
-
-    const totalStars = filteredRepos().reduce((a, r) => a + r.stars, 0);
-    const totalForks = filteredRepos().reduce((a, r) => a + r.forks, 0);
-
-    return section(
-      "Community Signal",
-      "Repository reach, developer engagement, and forks",
-      pill(),
-      `<div class="bento">
-        <div class="card">
-          <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--amber)">${ICONS.star}</span>
-              Total Stars
-            </div>
-          </div>
-          <div class="metric" style="color:var(--amber)">${fmtNum(totalStars)}</div>
-          <div class="metric-sub">developer appreciation</div>
-        </div>
-        <div class="card">
-          <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--violet)">${ICONS.fork}</span>
-              Total Forks
-            </div>
-          </div>
-          <div class="metric" style="color:var(--violet)">${fmtNum(totalForks)}</div>
-          <div class="metric-sub">community derivations</div>
-        </div>
+        ${languageDistributionWidget()}
         <div class="card col2">
           <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--amber)">${ICONS.award}</span>
-              Star Leaderboard
-            </div>
-            <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">Top repositories</span>
+            <div class="card-title"><span class="stat-icon" style="color:var(--amber)">${ICONS.award}</span> Release Cadence</div>
+            <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">${allReleases().length} published</span>
           </div>
-          <div class="mini-list">${rows || '<div style="color:var(--faint);font-size:13px;padding:8px 0">No community data</div>'}</div>
-        </div>
-      </div>`
-    );
-  }
-
-  /* ---- 6. HEALTH VIEW ---- */
-  function renderHealth() {
-    const repos = filteredRepos();
-    const recent = repos.filter((r) => Date.now() - new Date(r.pushedAt).getTime() < 30 * 864e5).length;
-    const pct = Math.round((recent / Math.max(1, repos.length)) * 100);
-
-    const rows = repos.slice(0, 6).map((r) => {
-      const isFresh = Date.now() - new Date(r.pushedAt).getTime() < 30 * 864e5;
-      return `
-        <div class="mini-row" data-inspect="${esc(r.name)}">
-          <div class="av" style="background:${isFresh ? "linear-gradient(135deg,var(--green),var(--cyan))" : "linear-gradient(135deg,var(--amber),var(--red))"}">${initials(r.name)}</div>
-          <div class="meta">
-            <div class="t">${esc(r.name)}</div>
-            <div class="s">${fmtNum(r.openIssues)} open issues · updated ${fmtAgo(r.pushedAt)}</div>
+          <div class="mini-list">
+            ${
+              allReleases()
+                .slice(0, 8)
+                .map(
+                  (r) => `
+              <div class="mini-row">
+                <div class="av" style="background:linear-gradient(135deg,var(--amber),var(--violet))">${ICONS.award}</div>
+                <div class="meta">
+                  <div class="t">${esc(r.tag)}${r.prerelease ? ' <span class="priv-tag" style="font-size:10px">PRE</span>' : ""}</div>
+                  <div class="s">${esc(r.repo)} · ${fmtAgo(r.publishedAt)}</div>
+                </div>
+                <a class="btn btn-sm btn-icon" href="${esc(r.htmlUrl)}" target="_blank" rel="noopener noreferrer">${ICONS.externalLink}</a>
+              </div>`
+                )
+                .join("") ||
+              '<div style="color:var(--faint);font-size:13px;padding:8px 0">No releases published yet.</div>'
+            }
           </div>
-          <div><span class="status ${isFresh ? "ok" : "warn"}"><span class="sdot"></span>${isFresh ? "MAINTAINED" : "STALE"}</span></div>
-        </div>`;
-    }).join("");
-
-    return section(
-      "Repository Health",
-      "Maintenance velocity and issue pressure index",
-      pill(),
-      `<div class="bento">
-        <div class="card">
-          <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--green)">${ICONS.shield}</span>
-              Maintained Repos
-            </div>
-          </div>
-          <div class="metric" style="color:var(--green)">${fmtNum(recent)}<small>/ ${repos.length}</small></div>
-          <div class="metric-sub">updated within 30 days</div>
-        </div>
-        <div class="card">
-          <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--cyan)">${ICONS.activity}</span>
-              Freshness Ratio
-            </div>
-          </div>
-          <div class="ring-row">
-            <div class="ring" style="--p:${pct}"><div class="inner">${pct}%</div></div>
-            <div class="ring-legend">
-              <div class="ln"><span>Active</span><b>${pct}%</b></div>
-              <div class="ln"><span>Inactive</span><b>${100 - pct}%</b></div>
-            </div>
-          </div>
-        </div>
-        <div class="card col2">
-          <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--green)">${ICONS.health}</span>
-              Repository Health Audit
-            </div>
-            <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">Inspection audit</span>
-          </div>
-          <div class="mini-list">${rows || '<div style="color:var(--faint);font-size:13px;padding:8px 0">No repositories</div>'}</div>
-        </div>
-      </div>`
-    );
-  }
-
-  /* ---- 7. XP & REWARDS VIEW ---- */
-  const XP_LEVELS = ["OPERATOR", "ENGINEER", "ARCHITECT", "LEAD SHIPPER", "DISTINGUISHED TECH TITAN"];
-  function renderXP() {
-    const repos = filteredRepos();
-    const stars = repos.reduce((a, r) => a + r.stars, 0);
-    const forks = repos.reduce((a, r) => a + r.forks, 0);
-    const xp = stars * 60 + forks * 30 + repos.length * 100;
-    const levelIdx = Math.min(XP_LEVELS.length - 1, Math.floor(xp / 500));
-    const level = XP_LEVELS[levelIdx];
-    const next = XP_LEVELS[levelIdx + 1];
-    const pct = next ? Math.min(100, ((xp - levelIdx * 500) / 500) * 100) : 100;
-
-    const achievements = [
-      { n: "FIRST CODEBASE", x: 100, got: repos.length >= 1, icon: ICONS.zap },
-      { n: "STAR COLLECTOR", x: 150, got: stars > 0, icon: ICONS.star },
-      { n: "COMMUNITY FORK", x: 120, got: forks > 0, icon: ICONS.fork },
-      { n: "PORTFOLIO EXPANSION", x: 250, got: repos.length >= 5, icon: ICONS.repos },
-      { n: "COMMAND SHIPPER", x: 200, got: repos.length >= 8, icon: ICONS.award },
-      { n: "FULL STACK POLYGLOT", x: 300, got: new Set(repos.map((r) => r.language).filter(Boolean)).size >= 3, icon: ICONS.layers },
-    ]
-      .map(
-        (a) => `
-      <div class="ach ${a.got ? "" : "locked"}">
-        <div class="badge"><span>${a.icon}</span></div>
-        <div>
-          <div style="font-weight:700;font-size:14px;color:var(--text-bright)">${a.n}</div>
-          <div style="font-size:11.5px;color:var(--faint)">${a.got ? "Unlocked" : "In Progress"}</div>
-        </div>
-        <div class="xp">+${a.x} XP</div>
-      </div>`
-      )
-      .join("");
-
-    return section(
-      "XP & Rewards",
-      "Gamified developer shipping metrics and achievement progression",
-      pill(),
-      `<div class="bento">
-        <div class="card col2">
-          <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--violet)">${ICONS.xp}</span>
-              Rank · Tier ${levelIdx + 1}
-            </div>
-            <span class="priv-tag">${level}</span>
-          </div>
-          <div class="metric" style="font-size:48px;color:var(--violet)">${fmtNum(xp)}<small>XP</small></div>
-          <div class="xp-track">
-            <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
-            <div class="xp-levels">
-              <span>${level}</span>
-              <span>${next ? `NEXT: ${next}` : "MAX RANK ACHIEVED"}</span>
-            </div>
-          </div>
-          <div class="metric-sub" style="margin-top:14px">
-            Calculated from ${repos.length} repos, ${stars} stars, and ${forks} forks.
-          </div>
-        </div>
-
-        <div class="card col2">
-          <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--cyan)">${ICONS.award}</span>
-              Milestones & Badges
-            </div>
-            <span style="font-family:var(--mono);font-size:11px;color:var(--cyan)">Progression</span>
-          </div>
-          <div style="margin-top:8px">${achievements}</div>
         </div>
       </div>`
     );
@@ -2429,12 +2526,12 @@
         state.snapshot = { ...s, extras: [...extrasMap.values()], generatedAt: new Date().toISOString() };
         state.live.lastFetchAt = new Date().toISOString();
         state.live.error = null;
-        if (state.view === "ci" || state.view === "activity") render();
+        if (state.view === "craft" || state.view === "activity" || state.view === "project") render();
         return true;
       }
       state.live.lastFetchAt = new Date().toISOString();
       state.live.error = null;
-      if (state.view === "ci") render();
+      if (state.view === "craft") render();
       return false;
     } catch (e) {
       console.warn("Workflow live fetch failed", e);
@@ -2477,6 +2574,15 @@
     toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
   }
 
+  function goProject(name) {
+    state.selectedProject = name;
+    try {
+      const target = `#/project/${encodeURIComponent(name)}`;
+      if (location.hash !== target) history.replaceState(null, "", target);
+    } catch {}
+    go("project", { keepHash: true });
+  }
+
   /* ---- BOOT ---- */
   let _wfVisibilityWired = false;
   async function boot() {
@@ -2500,7 +2606,7 @@
       _wfVisibilityWired = true;
       document.addEventListener("visibilitychange", () => {
         if (document.hidden) return;
-        if (state.view === "ci") {
+        if (state.view === "craft" || state.view === "project") {
           fetchWorkflowLive().catch(() => {});
         }
       });
@@ -2512,12 +2618,6 @@
     });
     $('#paletteOverlay')?.addEventListener("click", (e) => {
       if (e.target.id === "paletteOverlay") closeCommandPalette();
-    });
-    $('#inspectorOverlay')?.addEventListener("click", (e) => {
-      if (e.target.id === "inspectorOverlay") {
-        $('#inspectorOverlay').classList.remove("open");
-        $('#inspectorOverlay').setAttribute("aria-hidden", "true");
-      }
     });
     $('#widgetOverlay')?.addEventListener("click", (e) => {
       if (e.target.id === "widgetOverlay") {
@@ -2537,7 +2637,6 @@
       } else if (e.key === "Escape") {
         closeOverlay();
         closeCommandPalette();
-        $('#inspectorOverlay')?.classList.remove("open");
         $('#widgetOverlay')?.classList.remove("open");
         $('#issueOverlay')?.classList.remove("open");
       }
@@ -2546,8 +2645,23 @@
 
   // Deep-link support: #/view-name
   const applyHash = () => {
-    const h = (location.hash || "").replace(/^#\/?/, "").split("/")[0].toLowerCase();
-    if (h && NAV.some((n) => n.id === h)) go(h);
+    const parts = (location.hash || "")
+      .replace(/^#\/?/, "")
+      .split("/")
+      .filter(Boolean);
+    const view = (parts[0] || "").toLowerCase();
+    const arg = parts.slice(1).join("/");
+
+    // Shareable project pages: #/project/<repo-name>
+    if (view === "project" && arg) {
+      state.selectedProject = decodeURIComponent(arg);
+      go("project", { keepHash: true });
+      return;
+    }
+    // Legacy links (#/command, #/repos, #/ci, #/profile...) map to new views.
+    const LEGACY = { command: "overview", repos: "projects", ci: "craft", profile: "about", community: "numbers", health: "numbers", xp: "overview" };
+    const target = LEGACY[view] || view;
+    if (target && NAV.some((n) => n.id === target)) go(target, { keepHash: true });
   };
   window.addEventListener("hashchange", applyHash);
 

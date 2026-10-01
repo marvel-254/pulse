@@ -1,7 +1,7 @@
 {
-  "name": "Pulse — Developer Command Center",
+  "name": "Pulse — Public GitHub Showcase",
   "short_name": "Pulse",
-  "description": "Personal, mobile-first developer operations cockpit powered by GitHub.",
+  "description": "A public, read-only showcase of a GitHub account: projects, activity, releases and CI. No login required.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

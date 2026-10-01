@@ -14,11 +14,14 @@ window.PULSE_CONFIG = {
   },
 
   display: {
-    // Shown in the hero/footer as an optional personal line.
-    tagline: "",
-    // Optional links rendered in the footer/contact block. Leave blank to hide.
+    // Shown under the name in the hero when the GitHub bio is empty.
+    tagline: "Builder of AI-native tools, web apps and developer utilities.",
+    // Links rendered in the hero and the About page.
+    links: [
+      { label: "Portfolio", url: "https://admin.omixsystems.store" },
+      { label: "Blog", url: "https://blog.omixsystems.store" },
+    ],
     email: "",
-    website: "",
   },
 
   // Live public GitHub API reads. No credential is ever sent.

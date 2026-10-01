@@ -2,7 +2,8 @@
 
 **A structured, visitor-first way to view one GitHub account.**
 
-Status: plan + phase 0 already implemented (login/OAuth layer removed).
+Status: **Phase 0 (login/OAuth removal) and Phase 1 (visitor-first IA) shipped.**
+Phase 2 (data depth) is next.
 Owner: `@marvel-254` · Data source: public GitHub only · No login, ever.
 
 ---
@@ -172,15 +173,22 @@ Visitor sees fresh data even if the snapshot is hours old
 - [x] Smoke test: `npm run smoke` boots the real page in jsdom, walks every
       view, opens the palette/modals and asserts no auth UI remains.
 
-### Phase 1 — IA skeleton (the visible restructure)
-- New nav + routes: Overview · Highlights · Activity · Projects · Craft · About.
-- Hero component with identity + live "currently building" chip.
-- Projects grouped into ACTIVE / SHIPPED / ARCHIVED; project detail route
-  `#/project/<name>` with its own shareable URL and OG tags.
-- `data/curated.json` + featured/fallback logic.
-- Convert "XP & Rewards" and "Health" into hero micro-badges or drop them.
+### Phase 1 — IA skeleton — ✅ SHIPPED
+- [x] New nav + routes: Overview · Highlights · Numbers · Activity · Projects ·
+      How I build · About (legacy links like `#/repos` are redirected).
+- [x] Hero with identity, contact links (portfolio + blog), live "last push"
+      status and momentum counters.
+- [x] Highlights derived automatically from public signals — recency, reach
+      (stars/forks) and completeness (description, live site, topics, license).
+      README excerpts are baked into the snapshot at build time.
+- [x] Projects grouped ACTIVE / QUIET / ARCHIVED.
+- [x] Project detail route `#/project/<name>` with README (raw → API →
+      snapshot fallback), releases, workflow runs and clone URLs.
+- [x] Numbers section absorbs Community + Health; XP & Rewards dropped.
+- [x] Per-visitor live reads stay inside the 60 req/hr public limit by polling
+      slowly and only while Craft/Project views are open.
 
-### Phase 2 — data depth
+### Phase 2 — data depth (next)
 - Contribution heatmap + totals (build-time scrape → snapshot).
 - Authored PR/issue counts via the Search API (build-time, cheap).
 - Languages **by bytes** for the top repos.
@@ -202,15 +210,18 @@ Visitor sees fresh data even if the snapshot is hours old
 
 ## 6. Decision checklist (what I need from you)
 
-1. **Structure**: adopt the 8-section visitor IA above, or keep the current
-   cockpit nav and only reframe the labels?
-2. **XP / Health / Community**: drop entirely, or shrink into hero badges?
-3. **Featured projects**: which 3–5 repos should lead, and do you want to write
-   the pitches (or should I draft them from the repo descriptions/READMEs)?
-4. **Personal links**: which contact links should appear (email, LinkedIn, X,
-   portfolio)? They go in `js/config.js` / `curated.json`.
-5. **Contributions privacy**: the heatmap only reads the *public* contribution
-   graph — confirm that is acceptable (it shows counts, no private detail).
+**Answered (2026-10-01):** visitor-first showcase IA; XP & Health dropped and
+Community folded into Numbers; highlights derived automatically; portfolio
+(`admin.omixsystems.store`) and blog (`blog.omixsystems.store`) links added in
+`js/config.js`.
+
+**Still open**
+
+1. Contributions heatmap: OK to read the *public* contribution graph (counts
+   only, no private detail)?
+2. Should the Highlight ranking weight stars more heavily once the account has
+   stars, or keep recency dominant?
+3. Anything to add to About (email, LinkedIn, X)?
 
 ---
 
