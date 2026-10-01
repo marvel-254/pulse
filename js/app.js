@@ -5,8 +5,9 @@
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 
-  // High-fidelity Developer Icon System (Lucide/Feather inspired 24x24 stroke icons)
+    // High-fidelity Developer Icon System (Lucide/Feather inspired 24x24 stroke icons)
   const ICONS = {
+    github: `<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.02c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.84 2.81 1.31 3.5 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.34-5.47-5.96 0-1.32.47-2.39 1.24-3.23-.12-.31-.54-1.53.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.65.24 2.87.12 3.18.77.84 1.24 1.91 1.24 3.23 0 4.63-2.8 5.65-5.48 5.95.43.37.81 1.1.81 2.22v3.29c0 .32.21.7.82.58A12.01 12.01 0 0 0 24 12.5C24 5.87 18.63.5 12 .5Z"/></svg>`,
     command: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1.5"/><rect width="7" height="5" x="14" y="3" rx="1.5"/><rect width="7" height="9" x="14" y="12" rx="1.5"/><rect width="7" height="5" x="3" y="16" rx="1.5"/></svg>`,
     repos: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>`,
     activity: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>`,
@@ -75,7 +76,6 @@
     snapshot: null,
     selectedRepo: "all",
     view: "command",
-    token: localStorage.getItem("pulse-gh-token") || "",
     api: { rateLimit: 60, rateRemaining: null },
     theme: localStorage.getItem("pulse-theme") || "dark",
     repoSearchQuery: "",
@@ -90,6 +90,26 @@
     live: { lastFetchAt: null, isPolling: false, error: null },
     _pollTimer: null,
   };
+
+  /* ---- PUBLIC ACCOUNT (no auth, ever) ----
+     Pulse is a read-only showroom: no login, no OAuth, no stored token.
+     The GitHub account it displays comes from js/config.js, with the
+     build-time snapshot login as a fallback. */
+  const accountConfig = () => (window.PULSE_CONFIG && window.PULSE_CONFIG.github) || {};
+  const liveConfig = () => (window.PULSE_CONFIG && window.PULSE_CONFIG.live) || {};
+
+  function ghAccount() {
+    const configured = (accountConfig().username || "").trim();
+    if (configured && configured !== "your-username") return configured;
+    return (state.snapshot?.user?.login || "").trim();
+  }
+
+  const isLiveEnabled = () => liveConfig().enabled !== false;
+
+  // Purge any credential an older (login-enabled) build of Pulse may have stored.
+  try {
+    localStorage.removeItem("pulse-gh-token");
+  } catch {}
 
   // Language color mappings
   const LANG_COLORS = {
@@ -145,7 +165,20 @@
       .slice(0, 2)
       .toUpperCase();
 
-  const repoList = () => (state.snapshot?.repos || []).slice().sort((a, b) => new Date(b.pushedAt) - new Date(a.pushedAt));
+  // Public showroom: private repositories are never listed or counted, even if
+  // an old/corrupt snapshot were to contain them. Deduplicated by full name.
+  const repoList = () => {
+    const seen = new Set();
+    return (state.snapshot?.repos || [])
+      .filter((r) => r && !r.isPrivate)
+      .filter((r) => {
+        const key = r.fullName || r.name;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .sort((a, b) => new Date(b.pushedAt) - new Date(a.pushedAt));
+  };
 
   const filteredRepos = () => {
     const list = repoList();
@@ -205,26 +238,21 @@
       </div>
 
       <div class="topstatus">
-        <span class="live-ind" title="GitHub live pulse active">
-          <span class="dot"></span>LIVE
+        <span class="live-ind" title="Public GitHub data · no login required">
+          <span class="dot"></span>PUBLIC
         </span>
 
-        <span id="rateChip" style="${state.api.rateRemaining != null ? "display:inline" : "display:none"}">
-          ${state.api.rateRemaining != null ? `${state.api.rateRemaining} reqs` : ""}
-        </span>
+        <span id="rateChip" style="display:none"></span>
 
-        <button class="topbar-btn" id="tokenSettingsBtn" title="${state.token ? "GitHub Token Connected (5,000 req/hr)" : "Connect GitHub Token (Public 60 req/hr)"}">
-          <span style="position:relative;display:flex;align-items:center;justify-content:center">
-            ${ICONS.key}
-            ${state.token ? '<span style="position:absolute;top:-3px;right:-3px;width:7px;height:7px;background:var(--green);border-radius:50%;box-shadow:0 0 6px var(--green)"></span>' : ""}
-          </span>
-        </button>
+        <a class="topbar-btn" id="githubProfileBtn" href="${esc(state.snapshot?.user?.htmlUrl || (ghAccount() ? "https://github.com/" + ghAccount() : "https://github.com"))}" target="_blank" rel="noopener noreferrer" title="Open GitHub profile">
+          ${ICONS.github}
+        </a>
 
         <button class="topbar-btn" id="themeToggleBtn" title="Toggle Dark/Light Mode">
           ${isDark ? ICONS.sun : ICONS.moon}
         </button>
 
-        ${u ? `
+        ${u?.login ? `
           <a class="user-badge" href="https://github.com/${esc(u.login)}" target="_blank" rel="noopener noreferrer" title="View GitHub profile">
             <img src="${esc(u.avatar || "icons/icon.svg")}" alt="${esc(u.login)}" />
             <span class="user-login">${esc(u.login)}</span>
@@ -236,7 +264,6 @@
       go("command");
     });
     $('#topbarSearchTrigger')?.addEventListener("click", openCommandPalette);
-    $('#tokenSettingsBtn')?.addEventListener("click", openTokenModal);
     $('#themeToggleBtn')?.addEventListener("click", toggleTheme);
   }
 
@@ -263,22 +290,18 @@
         <span>Command Palette</span>
         <span class="nav-badge">⌘K</span>
       </button>
-      <button class="nav-item" id="sidebarTokenBtn">
-        <span class="ic">${ICONS.key}</span>
-        <span>Access Token</span>
-        ${state.token ? `<span class="nav-badge" style="color:var(--green);border-color:var(--green)">ACTIVE</span>` : `<span class="nav-badge">CONNECT</span>`}
+      <button class="nav-item" id="sidebarGithubBtn">
+        <span class="ic">${ICONS.github}</span>
+        <span>GitHub Profile</span>
+        <span class="nav-badge">↗</span>
       </button>
       <button class="nav-item" id="sidebarRefreshBtn">
         <span class="ic">${ICONS.refresh}</span>
-        <span>Sync GitHub</span>
+        <span>Refresh Data</span>
       </button>
       <button class="nav-item" id="sidebarWidgetsBtn">
         <span class="ic">${ICONS.settings}</span>
         <span>Customize View</span>
-      </button>
-      <button class="nav-item" id="sidebarSignOutBtn" style="color:var(--red)">
-        <span class="ic">${ICONS.power}</span>
-        <span>Sign Out</span>
       </button>
 
       <div class="sidebar-foot" id="footMeta">
@@ -303,10 +326,9 @@
       b.addEventListener("click", () => go(b.dataset.nav));
     });
     $('#sidebarCmdPaletteBtn')?.addEventListener("click", openCommandPalette);
-    $('#sidebarTokenBtn')?.addEventListener("click", openTokenModal);
+    $('#sidebarGithubBtn')?.addEventListener("click", openGithubProfile);
     $('#sidebarRefreshBtn')?.addEventListener("click", fetchLive);
     $('#sidebarWidgetsBtn')?.addEventListener("click", openWidgetModal);
-    $('#sidebarSignOutBtn')?.addEventListener("click", logout);
   }
 
   /* ---- MOBILE BOTTOM NAV ---- */
@@ -364,19 +386,30 @@
         ).join("")}
       </div>
       <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--stroke)">
-        <button class="sheet-row" id="moreSheetTokenBtn" style="width:100%">
-          <span class="ic" style="color:var(--cyan)">${ICONS.key}</span>
+        <button class="sheet-row" id="moreSheetGithubBtn" style="width:100%">
+          <span class="ic" style="color:var(--cyan)">${ICONS.github}</span>
           <span class="rmeta">
-            <span class="rt">GitHub Access Token</span>
-            <span class="rs">${state.token ? "Connected" : "Unlock 5,000 req/hr rate limit"}</span>
+            <span class="rt">GitHub Profile</span>
+            <span class="rs">Open @${esc(ghAccount() || "github")} on github.com</span>
+          </span>
+        </button>
+        <button class="sheet-row" id="moreSheetSuggestBtn" style="width:100%">
+          <span class="ic" style="color:var(--green)">${ICONS.issue}</span>
+          <span class="rmeta">
+            <span class="rt">Suggest Something</span>
+            <span class="rs">Propose an issue on a public repository</span>
           </span>
         </button>
       </div>`;
 
     $('#closeMoreSheet')?.addEventListener("click", closeOverlay);
-    $('#moreSheetTokenBtn')?.addEventListener("click", () => {
+    $('#moreSheetGithubBtn')?.addEventListener("click", () => {
       closeOverlay();
-      openTokenModal();
+      openGithubProfile();
+    });
+    $('#moreSheetSuggestBtn')?.addEventListener("click", () => {
+      closeOverlay();
+      openSuggestModal();
     });
     $$('[data-jump]', sheet).forEach((b) =>
       b.addEventListener("click", () => {
@@ -475,198 +508,14 @@
     $('#repoOverlay').setAttribute("aria-hidden", "true");
   }
 
-  /* ---- GITHUB OAUTH (one-click connect) ---- */
-  function oauthConfig() {
-    return (window.PULSE_CONFIG && window.PULSE_CONFIG.oauth) || {};
-  }
-  function startOAuth() {
-    const c = oauthConfig();
-    if (!c.enabled || !c.clientId || !c.workerUrl) {
-      toast("GitHub OAuth isn't configured yet. Add Client ID + Worker URL in js/config.js, or paste a PAT below.");
+  /* ---- PUBLIC PROFILE HELPERS ---- */
+  function openGithubProfile() {
+    const login = ghAccount();
+    if (!login) {
+      toast("No GitHub account configured in js/config.js");
       return;
     }
-    const redirectUri = location.origin + location.pathname;
-    const params = new URLSearchParams({
-      client_id: c.clientId,
-      scope: c.scope,
-      redirect_uri: redirectUri,
-    });
-    location.href = c.authorizeUrl + "?" + params.toString();
-  }
-  async function handleOAuthCallback() {
-    const c = oauthConfig();
-    if (!c.enabled) return;
-    const params = new URLSearchParams(location.search);
-    const code = params.get("code");
-    if (!code) return;
-    try {
-      const res = await fetch(c.workerUrl + "/exchange", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code }),
-      });
-      const data = await res.json();
-      history.replaceState({}, "", location.pathname + location.hash);
-      if (data && data.access_token) {
-        state.token = data.access_token;
-        localStorage.setItem(c.tokenKey || "pulse-gh-token", state.token);
-        state.api.rateLimit = 5000;
-        toast("Connected via GitHub OAuth");
-        fetchLive();
-      } else {
-        toast("OAuth exchange failed: " + (data && data.error ? data.error : "unknown error"));
-      }
-    } catch (e) {
-      history.replaceState({}, "", location.pathname + location.hash);
-      toast("OAuth exchange error: " + e.message);
-    }
-  }
-
-  /* ---- GITHUB TOKEN SETTINGS MODAL ---- */
-  function openTokenModal() {
-    const overlay = $('#tokenOverlay');
-    const sheet = $('#tokenSheet');
-    let showPassword = false;
-
-    const renderSheet = () => {
-      const isConnected = Boolean(state.token);
-      const remaining = state.api.rateRemaining != null ? state.api.rateRemaining : (isConnected ? 5000 : 60);
-      const limit = state.api.rateLimit || (isConnected ? 5000 : 60);
-      const pct = Math.round((remaining / limit) * 100);
-
-      sheet.innerHTML = `
-        <div class="sheet-head">
-          <div>
-            <div class="sheet-title">GitHub Access Token</div>
-            <div class="sheet-sub">Client-side authentication & rate limit expansion</div>
-          </div>
-          <button class="sheet-close" id="closeTokenModalBtn">✕</button>
-        </div>
-
-        <div class="oauth-connect-row" style="margin-bottom:14px">
-          <button class="btn btn-primary" id="oauthConnectBtn" style="width:100%">${ICONS.key} Connect GitHub (OAuth)</button>
-          <div style="font-size:11.5px;color:var(--faint);margin-top:6px;text-align:center">One-click login · unlocks private repos &amp; 5,000 req/hr. PAT below still works.</div>
-        </div>
-
-        <div class="token-card">
-          <div class="token-status-row">
-            <span style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted)">Connection Status</span>
-            <span class="status ${isConnected ? "ok" : "warn"}">
-              <span class="sdot"></span>
-              ${isConnected ? "CONNECTED (PAT ACTIVE)" : "PUBLIC ONLY (60 REQ/HR)"}
-            </span>
-          </div>
-
-          <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--faint);margin:12px 0 6px">
-            Personal Access Token (Classic or Fine-Grained)
-          </div>
-
-          <div class="token-input-group">
-            <input type="${showPassword ? "text" : "password"}" id="tokenInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx or github_pat_xxxx" value="${esc(state.token)}" autocomplete="off" spellcheck="false" />
-            <button class="token-eye-btn" id="toggleTokenEyeBtn" type="button" title="${showPassword ? "Hide token" : "Show token"}">
-              ${showPassword ? ICONS.eye : ICONS.lock}
-            </button>
-          </div>
-
-          <div class="token-rate-bar">
-            <div style="display:flex;justify-content:space-between;font-size:11.5px;font-family:var(--mono);color:var(--muted)">
-              <span>API Rate Quota</span>
-              <span><b>${fmtNum(remaining)}</b> / ${fmtNum(limit)} reqs (${pct}%)</span>
-            </div>
-            <div class="rate-bar-track">
-              <div class="rate-bar-fill" style="width:${pct}%;background:${pct < 20 ? "var(--red)" : pct < 50 ? "var(--amber)" : "var(--cyan)"}"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="callout-box">
-          <div style="display:flex;align-items:center;gap:6px;font-weight:700;color:var(--text);margin-bottom:4px">
-            <span class="stat-icon" style="color:var(--green)">${ICONS.shield}</span>
-            <span>Zero-Knowledge Browser Storage</span>
-          </div>
-          Your token stays strictly on this device in <code>localStorage</code>. It is sent exclusively to GitHub's official HTTPS REST API.
-          <br /><br />
-          Need a token? <a href="https://github.com/settings/tokens/new?scopes=repo,read:user&description=Pulse+Dashboard" target="_blank" rel="noopener noreferrer">Generate a Personal Access Token ↗</a> with <b>repo</b> &amp; <b>read:user</b> permissions.
-        </div>
-
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:10px;flex-wrap:wrap">
-          ${isConnected ? `<button class="btn btn-sm" id="disconnectTokenBtn" style="color:var(--red)"><span class="stat-icon" style="color:var(--red)">${ICONS.issue}</span> Disconnect</button>` : `<div></div>`}
-          <div style="display:flex;gap:10px">
-            <button class="btn btn-sm" id="cancelTokenBtn">Cancel</button>
-            <button class="btn btn-primary btn-sm" id="saveTokenBtn">${ICONS.check} Verify &amp; Save</button>
-          </div>
-        </div>`;
-
-      $('#closeTokenModalBtn')?.addEventListener("click", closeTokenModal);
-      $('#oauthConnectBtn')?.addEventListener("click", startOAuth);
-      $('#cancelTokenBtn')?.addEventListener("click", closeTokenModal);
-
-      $('#toggleTokenEyeBtn')?.addEventListener("click", () => {
-        showPassword = !showPassword;
-        const input = $('#tokenInput');
-        if (input) input.type = showPassword ? "text" : "password";
-      });
-
-      $('#disconnectTokenBtn')?.addEventListener("click", () => {
-        closeTokenModal();
-        logout();
-      });
-
-      $('#saveTokenBtn')?.addEventListener("click", async () => {
-        const input = $('#tokenInput');
-        const val = input ? input.value.trim() : "";
-        if (!val) {
-          toast("Please enter a token");
-          return;
-        }
-
-        const saveBtn = $('#saveTokenBtn');
-        if (saveBtn) {
-          saveBtn.disabled = true;
-          saveBtn.innerHTML = `Verifying...`;
-        }
-
-        try {
-          const res = await fetch("https://api.github.com/user", {
-            headers: {
-              Accept: "application/vnd.github+json",
-              Authorization: `Bearer ${val}`,
-            },
-          });
-
-          if (!res.ok) throw new Error(`HTTP ${res.status}: Invalid token or unauthorized`);
-          const user = await res.json();
-
-          state.token = val;
-          localStorage.setItem("pulse-gh-token", val);
-
-          const limit = res.headers.get("X-RateLimit-Limit");
-          const remaining = res.headers.get("X-RateLimit-Remaining");
-          if (limit) state.api.rateLimit = Number(limit);
-          if (remaining) state.api.rateRemaining = Number(remaining);
-
-          toast(`Authenticated as @${user.login}! Full rate limit unlocked.`);
-          closeTokenModal();
-          fetchLive();
-        } catch (err) {
-          toast(`Verification failed: ${err.message}`);
-          if (saveBtn) {
-            saveBtn.disabled = false;
-            saveBtn.innerHTML = `${ICONS.check} Verify &amp; Save`;
-          }
-        }
-      });
-    };
-
-    renderSheet();
-    overlay.classList.add("open");
-    overlay.setAttribute("aria-hidden", "false");
-  }
-
-  function closeTokenModal() {
-    const overlay = $('#tokenOverlay');
-    overlay.classList.remove("open");
-    overlay.setAttribute("aria-hidden", "true");
+    window.open(`https://github.com/${encodeURIComponent(login)}`, "_blank", "noopener,noreferrer");
   }
 
   /* ---- REPO INSPECTOR MODAL ---- */
@@ -690,17 +539,18 @@
       </div>
 
       <div class="inspector-tags" style="margin-bottom:16px">
-        <span class="status ${repo.isPrivate ? "bad" : "ok"}">
+        <span class="status ${repo.archived ? "warn" : "ok"}">
           <span class="sdot"></span>
-          ${repo.isPrivate ? "PRIVATE" : "PUBLIC"}
+          ${repo.archived ? "ARCHIVED" : "ACTIVE"}
         </span>
+        <span class="status ok"><span class="sdot"></span>PUBLIC</span>
         ${repo.language ? `<span class="lang-tag" style="background:${langColor}22;color:${langColor}">${esc(repo.language)}</span>` : ""}
         <span class="priv-tag" style="display:inline-flex;align-items:center;gap:4px">
           <span class="stat-icon" style="width:12px;height:12px">${ICONS.branch}</span>
           ${esc(repo.defaultBranch || "main")}
         </span>
         ${repo.license ? `<span class="priv-tag" style="display:inline-flex;align-items:center;gap:4px"><span class="stat-icon" style="width:12px;height:12px">${ICONS.shield}</span>${esc(repo.license)}</span>` : ""}
-        ${repo.archived ? `<span class="status warn"><span class="sdot"></span>ARCHIVED</span>` : ""}
+        ${repo.homepage ? `<a class="priv-tag" style="display:inline-flex;align-items:center;gap:4px" href="${esc(repo.homepage)}" target="_blank" rel="noopener noreferrer"><span class="stat-icon" style="width:12px;height:12px">${ICONS.globe}</span>Live site ↗</a>` : ""}
       </div>
 
       <p style="font-size:14px;color:var(--text);margin-bottom:18px;line-height:1.5">
@@ -818,10 +668,16 @@
       // Actions group
       const actions = [
         {
-          title: state.token ? "GitHub Access Token (Connected · 5,000 req/hr)" : "Connect GitHub Access Token (Unlock Private Repos)",
-          sub: "Auth",
-          icon: ICONS.key,
-          action: openTokenModal,
+          title: "Open GitHub Profile",
+          sub: "GitHub",
+          icon: ICONS.github,
+          action: openGithubProfile,
+        },
+        {
+          title: "Suggest Something (Open an Issue)",
+          sub: "Contact",
+          icon: ICONS.issue,
+          action: openSuggestModal,
         },
         {
           title: `Switch to ${state.theme === "dark" ? "Light" : "Dark"} Theme`,
@@ -830,8 +686,8 @@
           action: toggleTheme,
         },
         {
-          title: "Sync with GitHub (Live Refresh)",
-          sub: "API",
+          title: "Refresh from GitHub (Live)",
+          sub: "Public API",
           icon: ICONS.refresh,
           action: fetchLive,
         },
@@ -876,8 +732,8 @@
           items.push({
             type: "REPO",
             title: r.name,
-            sub: `${r.language || "code"} · ★${r.stars}${r.isPrivate ? " · Private" : ""}`,
-            icon: r.isPrivate ? ICONS.lock : ICONS.repos,
+            sub: `${r.language || "code"} · ★${r.stars}`,
+            icon: ICONS.repos,
             action: () => openInspector(r.name),
           });
         }
@@ -1053,12 +909,11 @@
 
   /* ---- PROFILE README VIEW ---- */
   async function loadProfileLive() {
-    const u = state.snapshot?.user?.login;
+    const u = ghAccount();
     if (!u) {
-      toast("Unknown GitHub profile");
+      toast("No GitHub account configured");
       return;
     }
-    const badge = toast;
     try {
       const res = await fetch(`https://raw.githubusercontent.com/${u}/${u}/HEAD/README.md`);
       if (!res.ok) {
@@ -1312,7 +1167,7 @@
     $('#customizeWidgetsTrigger')?.addEventListener("click", openWidgetModal);
     $('#exportSummaryTrigger')?.addEventListener("click", copyMarkdownSummary);
 
-    $('#createIssueBtn')?.addEventListener("click", () => openIssueModal());
+    $('#createIssueBtn')?.addEventListener("click", () => openSuggestModal());
     $('#refreshProfileBtn')?.addEventListener("click", () => loadProfileLive());
 
     // Repositories view events
@@ -1344,10 +1199,8 @@
 
     // CI realtime controls
     $('#wfRefreshBtn')?.addEventListener("click", async () => {
-      const headers = { Accept: "application/vnd.github+json" };
-      if (state.token) headers["Authorization"] = `Bearer ${state.token}`;
       toast("Refreshing workflows…");
-      await fetchWorkflowLive(headers, { manual: true });
+      await fetchWorkflowLive(undefined, { manual: true });
       toast("Workflows refreshed");
     });
     $('#wfPollToggleBtn')?.addEventListener("click", () => toggleWorkflowPoll());
@@ -1361,6 +1214,11 @@
 
   function go(view) {
     state.view = view;
+    // Keep the address bar in sync so any view is directly linkable.
+    try {
+      const target = "#/" + view;
+      if (location.hash !== target) history.replaceState(null, "", target);
+    } catch {}
     if (view === "ci") {
       if (!state._pollTimer) scheduleWorkflowPoll();
     } else {
@@ -1393,7 +1251,7 @@
     const stars = repos.reduce((a, r) => a + r.stars, 0);
     const forks = repos.reduce((a, r) => a + r.forks, 0);
     const issues = repos.reduce((a, r) => a + r.openIssues, 0);
-    const privateCount = repos.filter((r) => r.isPrivate).length;
+    const followers = state.snapshot?.user?.followers;
 
     const langs = {};
     repos.forEach((r) => {
@@ -1488,12 +1346,12 @@
         <div class="card">
           <div class="card-head">
             <div class="card-title">
-              <span class="stat-icon" style="color:var(--red)">${ICONS.lock}</span>
-              Private Repos
+              <span class="stat-icon" style="color:var(--red)">${ICONS.community}</span>
+              Followers
             </div>
           </div>
-          <div class="metric" style="color:var(--red)">${fmtNum(privateCount)}</div>
-          <div class="metric-sub">of ${repos.length} total repos</div>
+          <div class="metric" style="color:var(--red)">${followers != null ? fmtNum(followers) : "—"}</div>
+          <div class="metric-sub">${repos.length} public repositories</div>
         </div>`;
     }
 
@@ -1788,12 +1646,12 @@
         <div class="card repo-card" data-inspect="${esc(r.name)}">
           <div class="card-head">
             <div class="name">
-              <span class="dot" style="background:${r.isPrivate ? "var(--red)" : "var(--green)"}"></span>
+              <span class="dot" style="background:${r.archived ? "var(--amber)" : "var(--green)"}"></span>
               ${esc(r.name)}
             </div>
             <span class="priv-tag" style="display:inline-flex;align-items:center;gap:3px">
-              <span class="stat-icon" style="width:11px;height:11px">${r.isPrivate ? ICONS.lock : ICONS.globe}</span>
-              ${r.isPrivate ? "PRIV" : "PUB"}
+              <span class="stat-icon" style="width:11px;height:11px">${r.archived ? ICONS.lock : ICONS.globe}</span>
+              ${r.archived ? "ARCHIVED" : "PUBLIC"}
             </span>
           </div>
           <div class="desc">${esc(r.description || "No description provided.")}</div>
@@ -1942,7 +1800,7 @@
       .join("");
 
     const createIssueBtn = `
-      <button class="btn btn-primary" id="createIssueBtn" style="margin-right:10px">${ICONS.issue} New Issue</button>`;
+      <button class="btn btn-primary" id="createIssueBtn" style="margin-right:10px">${ICONS.issue} Suggest Something</button>`;
 
     return section(
       "Activity Stream",
@@ -1988,43 +1846,45 @@
     );
   }
 
-  /* ---- CREATE ISSUE MODAL ---- */
-  function openIssueModal(preRepo) {
+  /* ---- SUGGEST / CONTACT MODAL (public: hands off to GitHub) ----
+     Visitors cannot create issues from Pulse without an account, so this
+     builds a prefilled GitHub "new issue" URL and opens it in a new tab.
+     Nothing is stored and nothing is sent anywhere by Pulse itself. */
+  function openSuggestModal(preRepo) {
     const overlay = $("#issueOverlay");
     const sheet = $("#issueSheet");
-    const repos = repoList().filter((r) => !r.isPrivate);
-    const pre = preRepo || state.selectedRepo !== "all" ? state.selectedRepo : "";
-    const token = state.token;
+    const repos = repoList().filter((r) => !r.isPrivate && !r.archived);
+    const pre = preRepo || (state.selectedRepo !== "all" ? state.selectedRepo : "");
+    const preFull = repos.find((r) => r.name === pre)?.fullName || repos[0]?.fullName || "";
 
     sheet.innerHTML = `
       <div class="sheet-head">
         <div>
-          <div class="inspector-title">New Issue</div>
-          <div class="sheet-sub">Create an issue directly from Pulse</div>
+          <div class="inspector-title">Suggest Something</div>
+          <div class="sheet-sub">Open a prefilled issue on GitHub — no account needed here</div>
         </div>
         <button class="sheet-close" id="closeIssueBtn">✕</button>
       </div>
 
-      ${token ? "" : `
-      <div class="status warn" style="margin-bottom:16px;display:flex;gap:8px;align-items:center">
-        <span class="sdot"></span> Creating issues requires a GitHub token.
-        <button class="btn btn-sm" id="issueGotToken" style="margin-left:auto">Connect →</button>
-      </div>`}
+      <div class="callout-box" style="margin-bottom:16px">
+        Pulse is a read-only public view of this account. Your suggestion opens on
+        <b>github.com</b> where GitHub handles sign-in and posting for you.
+      </div>
 
       <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--faint);margin-bottom:8px">Repository</div>
       <select id="issueRepo" class="form-input" style="width:100%;margin-bottom:14px">
-        ${repos.map((r) => `<option value="${esc(r.fullName)}" ${r.fullName === pre ? "selected" : ""}>${esc(r.fullName)}</option>`).join("")}
+        ${repos.map((r) => `<option value="${esc(r.fullName)}" ${r.fullName === preFull ? "selected" : ""}>${esc(r.fullName)}</option>`).join("")}
       </select>
 
       <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--faint);margin-bottom:8px">Title</div>
-      <input id="issueTitle" class="form-input" placeholder="Summarize the issue" style="width:100%;margin-bottom:14px" />
+      <input id="issueTitle" class="form-input" placeholder="Summarize your suggestion" style="width:100%;margin-bottom:14px" />
 
-      <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--faint);margin-bottom:8px">Body (Markdown)</div>
-      <textarea id="issueBody" class="form-input" rows="6" placeholder="Describe the problem, steps to reproduce, expected vs actual…" style="width:100%;margin-bottom:18px"></textarea>
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--faint);margin-bottom:8px">Details (Markdown)</div>
+      <textarea id="issueBody" class="form-input" rows="5" placeholder="Describe the idea, bug or question…" style="width:100%;margin-bottom:18px"></textarea>
 
       <div style="display:flex;gap:10px;justify-content:flex-end">
         <button class="btn" id="cancelIssueBtn">Cancel</button>
-        <button class="btn btn-primary" id="submitIssueBtn" ${token ? "" : "disabled"}>${ICONS.issue} Create Issue</button>
+        <button class="btn btn-primary" id="submitIssueBtn" ${repos.length ? "" : "disabled"}>${ICONS.github} Continue on GitHub</button>
       </div>`;
 
     overlay.classList.add("open");
@@ -2039,41 +1899,22 @@
     overlay.addEventListener("click", (e) => {
       if (e.target === overlay) close();
     });
-    $("#issueGotToken")?.addEventListener("click", () => {
-      close();
-      openTokenModal();
-    });
 
-    $("#submitIssueBtn")?.addEventListener("click", async () => {
-      const full = $("#issueRepo").value;
-      const title = $("#issueTitle").value.trim();
-      const body = $("#issueBody").value.trim();
-      if (!full || !title) {
-        toast("Please provide a repository and issue title");
+    $("#submitIssueBtn")?.addEventListener("click", () => {
+      const full = $("#issueRepo")?.value;
+      const title = ($("#issueTitle")?.value || "").trim();
+      const body = ($("#issueBody")?.value || "").trim();
+      if (!full) {
+        toast("No public repository available for suggestions");
         return;
       }
-      const btn = $("#submitIssueBtn");
-      btn.disabled = true;
-      btn.textContent = "Creating…";
-      try {
-        const res = await fetch(`https://api.github.com/repos/${full}/issues`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${state.token}`,
-          },
-          body: JSON.stringify({ title, body }),
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "Request failed");
-        toast(`Issue created: ${data.html_url}`);
-        close();
-        fetchLive();
-      } catch (err) {
-        toast(`Failed to create issue: ${err.message}`);
-        btn.disabled = false;
-        btn.textContent = "Create Issue";
-      }
+      const params = new URLSearchParams();
+      if (title) params.set("title", title);
+      if (body) params.set("body", body);
+      const url = `https://github.com/${full}/issues/new${params.toString() ? "?" + params.toString() : ""}`;
+      close();
+      window.open(url, "_blank", "noopener,noreferrer");
+      toast("Opening GitHub to post your suggestion");
     });
   }
 
@@ -2141,7 +1982,7 @@
     }).slice(0, 30);
     const lastSync = live.lastFetchAt ? fmtAgo(live.lastFetchAt) : (state.snapshot?.generatedAt ? fmtAgo(state.snapshot.generatedAt) + " (snapshot)" : "—");
     const liveDot = live.isPolling ? '<span class="status run"><span class="sdot"></span>POLLING</span>' : (live.error ? `<span class="status bad"><span class="sdot"></span>STALE</span>` : '<span class="status ok"><span class="sdot"></span>LIVE</span>');
-    const staleHint = (!state.token && !live.lastFetchAt) ? `<div class="callout-box" style="margin-top:12px">Showing build-time snapshot. <b>Connect a token</b> for continuous realtime polling. Public API: 60 req/hr.</div>` : "";
+    const staleHint = (!live.lastFetchAt) ? `<div class="callout-box" style="margin-top:12px">Showing the latest <b>build-time snapshot</b>. Public GitHub data is refreshed automatically while you stay on this view (unauthenticated API: 60 req/hr per visitor).</div>` : "";
     const rows = filtered.map((r) => {
       const cls = runStatusClass(r);
       const label = runStatusLabel(r);
@@ -2193,7 +2034,7 @@
             <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">newest first · realtime</span>
           </div>
           <div class="filter-pills" style="margin-top:12px">${filterPills}</div>
-          <div class="mini-list">${rows || '<div style="color:var(--faint);font-size:13px;padding:8px 0">No workflow runs yet — connect a token or push to trigger Actions.</div>'}</div>
+          <div class="mini-list">${rows || '<div style="color:var(--faint);font-size:13px;padding:8px 0">No workflow runs yet — GitHub Actions activity will appear here once a run is triggered.</div>'}</div>
         </div>
       </div>`
     );
@@ -2405,6 +2246,16 @@
       const data = await res.json();
       if (data && data.repos) {
         state.snapshot = data;
+        const login = ghAccount();
+        if (login) {
+          const u = data.user || {};
+          state.snapshot.user = {
+            ...u,
+            login: u.login || login,
+            avatar: u.avatar || `https://github.com/${encodeURIComponent(login)}.png`,
+            htmlUrl: u.htmlUrl || `https://github.com/${encodeURIComponent(login)}`,
+          };
+        }
         return true;
       }
     } catch (e) {
@@ -2414,35 +2265,41 @@
   }
 
   async function fetchLive() {
-    toast(state.token ? "Syncing authenticated GitHub data..." : "Syncing public GitHub data...");
+    const login = ghAccount();
+    if (!login) {
+      toast("No GitHub account configured — set github.username in js/config.js");
+      return;
+    }
+    if (!isLiveEnabled()) {
+      toast("Live refresh is disabled in js/config.js");
+      return;
+    }
+    toast("Refreshing public GitHub data…");
     try {
       const chip = $('#rateChip');
       const headers = { Accept: "application/vnd.github+json" };
-      if (state.token) {
-        headers["Authorization"] = `Bearer ${state.token}`;
-      }
 
-      // If token present, fetch both public and private repos (owner and collaborator)
-      const url = state.token
-        ? "https://api.github.com/user/repos?per_page=100&sort=updated&affiliation=owner,collaborator"
-        : "https://api.github.com/user/repos?per_page=100&sort=updated";
+      // Public, read-only reads. No credential of any kind is attached.
+      const [reposRes, userRes] = await Promise.all([
+        fetch(`https://api.github.com/users/${encodeURIComponent(login)}/repos?per_page=100&sort=updated&type=owner`, { headers }),
+        fetch(`https://api.github.com/users/${encodeURIComponent(login)}`, { headers }),
+      ]);
 
-      const res = await fetch(url, { headers });
-
-      if (res.headers) {
-        const limit = res.headers.get("X-RateLimit-Limit");
-        const remain = res.headers.get("X-RateLimit-Remaining");
+      if (reposRes.headers) {
+        const limit = reposRes.headers.get("X-RateLimit-Limit");
+        const remain = reposRes.headers.get("X-RateLimit-Remaining");
         if (limit) state.api.rateLimit = Number(limit);
         if (remain) state.api.rateRemaining = Number(remain);
-        if (chip) {
+        if (chip && remain) {
           chip.style.display = "inline";
           chip.textContent = `${remain} / ${state.api.rateLimit} reqs`;
         }
       }
 
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const repos = await res.json();
-      if (Array.isArray(repos) && repos.length) {
+      if (!reposRes.ok) throw new Error(`HTTP ${reposRes.status}`);
+      const repos = await reposRes.json();
+
+      if (Array.isArray(repos)) {
         const enriched = repos
           .filter((r) => !r.fork)
           .map((r) => ({
@@ -2457,30 +2314,37 @@
             openIssues: r.open_issues_count,
             watchers: r.watchers_count,
             license: r.license?.spdx_id || null,
-            isPrivate: r.private,
+            isPrivate: false, // public showroom: only public work is listed
             archived: r.archived,
+            topics: r.topics || [],
             defaultBranch: r.default_branch,
             createdAt: r.created_at,
             updatedAt: r.updated_at,
             pushedAt: r.pushed_at,
           }));
 
-        // Fetch user info if token is connected
-        let userInfo = state.snapshot?.user;
-        if (state.token) {
+        // Profile block (bio, followers, links) straight from the public API.
+        let userInfo = state.snapshot?.user || { login };
+        if (userRes.ok) {
           try {
-            const userRes = await fetch("https://api.github.com/user", { headers });
-            if (userRes.ok) {
-              const u = await userRes.json();
-              userInfo = {
-                login: u.login,
-                name: u.name,
-                avatar: u.avatar_url,
-                publicRepos: u.public_repos,
-                followers: u.followers,
-                following: u.following,
-              };
-            }
+            const u = await userRes.json();
+            userInfo = {
+              login: u.login,
+              name: u.name,
+              avatar: u.avatar_url,
+              bio: u.bio,
+              company: u.company,
+              blog: u.blog,
+              location: u.location,
+              twitter: u.twitter_username,
+              hireable: u.hireable,
+              publicRepos: u.public_repos,
+              publicGists: u.public_gists,
+              followers: u.followers,
+              following: u.following,
+              createdAt: u.created_at,
+              htmlUrl: u.html_url,
+            };
           } catch (e) {}
         }
 
@@ -2494,25 +2358,26 @@
           totalOpenIssues: enriched.reduce((a, r) => a + r.openIssues, 0),
         };
         state.live.lastFetchAt = new Date().toISOString();
+        state.live.error = null;
         render();
-        // Kick off workflow live data in background (respects throttling + rate-low guard)
-        const _hdr = { Accept: "application/vnd.github+json" };
-        if (state.token) _hdr["Authorization"] = `Bearer ${state.token}`;
-        fetchWorkflowLive(_hdr).catch(() => {});
-        toast(state.token ? "Synced private & public repos with full API quota" : "Live GitHub data synchronized");
+        fetchWorkflowLive().catch(() => {});
+        toast(`Showing @${login}'s public repositories`);
       }
     } catch (e) {
       console.warn("Live sync warning:", e);
-      toast("Showing latest snapshot data");
+      state.live.error = String(e.message || e);
+      toast("Showing the latest snapshot data");
     }
   }
 
-  async function fetchWorkflowLive(headers, opts = {}) {
+  async function fetchWorkflowLive(opts = {}) {
+    if (!isLiveEnabled()) return null;
     const s = state.snapshot || {};
     const all = (s.repos || []).slice(0, 12);
     if (!all.length) return null;
+    const headers = { Accept: "application/vnd.github+json" };
     const remaining = state.api.rateRemaining;
-    const limit = state.api.rateLimit || (state.token ? 5000 : 60);
+    const limit = state.api.rateLimit || 60;
     if (!opts.manual && remaining != null && remaining < Math.min(15, Math.ceil(limit * 0.08))) {
       state.live.error = "rate-low";
       return null;
@@ -2521,7 +2386,7 @@
       const sel = state.selectedRepo;
       const targetRepos = sel !== "all"
         ? all.filter((r) => (r.fullName || "").split("/").pop() === String(sel).split("/").pop() || r.name === sel).slice(0, 1)
-        : all.slice(0, state.token ? 8 : 3);
+        : all.slice(0, 3);
       if (!targetRepos.length) return null;
       const results = await Promise.all(targetRepos.map(async (r) => {
         try {
@@ -2582,16 +2447,17 @@
     state.live.isPolling = false;
   }
   function scheduleWorkflowPoll() {
+    if (!isLiveEnabled()) return;
     if (state._pollTimer) { clearInterval(state._pollTimer); state._pollTimer = null; }
-    const base = state.token ? 30000 : 120000;
+    // Public API budget is 60 req/hr per visitor IP and CI refresh costs one
+    // request per repo, so this stays slow and pauses in background tabs.
+    const base = Math.max(60000, Number(liveConfig().ciRefreshMs) || 600000);
     const jitter = Math.floor(Math.random() * 8000);
     const intervalMs = base + jitter;
     state.live.isPolling = true;
     const tick = async () => {
       if (document.hidden) return;
-      const headers = { Accept: "application/vnd.github+json" };
-      if (state.token) headers["Authorization"] = `Bearer ${state.token}`;
-      await fetchWorkflowLive(headers);
+      await fetchWorkflowLive();
     };
     setTimeout(tick, 4000);
     state._pollTimer = setInterval(tick, intervalMs);
@@ -2612,108 +2478,20 @@
   }
 
   /* ---- BOOT ---- */
-  /* ---- LOGIN GATE (mandatory GitHub OAuth) ---- */
-  function authRequired() {
-    const c = oauthConfig();
-    return !!(c && c.requiredLogin);
-  }
-  function renderLoginGate() {
-    const gate = $('#loginGate');
-    if (!gate) return;
-    gate.hidden = false;
-    gate.setAttribute("aria-hidden", "false");
-    const c = oauthConfig();
-    const configured = c && c.enabled && c.clientId && c.workerUrl;
-    const doLogin = () => { if (configured) startOAuth(); else toast("OAuth isn't configured yet."); };
-    const lfCard = (ic, t, d) => `<div class="lf-card"><div class="lf-card-ic">${ic}</div><div class="lf-card-t">${t}</div><div class="lf-card-d">${d}</div></div>`;
-    const step = (n, t, d) => `<div class="how-step"><div class="how-num">${n}</div><div class="how-t">${t}</div><div class="how-d">${d}</div></div>`;
-    gate.innerHTML = `
-      <div class="landing">
-        <header class="landing-nav">
-          <div class="landing-brand"><span class="brand-icon">${ICONS.pulse}</span><span class="brand-name">PULSE</span></div>
-          <button class="btn btn-primary btn-sm" id="loginBtn">${ICONS.key} Continue with GitHub</button>
-        </header>
-        <main class="landing-main">
-          <section class="landing-hero">
-            <div class="hero-chip">&#9889; Developer operations cockpit</div>
-            <h1>Your GitHub <span>command center</span></h1>
-            <p class="hero-sub">Repositories, pull requests, issues, CI, releases &amp; activity — live in one dark-first cockpit. Sign in to build a focused workspace around your repos.</p>
-            <button class="btn btn-primary btn-lg" id="loginBtnHero">${ICONS.key} Continue with GitHub</button>
-            <div class="hero-meta">Private repos &middot; 5,000 req/hr &middot; PWA &middot; Zero-knowledge browser auth</div>
-            ${configured ? "" : '<div class="login-err">OAuth not configured — add clientId + workerUrl in js/config.js.</div>'}
-          </section>
-
-          <section class="landing-features">
-            <div class="lf-head"><h2>One cockpit for your whole dev life</h2><p>Everything Pulse reads from GitHub, visualized instantly.</p></div>
-            <div class="lf-grid">
-              ${lfCard(ICONS.command, "Command Center", "A live overview of every project, star and signal at a glance.")}
-              ${lfCard(ICONS.activity, "Activity Stream", "Real-time commits, PRs, issues and releases across your repos.")}
-              ${lfCard(ICONS.pipeline, "CI & Workflows", "Track GitHub Actions runs and pipeline health in real time.")}
-              ${lfCard(ICONS.repos, "Private Repos", "OAuth access to your private repositories, fully authenticated.")}
-              ${lfCard(ICONS.issue, "Ship Faster", "Create issues and triage work right from Pulse.")}
-              ${lfCard(ICONS.xp, "XP & Rewards", "Your shipping turned into momentum, levels and badges.")}
-            </div>
-          </section>
-
-          <section class="landing-how">
-            <div class="lf-head"><h2>How it works</h2></div>
-            <div class="how-steps">
-              ${step(1, "Sign in", "Continue with GitHub — secure OAuth, no passwords to remember.")}
-              ${step(2, "Connect", "Pulse reads your public and private repositories.")}
-              ${step(3, "Command", "Monitor CI, activity, releases and issues from one place.")}
-            </div>
-          </section>
-        </main>
-        <footer class="landing-foot">Pulse &mdash; your developer operations cockpit &middot; your token never leaves this browser.</footer>
-      </div>`;
-    $('#loginBtn')?.addEventListener("click", doLogin);
-    $('#loginBtnHero')?.addEventListener("click", doLogin);
-  }
-
-function hideLoginGate() {
-    const gate = $('#loginGate');
-    if (!gate) return;
-    gate.hidden = true;
-    gate.setAttribute("aria-hidden", "true");
-  }
-  function checkAuth() {
-    const required = authRequired();
-    if (required && !state.token) {
-      document.body.classList.add("locked");
-      renderLoginGate();
-      return false;
-    }
-    document.body.classList.remove("locked");
-    hideLoginGate();
-    return true;
-  }
-  function logout() {
-    state.token = "";
-    localStorage.removeItem("pulse-gh-token");
-    state.api.rateLimit = 60;
-    state.api.rateRemaining = null;
-    // clear cached snapshot so a new user never sees stale data
-    state.snapshot = null;
-    checkAuth();
-  }
-
   let _wfVisibilityWired = false;
   async function boot() {
     applyTheme(state.theme);
 
-    // Resolve any pending OAuth callback (code) BEFORE deciding auth state
-    await handleOAuthCallback();
-
+    // No login, no gate: the snapshot renders immediately for every visitor.
     const ok = await loadSnapshot();
-    const authed = checkAuth();
-    if (authed) render();
+    render();
 
     // Register Service Worker on supported http(s) protocols
     if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
       navigator.serviceWorker.register("sw.js").catch((e) => console.warn("SW not registered", e));
     }
 
-    if (ok && authed) {
+    if (ok && isLiveEnabled()) {
       setTimeout(fetchLive, 900);
       scheduleWorkflowPoll();
     }
@@ -2723,9 +2501,7 @@ function hideLoginGate() {
       document.addEventListener("visibilitychange", () => {
         if (document.hidden) return;
         if (state.view === "ci") {
-          const headers = { Accept: "application/vnd.github+json" };
-          if (state.token) headers["Authorization"] = `Bearer ${state.token}`;
-          fetchWorkflowLive(headers).catch(() => {});
+          fetchWorkflowLive().catch(() => {});
         }
       });
     }
@@ -2749,10 +2525,6 @@ function hideLoginGate() {
         $('#widgetOverlay').setAttribute("aria-hidden", "true");
       }
     });
-    $('#tokenOverlay')?.addEventListener("click", (e) => {
-      if (e.target.id === "tokenOverlay") closeTokenModal();
-    });
-
     // Global keyboard shortcuts
     window.addEventListener("keydown", (e) => {
       // ⌘K or Ctrl+K or / (when not focused on input)
@@ -2765,7 +2537,6 @@ function hideLoginGate() {
       } else if (e.key === "Escape") {
         closeOverlay();
         closeCommandPalette();
-        closeTokenModal();
         $('#inspectorOverlay')?.classList.remove("open");
         $('#widgetOverlay')?.classList.remove("open");
         $('#issueOverlay')?.classList.remove("open");
@@ -2775,7 +2546,7 @@ function hideLoginGate() {
 
   // Deep-link support: #/view-name
   const applyHash = () => {
-    const h = (location.hash || "").replace(/^#/, "").split("/")[0].toLowerCase();
+    const h = (location.hash || "").replace(/^#\/?/, "").split("/")[0].toLowerCase();
     if (h && NAV.some((n) => n.id === h)) go(h);
   };
   window.addEventListener("hashchange", applyHash);

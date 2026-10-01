@@ -1,5 +1,12 @@
 # Pulse — Next Features & Product Roadmap
 
+> **Status update (2026-10-01):** the "Connect GitHub / authenticated mode"
+> described below has been **removed**. Pulse is deliberately public and
+> read-only — no OAuth, no tokens, no private data. Everything in this document
+> that depends on authenticated access is now out of scope; see
+> [`SHOWCASE-PLAN.md`](SHOWCASE-PLAN.md) for the current direction.
+
+
 > Source: external product review of the live Pulse page, cross-checked against the GitHub workflows it is built around.
 >
 > **Overall assessment:** Pulse has a good product idea, but it currently reads more like a very well-designed GitHub shortcut launcher than a full developer command center. The next step should **not** be "add more shortcuts." It should be turning Pulse into a workspace that understands a repository, its branches, commits, PRs, issues and developer workflow.

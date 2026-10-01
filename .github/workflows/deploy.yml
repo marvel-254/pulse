@@ -29,9 +29,12 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Generate data snapshot
+      - name: Generate public data snapshot
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          # Optional: set a repo variable PULSE_USERNAME to override the
+          # account shown on the site (otherwise js/config.js is used).
+          PULSE_USERNAME: ${{ vars.PULSE_USERNAME }}
         run: node build.mjs
 
       - name: Setup Pages
