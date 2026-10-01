@@ -1,7 +1,7 @@
 {
   "name": "pulse",
   "version": "1.0.0",
-  "description": "Pulse \u2014 a public, read-only showcase of a GitHub account. No login, no OAuth, no tokens.",
+  "description": "Pulse — a public, read-only showcase of a GitHub account. No login, no OAuth, no tokens.",
   "type": "module",
   "scripts": {
     "build": "node build.mjs",
@@ -11,7 +11,9 @@
     "audit": "node scripts/layout-audit.mjs",
     "check": "node scripts/ci-check.mjs",
     "verify": "npm run check && npm run audit && npm run a11y",
-    "a11y": "node scripts/a11y-test.mjs"
+    "a11y": "node scripts/a11y-test.mjs",
+    "og": "node scripts/make-og.mjs",
+    "sweep": "node scripts/visual-sweep.mjs"
   },
   "engines": {
     "node": ">=18"

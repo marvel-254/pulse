@@ -74,15 +74,35 @@ window.dispatchEvent(new window.HashChangeEvent("hashchange"));
 await wait(900);
 await audit("account");
 
-window.document.querySelector("#soundToggleBtn")?.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
-await wait(100);
-window.document.querySelector("#soundToggleBtn")?.dispatchEvent(new window.MouseEvent("contextmenu", { bubbles: true }));
+/* The sheets a visitor can actually open. */
+window.location.hash = "#/overview";
+window.dispatchEvent(new window.HashChangeEvent("hashchange"));
+await wait(600);
+window.document.querySelector(".repo-pill")?.click();
 await wait(400);
-await audit("sound sheet");
+await audit("repository sheet");
+window.document.dispatchEvent(new window.KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+await wait(300);
 
-window.document.querySelector("#questChipBtn")?.click();
+window.document.querySelector("#topbarSearchTrigger")?.click();
 await wait(400);
-await audit("quest sheet");
+await audit("command palette");
+window.document.dispatchEvent(new window.KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+await wait(300);
+
+/* Both colour schemes, because the retro palette differs sharply between
+   them and contrast is the likeliest failure. */
+for (const theme of ["light", "dark"]) {
+  window.document.documentElement.setAttribute("data-theme", theme);
+  window.location.hash = "#/overview";
+  window.dispatchEvent(new window.HashChangeEvent("hashchange"));
+  await wait(700);
+  await audit(`overview (${theme})`);
+  window.location.hash = "#/highlights";
+  window.dispatchEvent(new window.HashChangeEvent("hashchange"));
+  await wait(700);
+  await audit(`highlights (${theme})`);
+}
 
 /* ---- report ---- */
 const rank = { critical: 0, serious: 1, moderate: 2, minor: 3 };

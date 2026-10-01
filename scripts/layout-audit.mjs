@@ -94,8 +94,13 @@ const checks = [
   ["mobile bottom nav container", /id="mobilenav"/.test(readFileSync("index.html", "utf8"))],
   ["safe-area padding rules", /env\(safe-area-inset-bottom/.test(css) && /env\(safe-area-inset-top/.test(css)],
   ["touch target minimums", /min-height:\s*44px|min-height:\s*40px/.test(css)],
-  ["reduced-motion handling", /prefers-reduced-motion/.test(css) && /prefers-reduced-motion/.test(js)],
-  ["no-preference for tilt on touch", /@media \(hover: none\)/.test(css)],
+  ["reduced-motion handling", /prefers-reduced-motion/.test(css)],
+  ["dark scheme defined alongside the light one", /\[data-theme="dark"\]/.test(css) && /:root\s*\{/.test(css)],
+  ["zero border-radius (1995 had none)", !/^[ \t]*border-radius\s*:/m.test(css)],
+  ["beveled 3D borders present", /--bevel-hi/.test(css) && /box-shadow:\s*inset/.test(css)],
+  ["no soft / blurred shadows", !/box-shadow:[^;]*\b(?:blur|rgba?)\(/i.test(css)],
+  ["no backdrop blur", !/backdrop-filter/.test(css)],
+  ["marquee pauses are not required (decorative, aria-hidden)", /retro-marquee/.test(css)],
 ];
 for (const [name, ok] of checks) if (!ok) ISSUES.push(`missing: ${name}`);
 

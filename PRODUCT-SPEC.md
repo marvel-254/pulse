@@ -1,5 +1,13 @@
 # Pulse — Personal GitHub Command Center (Product Spec)
 
+> **Status update (2026-10-01): the visual direction changed.**
+> Pulse is no longer a dark-first glass cockpit. It is now a faithful
+> Windows 95 / GeoCities pastiche (bevels, system fonts, marquee, hit counter)
+> with a period-correct dark scheme. Section 4 below describes the *original*
+> glass-cockpit direction and is kept only as history; the live design system
+> is documented in [`README.md`](README.md#design-system) and implemented as the
+> token layer at the top of `css/styles.css`.
+>
 > **Status update (2026-10-01): Pulse is now a public, read-only showcase.**
 > The mandatory GitHub login gate, OAuth flow, PAT storage and the OAuth Worker
 > have been removed. Pulse reads public GitHub data only and renders for any

@@ -28,9 +28,6 @@ const required = [
   "css/styles.css",
   "js/config.js",
   "js/app.js",
-  "js/depth.js",
-  "js/game.js",
-  "js/music.js",
   "data/snapshot.json",
   "data/history.json",
   "sw.js",
@@ -98,15 +95,15 @@ assert("index.html has description", /name="description"/.test(html));
 assert("index.html has JSON-LD", /application\/ld\+json/.test(html));
 assert("index.html has a skip link", /class="skip-link"[^>]*href="#stage"/.test(html));
 assert("stage is a focus target", /<main class="stage" id="stage" tabindex="-1">/.test(html));
-assert("sheets are dialogs", (html.match(/role="dialog"/g) || []).length >= 6);
-assert("index.html loads the music engine", /js\/music\.js/.test(html));
+assert("sheets are dialogs", (html.match(/role="dialog"/g) || []).length >= 3);
+assert("index.html loads the app", /js\/app\.js/.test(html));
 assert("no login / token UI in HTML", !/access token|sign in with github|oauth/i.test(html));
 
 /* ---- service worker precache matches disk ---- */
 const sw = read("sw.js");
 const cached = [...sw.matchAll(/"(\.\/[^"]+)"/g)].map((m) => m[1].replace(/^\.\//, "")).filter(Boolean);
 cached.forEach((f) => assert(`precached file exists: ${f}`, f === "" || has(f)));
-assert("service worker caches js/music.js", /"\.\/js\/music\.js"/.test(sw));
+assert("service worker caches the app shell", /"\.\/js\/app\.js"/.test(sw));
 assert("service worker cache name is versioned", /const CACHE = "pulse-v\d+"/.test(sw));
 
 /* ---- shipped code stays login-free and third-party-script-free ---- */
@@ -116,11 +113,27 @@ assert(
   !/access_token|authorize\?client_id/i.test(appJs) && !/oauth/i.test(appJs.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, ""))
 );
 assert("app has no analytics beacons", !/gtag\(|googletagmanager|plausible\.io|posthog|mixpanel|umami/i.test(appJs));
+assert(
+  "retro design system present (bevels, marquee, hit counter)",
+  /--bevel-hi\s*:/.test(read("css/styles.css")) &&
+    /\.retro-marquee\s*\{/.test(read("css/styles.css")) &&
+    /\.retro-counter\s*\{/.test(read("css/styles.css"))
+);
+assert(
+  "no border-radius anywhere (1995 had none)",
+  !/^[ \t]*border-radius\s*:/m.test(read("css/styles.css"))
+);
+assert("dark scheme defined", /\[data-theme="dark"\]/.test(read("css/styles.css")));
 assert("no bundled audio files", !/\.(mp3|wav|ogg|m4a|flac)["')]/i.test(appJs) || /hasCustomTrack/.test(appJs));
 const tracked = [...html.matchAll(/<(?:script|link|img)[^>]*?(?:src|href)="(https?:\/\/[^"]+)"/g)]
   .filter((m) => !/rel="(canonical|alternate|me)"/.test(m[0]))
   .map((m) => m[1]);
-assert("fonts are self-hosted", /\.\.\/fonts\//.test(read("css/styles.css")) && !/fonts\.googleapis\.com/.test(html));
+assert(
+  "no webfont requests (system fonts only)",
+  !/@font-face/.test(read("css/styles.css")) &&
+    !/fonts\.googleapis\.com|fonts\.gstatic\.com/.test(html) &&
+    !/\.(woff2?|ttf|eot|otf)["')]/.test(read("css/styles.css"))
+);
 assert("no third-party requests at all", tracked.length === 0);
 assert(
   "third-party requests limited to fonts",

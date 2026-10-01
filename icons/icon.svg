@@ -1,34 +1,52 @@
-<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="pulseGrad" x1="40" y1="40" x2="472" y2="472" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#22d3ee"/>
-      <stop offset="50%" stop-color="#38bdf8"/>
-      <stop offset="100%" stop-color="#8b5cf6"/>
-    </linearGradient>
-    <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="16" result="blur" />
-      <feComposite in="SourceGraphic" in2="blur" operator="over" />
-    </filter>
-  </defs>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Pulse">
+  <title>Pulse</title>
+  <!-- A 1997 application icon: navy face, hard pixel waveform, Windows 95 bevel.
+       No gradients, no blur, no rounded corners. -->
 
-  <!-- Base App Tile Background -->
-  <rect width="512" height="512" rx="120" fill="#07090e"/>
-  <rect x="8" y="8" width="496" height="496" rx="112" stroke="rgba(255, 255, 255, 0.08)" stroke-width="4"/>
+  <!-- outer raised bevel -->
+  <rect x="0" y="0" width="512" height="512" fill="#c0c0c0"/>
+  <path d="M0 0h512v512H0z" fill="none"/>
+  <rect x="0" y="0" width="512" height="16" fill="#ffffff"/>
+  <rect x="0" y="0" width="16" height="512" fill="#ffffff"/>
+  <rect x="0" y="496" width="512" height="16" fill="#000000"/>
+  <rect x="496" y="0" width="16" height="512" fill="#000000"/>
+  <rect x="16" y="16" width="480" height="8" fill="#dfdfdf"/>
+  <rect x="16" y="16" width="8" height="480" fill="#dfdfdf"/>
+  <rect x="16" y="488" width="480" height="8" fill="#808080"/>
+  <rect x="488" y="16" width="8" height="480" fill="#808080"/>
 
-  <!-- Ambient Inner Glow Rings -->
-  <circle cx="256" cy="256" r="180" stroke="url(#pulseGrad)" stroke-width="8" opacity="0.2" stroke-dasharray="8 12"/>
-  <circle cx="256" cy="256" r="140" stroke="url(#pulseGrad)" stroke-width="4" opacity="0.3"/>
+  <!-- sunken screen -->
+  <rect x="32" y="32" width="448" height="448" fill="#000080"/>
 
-  <!-- Pulse Waveform & Command Node -->
-  <path d="M72 256 H168 L204 164 L256 360 L308 200 L344 256 H440" 
-        stroke="url(#pulseGrad)" 
-        stroke-width="26" 
-        stroke-linecap="round" 
-        stroke-linejoin="round"
-        filter="url(#neonGlow)" />
+  <!-- screen scanlines -->
+  <g fill="#000060">
+    <rect x="32" y="80" width="448" height="8"/>
+    <rect x="32" y="160" width="448" height="8"/>
+    <rect x="32" y="240" width="448" height="8"/>
+    <rect x="32" y="320" width="448" height="8"/>
+    <rect x="32" y="400" width="448" height="8"/>
+  </g>
 
-  <!-- Active Signal Indicator Dots -->
-  <circle cx="204" cy="164" r="12" fill="#22d3ee" filter="url(#neonGlow)"/>
-  <circle cx="308" cy="200" r="12" fill="#8b5cf6" filter="url(#neonGlow)"/>
-  <circle cx="256" cy="360" r="14" fill="#38bdf8" filter="url(#neonGlow)"/>
+  <!-- pixel waveform: flat, dip, spike, flat -->
+  <g fill="#00ff00">
+    <rect x="48" y="256" width="64" height="32"/>
+    <rect x="112" y="224" width="32" height="64"/>
+    <rect x="144" y="288" width="32" height="64"/>
+    <rect x="176" y="160" width="32" height="192"/>
+    <rect x="208" y="224" width="32" height="64"/>
+    <rect x="240" y="256" width="224" height="32"/>
+  </g>
+
+  <!-- highlight on the leading edge of the waveform -->
+  <g fill="#00aa00">
+    <rect x="48" y="280" width="64" height="8"/>
+    <rect x="240" y="280" width="224" height="8"/>
+  </g>
+
+  <!-- an "LIVE" status light, like a 90s hardware panel -->
+  <rect x="416" y="64" width="32" height="32" fill="#ff0000"/>
+  <rect x="416" y="64" width="32" height="8" fill="#ff8888"/>
+  <rect x="416" y="88" width="32" height="8" fill="#800000"/>
+  <rect x="416" y="64" width="8" height="32" fill="#ff8888"/>
+  <rect x="440" y="64" width="8" height="32" fill="#800000"/>
 </svg>
