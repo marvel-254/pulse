@@ -1,5 +1,0 @@
-# Wrangler local state / secrets — never commit these
-.wrangler/
-wrangler-*.toml.local
-node_modules/
-.dev.vars

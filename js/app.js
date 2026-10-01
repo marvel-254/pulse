@@ -5,8 +5,9 @@
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 
-  // High-fidelity Developer Icon System (Lucide/Feather inspired 24x24 stroke icons)
+    // High-fidelity Developer Icon System (Lucide/Feather inspired 24x24 stroke icons)
   const ICONS = {
+    github: `<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.02c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.84 2.81 1.31 3.5 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.34-5.47-5.96 0-1.32.47-2.39 1.24-3.23-.12-.31-.54-1.53.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.65.24 2.87.12 3.18.77.84 1.24 1.91 1.24 3.23 0 4.63-2.8 5.65-5.48 5.95.43.37.81 1.1.81 2.22v3.29c0 .32.21.7.82.58A12.01 12.01 0 0 0 24 12.5C24 5.87 18.63.5 12 .5Z"/></svg>`,
     command: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1.5"/><rect width="7" height="5" x="14" y="3" rx="1.5"/><rect width="7" height="9" x="14" y="12" rx="1.5"/><rect width="7" height="5" x="3" y="16" rx="1.5"/></svg>`,
     repos: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>`,
     activity: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>`,
@@ -44,6 +45,9 @@
     sun: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
     moon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
     filter: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>`,
+    music: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
+    musicOff: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="2" x2="22" y2="22"/><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
+    volume: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>`,
     key: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/></svg>`,
   };
 
@@ -60,6 +64,7 @@
     langDistribution: true,
     recentActivity: true,
     topRepos: true,
+    highlights: true,
   };
 
   const getSavedWidgets = () => {
@@ -74,8 +79,8 @@
   const state = {
     snapshot: null,
     selectedRepo: "all",
-    view: "command",
-    token: localStorage.getItem("pulse-gh-token") || "",
+    accountFilter: "all", // "all" | account login
+    view: "overview",
     api: { rateLimit: 60, rateRemaining: null },
     theme: localStorage.getItem("pulse-theme") || "dark",
     repoSearchQuery: "",
@@ -87,9 +92,64 @@
     paletteSelectedIndex: 0,
     filteredPaletteItems: [],
     ciFilter: "all",
+    selectedProject: null,
+    readmeCache: {},
+    history: [],
     live: { lastFetchAt: null, isPolling: false, error: null },
     _pollTimer: null,
   };
+
+  /* ---- PUBLIC ACCOUNT (no auth, ever) ----
+     Pulse is a read-only showroom: no login, no OAuth, no stored token.
+     The GitHub account it displays comes from js/config.js, with the
+     build-time snapshot login as a fallback. */
+  const accountConfig = () => (window.PULSE_CONFIG && window.PULSE_CONFIG.github) || {};
+  const liveConfig = () => (window.PULSE_CONFIG && window.PULSE_CONFIG.live) || {};
+
+  function ghAccount() {
+    const configured = (accountConfig().username || "").trim();
+    if (configured && configured !== "your-username") return configured;
+    return (state.snapshot?.user?.login || "").trim();
+  }
+
+  /** Every account featured on the site (config list, else the primary one). */
+  function accountList() {
+    const configured = (accountConfig().accounts || [])
+      .map((a) => String(a).trim().replace(/^@/, ""))
+      .filter(Boolean);
+    if (configured.length) return [...new Set(configured)];
+    const single = ghAccount();
+    return single ? [single] : [];
+  }
+
+  /** Account summaries from the snapshot (falls back to what the repos reveal). */
+  function accountSummaries() {
+    const fromSnapshot = state.snapshot?.accounts;
+    if (Array.isArray(fromSnapshot) && fromSnapshot.length) return fromSnapshot;
+    return accountList().map((login) => {
+      const own = repoList().filter((r) => repoOwner(r) === login);
+      return {
+        login,
+        avatar: `https://github.com/${login}.png`,
+        htmlUrl: `https://github.com/${login}`,
+        repoCount: own.length,
+        stars: own.reduce((a, r) => a + r.stars, 0),
+        latestPush: own[0]?.pushedAt || null,
+        followers: null,
+      };
+    });
+  }
+
+  const repoOwner = (r) => r?.owner || (r?.fullName || "").split("/")[0] || "";
+  const accountAvatar = (login) =>
+    accountSummaries().find((a) => a.login === login)?.avatar || `https://github.com/${login}.png`;
+
+  const isLiveEnabled = () => liveConfig().enabled !== false;
+
+  // Purge any credential an older (login-enabled) build of Pulse may have stored.
+  try {
+    localStorage.removeItem("pulse-gh-token");
+  } catch {}
 
   // Language color mappings
   const LANG_COLORS = {
@@ -120,6 +180,8 @@
 
   const fmtNum = (n) => (n == null ? "0" : Number(n).toLocaleString());
 
+  const plural = (n, word) => `${fmtNum(n)} ${word}${Number(n) === 1 ? "" : "s"}`;
+
   const fmtAgo = (iso) => {
     if (!iso) return "—";
     const ms = Date.now() - new Date(iso).getTime();
@@ -145,25 +207,275 @@
       .slice(0, 2)
       .toUpperCase();
 
-  const repoList = () => (state.snapshot?.repos || []).slice().sort((a, b) => new Date(b.pushedAt) - new Date(a.pushedAt));
+  // Public showroom: private repositories are never listed or counted, even if
+  // an old/corrupt snapshot were to contain them. Deduplicated by full name.
+  const repoList = () => {
+    const seen = new Set();
+    return (state.snapshot?.repos || [])
+      .filter((r) => r && !r.isPrivate)
+      .filter((r) => {
+        const key = r.fullName || r.name;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .sort((a, b) => new Date(b.pushedAt) - new Date(a.pushedAt));
+  };
+
+  const accountRepos = () => {
+    const list = repoList();
+    if (state.accountFilter === "all") return list;
+    return list.filter((r) => repoOwner(r) === state.accountFilter);
+  };
 
   const filteredRepos = () => {
-    const list = repoList();
+    const list = accountRepos();
     if (state.selectedRepo === "all") return list;
     return list.filter((r) => r.name === state.selectedRepo);
   };
 
+  /* ---- PUBLIC SHOWCASE HELPERS ---- */
+  const displayConfig = () => (window.PULSE_CONFIG && window.PULSE_CONFIG.display) || {};
+
+  const displayLinks = () =>
+    (displayConfig().links || []).filter((l) => l && l.label && l.url);
+
+  const profileUrl = () => {
+    const login = ghAccount();
+    return login ? `https://github.com/${encodeURIComponent(login)}` : "https://github.com";
+  };
+
+  const daysSince = (iso) => (iso ? Math.floor((Date.now() - new Date(iso).getTime()) / 864e5) : Infinity);
+
+  const accountYears = () => {
+    const created = state.snapshot?.user?.createdAt;
+    if (!created) return null;
+    return Math.max(0, Math.round((Date.now() - new Date(created).getTime()) / (365.25 * 864e5) * 10) / 10);
+  };
+
+  // Momentum is derived from public push timestamps (works without any API auth).
+  const momentum = () => {
+    const repos = repoList();
+    return {
+      week: repos.filter((r) => daysSince(r.pushedAt) <= 7).length,
+      month: repos.filter((r) => daysSince(r.pushedAt) <= 30).length,
+      latest: repos[0] || null,
+    };
+  };
+
+  const repoStatus = (r) => (r.archived ? "archived" : daysSince(r.pushedAt) <= 90 ? "active" : "quiet");
+
+  /* Repos that exist to configure GitHub itself (profile README repo, dotfiles,
+     topic-only repos) are not projects — they never belong in Highlights. */
+  const isProfileRepo = (r) => {
+    const owner = repoOwner(r);
+    const name = (r.name || "").toLowerCase();
+    const topics = (r.topics || []).map((t) => t.toLowerCase());
+    if (owner && name === owner.toLowerCase()) return true;
+    if (topics.includes("github-config") || topics.includes("profile")) return true;
+    if (/^config files for my github profile/i.test(r.description || "")) return true;
+    if (!r.language && !r.readmeExcerpt && !(r.description || "").trim()) return true;
+    return false;
+  };
+
+  /* Auto-derived highlights — no hand-written content required.
+     Recent work first, then reach (stars/forks), then how complete the repo
+     looks (description, live site, README, topics, license). Results are
+     spread across accounts so one account cannot dominate the page. */
+  const featuredRepos = (limit = 6) => {
+    const score = (r) => {
+      const age = daysSince(r.pushedAt);
+      const recency = age <= 1 ? 60 : age <= 7 ? 45 : age <= 30 ? 30 : age <= 90 ? 15 : 4;
+      return (
+        recency +
+        (r.stars || 0) * 12 +
+        (r.forks || 0) * 6 +
+        (r.readmeExcerpt ? 10 : 0) +
+        (r.description ? 6 : 0) +
+        (r.homepage ? 8 : 0) +
+        ((r.topics || []).length ? 4 : 0) +
+        (r.license ? 2 : 0) +
+        (r.language ? 3 : 0) -
+        (r.archived ? 40 : 0)
+      );
+    };
+
+    const ranked = repoList()
+      .filter((r) => !isProfileRepo(r))
+      .sort((a, b) => score(b) - score(a));
+
+    // Round-robin across accounts so every account is represented early.
+    const perOwnerCap = Math.max(1, Math.ceil(limit / Math.max(1, accountList().length)));
+    const picked = [];
+    const capped = [];
+    const counts = {};
+    for (const r of ranked) {
+      const owner = repoOwner(r);
+      if ((counts[owner] || 0) < perOwnerCap) {
+        counts[owner] = (counts[owner] || 0) + 1;
+        picked.push(r);
+      } else {
+        capped.push(r);
+      }
+      if (picked.length >= limit) break;
+    }
+    // Top up with the best remaining repos if an account had too few.
+    return picked.concat(capped).slice(0, limit);
+  };
+
+  const extrasFor = (fullName) => (state.snapshot?.extras || []).find((x) => x.fullName === fullName) || null;
+
+  const allReleases = () =>
+    (state.snapshot?.extras || [])
+      .flatMap((x) => (x.releases || []).map((r) => ({ ...r, repo: x.fullName })))
+      .sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+
+  const allWorkflowRuns = () =>
+    (state.snapshot?.extras || []).flatMap((x) => (x.runs || []).map((r) => ({ ...r, repo: x.fullName })));
+
   /* ---- navigation items ---- */
+  /* ---- INFORMATION ARCHITECTURE (visitor-first) ----
+     Overview -> Highlights -> Numbers -> Activity -> Projects -> How I build -> About
+     Plus a shareable per-project route: #/project/<name> */
   const NAV = [
-    { id: "command", label: "COMMAND", ic: ICONS.command, badge: () => filteredRepos().length },
-    { id: "repos", label: "REPOSITORIES", ic: ICONS.repos, badge: () => repoList().length },
+    { id: "overview", label: "OVERVIEW", ic: ICONS.command, badge: () => null },
+    { id: "highlights", label: "HIGHLIGHTS", ic: ICONS.zap, badge: () => featuredRepos().length || null },
+    { id: "numbers", label: "NUMBERS", ic: ICONS.award, badge: () => null },
     { id: "activity", label: "ACTIVITY", ic: ICONS.activity, badge: () => null },
-    { id: "ci", label: "CI & PIPELINES", ic: ICONS.pipeline, badge: () => "OK" },
-    { id: "community", label: "COMMUNITY", ic: ICONS.community, badge: () => state.snapshot?.totalStars || null },
-    { id: "health", label: "HEALTH", ic: ICONS.health, badge: () => null },
-    { id: "xp", label: "XP & REWARDS", ic: ICONS.xp, badge: () => "LVL" },
-    { id: "profile", label: "PROFILE", ic: ICONS.user, badge: () => null },
+    { id: "projects", label: "PROJECTS", ic: ICONS.repos, badge: () => repoList().length },
+    { id: "craft", label: "HOW I BUILD", ic: ICONS.pipeline, badge: () => null },
+    { id: "about", label: "ABOUT", ic: ICONS.user, badge: () => null },
   ];
+  const VIEW_IDS = [...NAV.map((n) => n.id), "project", "account"];
+
+  /* ---- SHARING / SEO META ----
+     Public metadata only: no tracking, no third-party scripts. Absolute URLs
+     resolve against PULSE_CONFIG.site.url, so a fork on another domain still
+     produces correct share cards. */
+  function siteCfg() {
+    const s = window.PULSE_CONFIG?.site || {};
+    const base = String(s.url || location.origin + location.pathname).replace(/\/?$/, "/");
+    return {
+      base,
+      name: s.name || "Pulse",
+      description:
+        s.description ||
+        "A public, read-only showcase of a GitHub account: projects, activity, releases and CI. No login required.",
+      image: s.image || "icons/og.png",
+      twitter: s.twitter || "",
+    };
+  }
+  const absUrl = (rel) => {
+    try { return new URL(rel, siteCfg().base).href; } catch { return rel; }
+  };
+
+  function routeMeta() {
+    const cfg = siteCfg();
+    const u = state.snapshot?.user || {};
+    const accounts = accountList();
+    const who = accounts.length > 1 ? accounts.map((a) => "@" + a).join(" + ") : "@" + (u.login || ghAccount() || "github");
+    const map = {
+      overview: ["Overview", `What ${who} has been building — highlights, activity and public repositories.`],
+      highlights: ["Highlights", `The work worth seeing from ${who}: featured projects, releases and shipped tools.`],
+      numbers: ["Numbers", `Public GitHub stats for ${who}: contributions, streaks, PRs merged, issues, code volume and trends.`],
+      activity: ["Activity", `Recent public commits, releases and workflow runs from ${who}.`],
+      projects: ["Projects", `Every public repository from ${who}, filterable by language and activity.`],
+      craft: ["How I build", `Tooling, languages, release cadence and CI habits behind the work of ${who}.`],
+      about: ["About", `Who ${who} is, what they build, and how to get in touch.`],
+    };
+    if (state.view === "project") {
+      const repo =
+        repoList().find((r) => (r.name || "").toLowerCase() === String(state.selectedProject || "").toLowerCase()) || repoList()[0];
+      if (repo) {
+        const image = repo.cover || repo.openGraphImage || repo.socialImage;
+        return {
+          title: `${repo.name} — ${cfg.name}`,
+          description: (repo.description || `Public repository ${repo.fullName}.`).slice(0, 180),
+          path: `#/project/${repo.name}`,
+          image: image ? absUrl(image) : absUrl(cfg.image),
+          repo,
+        };
+      }
+    }
+    if (state.view === "account") {
+      const account = accountFor(state.selectedAccount);
+      if (account) {
+        return {
+          title: `${account.name || account.login} (@${account.login}) — ${cfg.name}`,
+          description: (account.bio || `Public GitHub work from @${account.login}: repositories, contributions and languages.`).slice(0, 180),
+          path: `#/account/${account.login}`,
+          image: absUrl(cfg.image),
+        };
+      }
+    }
+    const [t, d] = map[state.view] || map.overview;
+    return {
+      title: `${t} — ${cfg.name}`,
+      description: d,
+      path: state.view === "overview" ? "" : `#/${state.view}`,
+      image: absUrl(cfg.image),
+    };
+  }
+
+  function metaTag(selector, attrs, create) {
+    let el = document.head.querySelector(selector);
+    if (!el) {
+      el = document.createElement(create.tag);
+      Object.entries(create.attrs).forEach(([k, v]) => el.setAttribute(k, v));
+      document.head.appendChild(el);
+    }
+    Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+    return el;
+  }
+
+  /* Keep <title>, description, canonical and the social card in step with the
+     view/deep link the visitor is looking at. */
+  function syncMeta() {
+    const cfg = siteCfg();
+    const meta = routeMeta();
+    const url = cfg.base + meta.path;
+    document.title = meta.title;
+    metaTag('meta[name="description"]', { content: meta.description }, { tag: "meta", attrs: { name: "description" } });
+    metaTag('link[rel="canonical"]', { href: url }, { tag: "link", attrs: { rel: "canonical" } });
+    [
+      ["og:title", meta.title],
+      ["og:description", meta.description],
+      ["og:url", url],
+      ["og:image", meta.image],
+      ["og:site_name", cfg.name],
+      ["og:type", meta.repo ? "article" : "profile"],
+    ].forEach(([prop, content]) => metaTag(`meta[property="${prop}"]`, { content }, { tag: "meta", attrs: { property: prop } }));
+    [
+      ["twitter:card", "summary_large_image"],
+      ["twitter:title", meta.title],
+      ["twitter:description", meta.description],
+      ["twitter:image", meta.image],
+      ...(cfg.twitter ? [["twitter:site", cfg.twitter]] : []),
+    ].forEach(([name, content]) => metaTag(`meta[name="${name}"]`, { content }, { tag: "meta", attrs: { name } }));
+  }
+
+  /* Share the current deep link: native sheet when the browser has one,
+     clipboard otherwise. Never tracks anything. */
+  async function shareCurrent() {
+    const meta = routeMeta();
+    const url = siteCfg().base + meta.path;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: meta.title, text: meta.description, url });
+        window.PulseQuests?.action("share");
+        return;
+      }
+    } catch (err) {
+      if (err && err.name === "AbortError") return; // visitor dismissed the sheet
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      toast("Link copied to clipboard");
+      window.PulseQuests?.action("share");
+    } catch {
+      window.prompt("Copy this link:", url);
+    }
+  }
 
   /* ---- THEME HANDLING ---- */
   function applyTheme(theme) {
@@ -177,6 +489,7 @@
   }
 
   function toggleTheme() {
+    window.PulseQuests?.action("theme");
     const next = state.theme === "dark" ? "light" : "dark";
     applyTheme(next);
     renderTopbar();
@@ -205,26 +518,35 @@
       </div>
 
       <div class="topstatus">
-        <span class="live-ind" title="GitHub live pulse active">
-          <span class="dot"></span>LIVE
+        <span class="live-ind" title="Public GitHub data · no login required">
+          <span class="dot"></span>PUBLIC
         </span>
 
-        <span id="rateChip" style="${state.api.rateRemaining != null ? "display:inline" : "display:none"}">
-          ${state.api.rateRemaining != null ? `${state.api.rateRemaining} reqs` : ""}
-        </span>
+        <span id="rateChip" style="display:none"></span>
 
-        <button class="topbar-btn" id="tokenSettingsBtn" title="${state.token ? "GitHub Token Connected (5,000 req/hr)" : "Connect GitHub Token (Public 60 req/hr)"}">
-          <span style="position:relative;display:flex;align-items:center;justify-content:center">
-            ${ICONS.key}
-            ${state.token ? '<span style="position:absolute;top:-3px;right:-3px;width:7px;height:7px;background:var(--green);border-radius:50%;box-shadow:0 0 6px var(--green)"></span>' : ""}
-          </span>
+        <span id="questChip" class="quest-chip-host"></span>
+
+        <button class="topbar-btn sound-btn" id="soundToggleBtn" title="Background soundtrack" aria-label="Background soundtrack" aria-pressed="false">
+          ${ICONS.music}
         </button>
 
-        <button class="topbar-btn" id="themeToggleBtn" title="Toggle Dark/Light Mode">
+        <button class="topbar-btn" id="shareBtn" title="Share this view" aria-label="Share this view">
+          ${ICONS.share}
+        </button>
+
+        <button class="topbar-btn depth-btn" id="depthToggleBtn" title="Toggle the 3D depth layer" aria-label="Toggle the 3D depth layer" aria-pressed="true">
+          ${ICONS.layers}
+        </button>
+
+        <a class="topbar-btn" id="githubProfileBtn" href="${esc(state.snapshot?.user?.htmlUrl || (ghAccount() ? "https://github.com/" + ghAccount() : "https://github.com"))}" target="_blank" rel="noopener noreferrer" title="Open GitHub profile" aria-label="Open GitHub profile (new tab)">
+          ${ICONS.github}
+        </a>
+
+        <button class="topbar-btn" id="themeToggleBtn" title="Toggle Dark/Light Mode" aria-label="Toggle dark or light mode">
           ${isDark ? ICONS.sun : ICONS.moon}
         </button>
 
-        ${u ? `
+        ${u?.login ? `
           <a class="user-badge" href="https://github.com/${esc(u.login)}" target="_blank" rel="noopener noreferrer" title="View GitHub profile">
             <img src="${esc(u.avatar || "icons/icon.svg")}" alt="${esc(u.login)}" />
             <span class="user-login">${esc(u.login)}</span>
@@ -233,11 +555,26 @@
 
     $('#brandBtn')?.addEventListener("click", () => {
       state.selectedRepo = "all";
-      go("command");
+      go("overview");
     });
     $('#topbarSearchTrigger')?.addEventListener("click", openCommandPalette);
-    $('#tokenSettingsBtn')?.addEventListener("click", openTokenModal);
+    $('#shareBtn')?.addEventListener("click", shareCurrent);
     $('#themeToggleBtn')?.addEventListener("click", toggleTheme);
+    $('#soundToggleBtn')?.addEventListener("click", (e) => {
+      if (e.shiftKey) return openSoundSheet();
+      toggleSoundtrack();
+    });
+    $('#soundToggleBtn')?.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+      openSoundSheet();
+    });
+    $('#depthToggleBtn')?.addEventListener("click", () => {
+      const next = !(window.PulseDepth?.isEnabled?.() ?? true);
+      window.PulseDepth?.setEnabled(next);
+      window.PulseQuests?.action("depth");
+      toast(next ? "3D depth layer enabled" : "3D depth layer disabled");
+    });
+    window.PulseQuests?.mount();
   }
 
   /* ---- SIDEBAR RENDERING ---- */
@@ -246,11 +583,13 @@
     if (!sidebar) return;
 
     sidebar.innerHTML = `
-      <div class="nav-label">Pulse Cockpit</div>
+      <nav class="nav-label" id="primaryNavLabel">Pulse Cockpit</nav>
       ${NAV.map((n) => {
         const badge = n.badge();
+        const active = state.view === n.id;
         return `
-          <button class="nav-item ${state.view === n.id ? "active" : ""}" data-nav="${n.id}">
+          <button class="nav-item ${active ? "active" : ""}" data-nav="${n.id}"
+            ${active ? 'aria-current="page"' : ""} aria-label="${esc(n.label)} section">
             <span class="ic">${n.ic}</span>
             <span>${n.label}</span>
             ${badge != null ? `<span class="nav-badge">${badge}</span>` : ""}
@@ -263,22 +602,23 @@
         <span>Command Palette</span>
         <span class="nav-badge">⌘K</span>
       </button>
-      <button class="nav-item" id="sidebarTokenBtn">
-        <span class="ic">${ICONS.key}</span>
-        <span>Access Token</span>
-        ${state.token ? `<span class="nav-badge" style="color:var(--green);border-color:var(--green)">ACTIVE</span>` : `<span class="nav-badge">CONNECT</span>`}
+      <button class="nav-item" id="sidebarGithubBtn">
+        <span class="ic">${ICONS.github}</span>
+        <span>GitHub Profile</span>
+        <span class="nav-badge">↗</span>
       </button>
       <button class="nav-item" id="sidebarRefreshBtn">
         <span class="ic">${ICONS.refresh}</span>
-        <span>Sync GitHub</span>
+        <span>Refresh Data</span>
+      </button>
+      <button class="nav-item" id="sidebarSoundBtn">
+        <span class="ic">${ICONS.music}</span>
+        <span>Soundtrack</span>
+        <span class="nav-badge">${window.PulseMusic?.isPlaying?.() ? "ON" : "OFF"}</span>
       </button>
       <button class="nav-item" id="sidebarWidgetsBtn">
         <span class="ic">${ICONS.settings}</span>
         <span>Customize View</span>
-      </button>
-      <button class="nav-item" id="sidebarSignOutBtn" style="color:var(--red)">
-        <span class="ic">${ICONS.power}</span>
-        <span>Sign Out</span>
       </button>
 
       <div class="sidebar-foot" id="footMeta">
@@ -303,10 +643,10 @@
       b.addEventListener("click", () => go(b.dataset.nav));
     });
     $('#sidebarCmdPaletteBtn')?.addEventListener("click", openCommandPalette);
-    $('#sidebarTokenBtn')?.addEventListener("click", openTokenModal);
+    $('#sidebarGithubBtn')?.addEventListener("click", openGithubProfile);
     $('#sidebarRefreshBtn')?.addEventListener("click", fetchLive);
+    $('#sidebarSoundBtn')?.addEventListener("click", openSoundSheet);
     $('#sidebarWidgetsBtn')?.addEventListener("click", openWidgetModal);
-    $('#sidebarSignOutBtn')?.addEventListener("click", logout);
   }
 
   /* ---- MOBILE BOTTOM NAV ---- */
@@ -315,8 +655,8 @@
     if (!mobilenav) return;
 
     const m = [
-      { id: "command", label: "HOME", svg: ICONS.command },
-      { id: "repos", label: "REPOS", svg: ICONS.repos },
+      { id: "overview", label: "HOME", svg: ICONS.command },
+      { id: "projects", label: "PROJECTS", svg: ICONS.repos },
       { id: "activity", label: "ACTIVITY", svg: ICONS.activity },
       { id: "palette", label: "SEARCH", svg: ICONS.search },
       { id: "more", label: "MORE", svg: ICONS.layers },
@@ -364,19 +704,52 @@
         ).join("")}
       </div>
       <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--stroke)">
-        <button class="sheet-row" id="moreSheetTokenBtn" style="width:100%">
-          <span class="ic" style="color:var(--cyan)">${ICONS.key}</span>
+        <button class="sheet-row" id="moreSheetGithubBtn" style="width:100%">
+          <span class="ic" style="color:var(--cyan)">${ICONS.github}</span>
           <span class="rmeta">
-            <span class="rt">GitHub Access Token</span>
-            <span class="rs">${state.token ? "Connected" : "Unlock 5,000 req/hr rate limit"}</span>
+            <span class="rt">GitHub Profile</span>
+            <span class="rs">Open @${esc(ghAccount() || "github")} on github.com</span>
+          </span>
+        </button>
+        <button class="sheet-row" id="moreSheetSoundBtn" style="width:100%">
+          <span class="ic" style="color:var(--cyan)">${ICONS.music}</span>
+          <span class="rmeta">
+            <span class="rt">Soundtrack</span>
+            <span class="rs">${window.PulseMusic?.isPlaying?.() ? "Playing — tap for mood & volume" : "Background music, generated live"}</span>
+          </span>
+        </button>
+        <button class="sheet-row" id="moreSheetQuestsBtn" style="width:100%">
+          <span class="ic" style="color:var(--violet)">${ICONS.award}</span>
+          <span class="rmeta">
+            <span class="rt">Pulse Quests</span>
+            <span class="rs">Level, badges and XP for exploring this profile</span>
+          </span>
+        </button>
+        <button class="sheet-row" id="moreSheetSuggestBtn" style="width:100%">
+          <span class="ic" style="color:var(--green)">${ICONS.issue}</span>
+          <span class="rmeta">
+            <span class="rt">Suggest Something</span>
+            <span class="rs">Propose an issue on a public repository</span>
           </span>
         </button>
       </div>`;
 
     $('#closeMoreSheet')?.addEventListener("click", closeOverlay);
-    $('#moreSheetTokenBtn')?.addEventListener("click", () => {
+    $('#moreSheetGithubBtn')?.addEventListener("click", () => {
       closeOverlay();
-      openTokenModal();
+      openGithubProfile();
+    });
+    $('#moreSheetSoundBtn')?.addEventListener("click", () => {
+      closeOverlay();
+      openSoundSheet();
+    });
+    $('#moreSheetQuestsBtn')?.addEventListener("click", () => {
+      closeOverlay();
+      window.PulseQuests?.open();
+    });
+    $('#moreSheetSuggestBtn')?.addEventListener("click", () => {
+      closeOverlay();
+      openSuggestModal();
     });
     $$('[data-jump]', sheet).forEach((b) =>
       b.addEventListener("click", () => {
@@ -465,332 +838,217 @@
     openOverlay();
   }
 
+  /* Move focus into the sheet that just opened; remember where we came from. */
+  function focusSheet(overlay) {
+    if (!overlay) return;
+    state._lastFocus = document.activeElement;
+    overlay.setAttribute("aria-hidden", "false");
+    const target = overlay.querySelector(".sheet");
+    if (target && !target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
+    target?.focus({ preventScroll: true });
+  }
+
+  /* Return focus to the control that opened a sheet. */
+  function restoreFocus() {
+    const el = state._lastFocus;
+    state._lastFocus = null;
+    try { el?.focus?.({ preventScroll: true }); } catch {}
+  }
+
+  function closeSheets() {
+    document.querySelectorAll('.overlay[role="dialog"].open').forEach((o) => {
+      o.classList.remove("open");
+      o.setAttribute("aria-hidden", "true");
+    });
+    restoreFocus();
+  }
+
   function openOverlay() {
-    $('#repoOverlay').classList.add("open");
-    $('#repoOverlay').setAttribute("aria-hidden", "false");
+    const ov = $('#repoOverlay');
+    ov.classList.add("open");
+    focusSheet(ov);
   }
 
   function closeOverlay() {
     $('#repoOverlay').classList.remove("open");
     $('#repoOverlay').setAttribute("aria-hidden", "true");
+    restoreFocus();
   }
 
-  /* ---- GITHUB OAUTH (one-click connect) ---- */
-  function oauthConfig() {
-    return (window.PULSE_CONFIG && window.PULSE_CONFIG.oauth) || {};
+  /* ---- SOUNDTRACK (background music) ----
+     All audio is synthesised in the browser — see js/music.js. Nothing is
+     bundled, nothing is downloaded, and it never autoplays. */
+  function syncSoundUI() {
+    const btn = $('#soundToggleBtn');
+    if (!btn) return;
+    const playing = window.PulseMusic?.isPlaying?.() ?? false;
+    btn.innerHTML = playing ? ICONS.music : ICONS.musicOff;
+    btn.classList.toggle("playing", playing);
+    btn.setAttribute("aria-pressed", playing ? "true" : "false");
+    btn.title = playing
+      ? `Soundtrack playing (${window.PulseMusic?.mood?.() || "cinematic"}) — click to mute`
+      : "Play background soundtrack";
+    $('#soundHint')?.classList.toggle("hidden", playing || soundHintDismissed());
+    window.PulseQuests?.mount();
   }
-  function startOAuth() {
-    const c = oauthConfig();
-    if (!c.enabled || !c.clientId || !c.workerUrl) {
-      toast("GitHub OAuth isn't configured yet. Add Client ID + Worker URL in js/config.js, or paste a PAT below.");
-      return;
-    }
-    const redirectUri = location.origin + location.pathname;
-    const params = new URLSearchParams({
-      client_id: c.clientId,
-      scope: c.scope,
-      redirect_uri: redirectUri,
-    });
-    location.href = c.authorizeUrl + "?" + params.toString();
-  }
-  async function handleOAuthCallback() {
-    const c = oauthConfig();
-    if (!c.enabled) return;
-    const params = new URLSearchParams(location.search);
-    const code = params.get("code");
-    if (!code) return;
+
+  const soundHintDismissed = () => {
     try {
-      const res = await fetch(c.workerUrl + "/exchange", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code }),
-      });
-      const data = await res.json();
-      history.replaceState({}, "", location.pathname + location.hash);
-      if (data && data.access_token) {
-        state.token = data.access_token;
-        localStorage.setItem(c.tokenKey || "pulse-gh-token", state.token);
-        state.api.rateLimit = 5000;
-        toast("Connected via GitHub OAuth");
-        fetchLive();
-      } else {
-        toast("OAuth exchange failed: " + (data && data.error ? data.error : "unknown error"));
-      }
-    } catch (e) {
-      history.replaceState({}, "", location.pathname + location.hash);
-      toast("OAuth exchange error: " + e.message);
+      return JSON.parse(localStorage.getItem("pulse-audio") || "{}").hintDismissed === true;
+    } catch {
+      return false;
     }
+  };
+
+  function dismissSoundHint() {
+    try {
+      const s = JSON.parse(localStorage.getItem("pulse-audio") || "{}");
+      s.hintDismissed = true;
+      localStorage.setItem("pulse-audio", JSON.stringify(s));
+    } catch {}
+    $('#soundHint')?.classList.add("hidden");
   }
 
-  /* ---- GITHUB TOKEN SETTINGS MODAL ---- */
-  function openTokenModal() {
-    const overlay = $('#tokenOverlay');
-    const sheet = $('#tokenSheet');
-    let showPassword = false;
-
-    const renderSheet = () => {
-      const isConnected = Boolean(state.token);
-      const remaining = state.api.rateRemaining != null ? state.api.rateRemaining : (isConnected ? 5000 : 60);
-      const limit = state.api.rateLimit || (isConnected ? 5000 : 60);
-      const pct = Math.round((remaining / limit) * 100);
-
-      sheet.innerHTML = `
-        <div class="sheet-head">
-          <div>
-            <div class="sheet-title">GitHub Access Token</div>
-            <div class="sheet-sub">Client-side authentication & rate limit expansion</div>
-          </div>
-          <button class="sheet-close" id="closeTokenModalBtn">✕</button>
-        </div>
-
-        <div class="oauth-connect-row" style="margin-bottom:14px">
-          <button class="btn btn-primary" id="oauthConnectBtn" style="width:100%">${ICONS.key} Connect GitHub (OAuth)</button>
-          <div style="font-size:11.5px;color:var(--faint);margin-top:6px;text-align:center">One-click login · unlocks private repos &amp; 5,000 req/hr. PAT below still works.</div>
-        </div>
-
-        <div class="token-card">
-          <div class="token-status-row">
-            <span style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted)">Connection Status</span>
-            <span class="status ${isConnected ? "ok" : "warn"}">
-              <span class="sdot"></span>
-              ${isConnected ? "CONNECTED (PAT ACTIVE)" : "PUBLIC ONLY (60 REQ/HR)"}
-            </span>
-          </div>
-
-          <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--faint);margin:12px 0 6px">
-            Personal Access Token (Classic or Fine-Grained)
-          </div>
-
-          <div class="token-input-group">
-            <input type="${showPassword ? "text" : "password"}" id="tokenInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx or github_pat_xxxx" value="${esc(state.token)}" autocomplete="off" spellcheck="false" />
-            <button class="token-eye-btn" id="toggleTokenEyeBtn" type="button" title="${showPassword ? "Hide token" : "Show token"}">
-              ${showPassword ? ICONS.eye : ICONS.lock}
-            </button>
-          </div>
-
-          <div class="token-rate-bar">
-            <div style="display:flex;justify-content:space-between;font-size:11.5px;font-family:var(--mono);color:var(--muted)">
-              <span>API Rate Quota</span>
-              <span><b>${fmtNum(remaining)}</b> / ${fmtNum(limit)} reqs (${pct}%)</span>
-            </div>
-            <div class="rate-bar-track">
-              <div class="rate-bar-fill" style="width:${pct}%;background:${pct < 20 ? "var(--red)" : pct < 50 ? "var(--amber)" : "var(--cyan)"}"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="callout-box">
-          <div style="display:flex;align-items:center;gap:6px;font-weight:700;color:var(--text);margin-bottom:4px">
-            <span class="stat-icon" style="color:var(--green)">${ICONS.shield}</span>
-            <span>Zero-Knowledge Browser Storage</span>
-          </div>
-          Your token stays strictly on this device in <code>localStorage</code>. It is sent exclusively to GitHub's official HTTPS REST API.
-          <br /><br />
-          Need a token? <a href="https://github.com/settings/tokens/new?scopes=repo,read:user&description=Pulse+Dashboard" target="_blank" rel="noopener noreferrer">Generate a Personal Access Token ↗</a> with <b>repo</b> &amp; <b>read:user</b> permissions.
-        </div>
-
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:10px;flex-wrap:wrap">
-          ${isConnected ? `<button class="btn btn-sm" id="disconnectTokenBtn" style="color:var(--red)"><span class="stat-icon" style="color:var(--red)">${ICONS.issue}</span> Disconnect</button>` : `<div></div>`}
-          <div style="display:flex;gap:10px">
-            <button class="btn btn-sm" id="cancelTokenBtn">Cancel</button>
-            <button class="btn btn-primary btn-sm" id="saveTokenBtn">${ICONS.check} Verify &amp; Save</button>
-          </div>
-        </div>`;
-
-      $('#closeTokenModalBtn')?.addEventListener("click", closeTokenModal);
-      $('#oauthConnectBtn')?.addEventListener("click", startOAuth);
-      $('#cancelTokenBtn')?.addEventListener("click", closeTokenModal);
-
-      $('#toggleTokenEyeBtn')?.addEventListener("click", () => {
-        showPassword = !showPassword;
-        const input = $('#tokenInput');
-        if (input) input.type = showPassword ? "text" : "password";
-      });
-
-      $('#disconnectTokenBtn')?.addEventListener("click", () => {
-        closeTokenModal();
-        logout();
-      });
-
-      $('#saveTokenBtn')?.addEventListener("click", async () => {
-        const input = $('#tokenInput');
-        const val = input ? input.value.trim() : "";
-        if (!val) {
-          toast("Please enter a token");
-          return;
-        }
-
-        const saveBtn = $('#saveTokenBtn');
-        if (saveBtn) {
-          saveBtn.disabled = true;
-          saveBtn.innerHTML = `Verifying...`;
-        }
-
-        try {
-          const res = await fetch("https://api.github.com/user", {
-            headers: {
-              Accept: "application/vnd.github+json",
-              Authorization: `Bearer ${val}`,
-            },
-          });
-
-          if (!res.ok) throw new Error(`HTTP ${res.status}: Invalid token or unauthorized`);
-          const user = await res.json();
-
-          state.token = val;
-          localStorage.setItem("pulse-gh-token", val);
-
-          const limit = res.headers.get("X-RateLimit-Limit");
-          const remaining = res.headers.get("X-RateLimit-Remaining");
-          if (limit) state.api.rateLimit = Number(limit);
-          if (remaining) state.api.rateRemaining = Number(remaining);
-
-          toast(`Authenticated as @${user.login}! Full rate limit unlocked.`);
-          closeTokenModal();
-          fetchLive();
-        } catch (err) {
-          toast(`Verification failed: ${err.message}`);
-          if (saveBtn) {
-            saveBtn.disabled = false;
-            saveBtn.innerHTML = `${ICONS.check} Verify &amp; Save`;
-          }
-        }
-      });
-    };
-
-    renderSheet();
-    overlay.classList.add("open");
-    overlay.setAttribute("aria-hidden", "false");
+  function toggleSoundtrack() {
+    const music = window.PulseMusic;
+    if (!music) return;
+    const btn = $('#soundToggleBtn');
+    if (btn && !music.isPlaying()) {
+      // brief "starting" affordance while the context resumes
+      btn.classList.add("starting");
+      setTimeout(() => btn.classList.remove("starting"), 900);
+    }
+    const playing = music.toggle();
+    toast(playing ? "Soundtrack on — enjoy" : "Soundtrack muted");
+    if (playing) {
+      window.PulseQuests?.action("music");
+      if ((music.triedMoods?.() || []).length >= 2) window.PulseQuests?.unlock("action:moods");
+    }
+    syncSoundUI();
   }
 
-  function closeTokenModal() {
-    const overlay = $('#tokenOverlay');
-    overlay.classList.remove("open");
-    overlay.setAttribute("aria-hidden", "true");
-  }
+  function openSoundSheet() {
+    const overlay = $('#audioOverlay');
+    const sheet = $('#audioSheet');
+    if (!overlay || !sheet) return;
+    const music = window.PulseMusic;
+    const playing = music?.isPlaying?.() ?? false;
+    const mood = music?.mood?.() || "cinematic";
+    const volume = Math.round((music?.volume?.() ?? 0.35) * 100);
+    const custom = music?.hasCustomTrack?.() ?? false;
+    const owner = displayConfig().owner || "this site";
 
-  /* ---- REPO INSPECTOR MODAL ---- */
-  function openInspector(repoName) {
-    const repo = repoList().find((r) => r.name === repoName);
-    if (!repo) return;
-
-    const overlay = $('#inspectorOverlay');
-    const sheet = $('#inspectorSheet');
-    const langColor = getLangColor(repo.language);
-    const httpsClone = `https://github.com/${repo.fullName}.git`;
-    const sshClone = `git@github.com:${repo.fullName}.git`;
+    const moodBtn = (id, label, desc) => `
+      <button class="mood-card ${mood === id ? "active" : ""}" data-mood="${id}" ${custom && id !== "custom" ? "disabled" : ""}>
+        <span class="mood-label">${label}</span>
+        <span class="mood-desc">${desc}</span>
+      </button>`;
 
     sheet.innerHTML = `
       <div class="sheet-head">
         <div>
-          <div class="inspector-title">${esc(repo.name)}</div>
-          <div class="sheet-sub">${esc(repo.fullName)}</div>
+          <div class="sheet-title">Soundtrack</div>
+          <div class="sheet-sub">Background music for the showcase · ${playing ? "playing" : "paused"}</div>
         </div>
-        <button class="sheet-close" id="closeInspectorBtn">✕</button>
+        <button class="sheet-close" id="closeSoundSheet">✕</button>
       </div>
 
-      <div class="inspector-tags" style="margin-bottom:16px">
-        <span class="status ${repo.isPrivate ? "bad" : "ok"}">
-          <span class="sdot"></span>
-          ${repo.isPrivate ? "PRIVATE" : "PUBLIC"}
-        </span>
-        ${repo.language ? `<span class="lang-tag" style="background:${langColor}22;color:${langColor}">${esc(repo.language)}</span>` : ""}
-        <span class="priv-tag" style="display:inline-flex;align-items:center;gap:4px">
-          <span class="stat-icon" style="width:12px;height:12px">${ICONS.branch}</span>
-          ${esc(repo.defaultBranch || "main")}
-        </span>
-        ${repo.license ? `<span class="priv-tag" style="display:inline-flex;align-items:center;gap:4px"><span class="stat-icon" style="width:12px;height:12px">${ICONS.shield}</span>${esc(repo.license)}</span>` : ""}
-        ${repo.archived ? `<span class="status warn"><span class="sdot"></span>ARCHIVED</span>` : ""}
+      <div class="sound-moods">
+        ${moodBtn("cinematic", "Cinematic", "Piano & strings ostinato that builds")}
+        ${moodBtn("phonk", "Phonk", "Half-time drums, 808s, cowbell, vinyl")}
+        ${custom ? moodBtn("custom", "Your track", "Playing the file configured in js/config.js") : ""}
       </div>
 
-      <p style="font-size:14px;color:var(--text);margin-bottom:18px;line-height:1.5">
-        ${esc(repo.description || "No repository description provided.")}
-      </p>
-
-      <div class="inspector-grid">
-        <div class="inspector-stat">
-          <div class="label">Stars</div>
-          <div class="val" style="color:var(--amber)">
-            <span style="color:var(--amber)">${ICONS.star}</span>
-            <span>${fmtNum(repo.stars)}</span>
-          </div>
-        </div>
-        <div class="inspector-stat">
-          <div class="label">Forks</div>
-          <div class="val" style="color:var(--violet)">
-            <span style="color:var(--violet)">${ICONS.fork}</span>
-            <span>${fmtNum(repo.forks)}</span>
-          </div>
-        </div>
-        <div class="inspector-stat">
-          <div class="label">Open Issues</div>
-          <div class="val" style="color:var(--cyan)">
-            <span style="color:var(--cyan)">${ICONS.issue}</span>
-            <span>${fmtNum(repo.openIssues)}</span>
-          </div>
-        </div>
-        <div class="inspector-stat">
-          <div class="label">Watchers</div>
-          <div class="val" style="color:var(--green)">
-            <span style="color:var(--green)">${ICONS.eye}</span>
-            <span>${fmtNum(repo.watchers)}</span>
-          </div>
-        </div>
-      </div>
-
-      <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--faint);margin-bottom:8px">Clone via HTTPS</div>
-      <div class="clone-box">
-        <code>${esc(httpsClone)}</code>
-        <button class="btn btn-sm" id="copyHttpsBtn">${ICONS.copy} Copy</button>
-      </div>
-
-      <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--faint);margin-bottom:8px">Clone via SSH</div>
-      <div class="clone-box">
-        <code>${esc(sshClone)}</code>
-        <button class="btn btn-sm" id="copySshBtn">${ICONS.copy} Copy</button>
-      </div>
-
-      <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">
-        <button class="btn btn-primary" id="focusRepoBtn">
-          ${ICONS.command} Focus Command Center
+      <div class="sound-controls">
+        <button class="btn ${playing ? "" : "btn-primary"}" id="soundPlayBtn">
+          ${playing ? ICONS.musicOff + " Pause" : ICONS.music + " Play"}
         </button>
-        <a class="btn" href="${esc(repo.htmlUrl)}" target="_blank" rel="noopener noreferrer">
-          ${ICONS.externalLink} View on GitHub
-        </a>
-        <a class="btn" href="${esc(repo.htmlUrl)}/issues" target="_blank" rel="noopener noreferrer">
-          ${ICONS.issue} Issues (${repo.openIssues})
-        </a>
-      </div>`;
+        <div class="sound-volume">
+          <span class="stat-icon" style="color:var(--cyan)">${ICONS.volume}</span>
+          <input type="range" id="soundVolume" min="0" max="100" value="${volume}" aria-label="Volume" />
+          <span class="sound-vol-value">${volume}%</span>
+        </div>
+      </div>
 
-    $('#closeInspectorBtn')?.addEventListener("click", () => {
-      overlay.classList.remove("open");
-      overlay.setAttribute("aria-hidden", "true");
-    });
+      <div class="callout-box" style="margin-top:14px">
+        <b>Every note is generated in your browser.</b> Pulse ships no audio files,
+        so there is no third-party music to license and nothing extra to download —
+        the Web Audio API builds the chords, drums and reverb live.
+        <br /><br />
+        Owner note: to use your own licensed track instead, set
+        <code>audio.track</code> in <code>js/config.js</code>.
+      </div>
 
-    $('#copyHttpsBtn')?.addEventListener("click", () => {
-      navigator.clipboard.writeText(httpsClone);
-      toast("Copied HTTPS clone URL");
-    });
-
-    $('#copySshBtn')?.addEventListener("click", () => {
-      navigator.clipboard.writeText(sshClone);
-      toast("Copied SSH clone URL");
-    });
-
-    $('#focusRepoBtn')?.addEventListener("click", () => {
-      state.selectedRepo = repo.name;
-      overlay.classList.remove("open");
-      overlay.setAttribute("aria-hidden", "true");
-      go("command");
-      toast(`Focused on ${repo.name}`);
-    });
+      <div class="quest-note">Muted by default, pauses when this tab is hidden, and your
+      choice + volume are remembered only in this browser.</div>`;
 
     overlay.classList.add("open");
-    overlay.setAttribute("aria-hidden", "false");
+    focusSheet(overlay);
+
+    $('#closeSoundSheet')?.addEventListener("click", () => {
+      overlay.classList.remove("open");
+      overlay.setAttribute("aria-hidden", "true");
+      restoreFocus();
+    });
+    $('#soundPlayBtn')?.addEventListener("click", () => {
+      toggleSoundtrack();
+      openSoundSheet();
+    });
+    $$('[data-mood]', sheet).forEach((b) =>
+      b.addEventListener("click", () => {
+        music?.setMood(b.dataset.mood);
+        window.PulseQuests?.unlock("action:sound");
+        if ((music?.triedMoods?.() || []).length >= 2) window.PulseQuests?.unlock("action:moods");
+        if (!music?.isPlaying?.()) music?.play();
+        window.PulseQuests?.action("music");
+        toast(`Soundtrack: ${b.dataset.mood === "custom" ? "your track" : b.dataset.mood}`);
+        syncSoundUI();
+        openSoundSheet();
+      })
+    );
+    $('#soundVolume')?.addEventListener("input", (e) => {
+      const v = Number(e.target.value) / 100;
+      music?.setVolume(v);
+      const label = $(".sound-vol-value", sheet);
+      if (label) label.textContent = `${e.target.value}%`;
+    });
+  }
+
+  function renderSoundHint() {
+    if (window.PulseMusic?.isPlaying?.() || soundHintDismissed()) return;
+    if (navigator.connection?.saveData) return; // respect data saver
+    const hint = document.createElement("div");
+    hint.id = "soundHint";
+    hint.className = "sound-hint";
+    hint.innerHTML = `
+      <button class="sh-play" id="soundHintPlay" aria-label="Play background soundtrack">
+        ${ICONS.music}
+      </button>
+      <span class="sh-text">Tap for a soundtrack</span>
+      <button class="sh-close" id="soundHintClose" aria-label="Dismiss">✕</button>`;
+    document.body.appendChild(hint);
+    requestAnimationFrame(() => hint.classList.add("show"));
+    $('#soundHintPlay')?.addEventListener("click", () => {
+      window.PulseMusic?.play();
+      window.PulseQuests?.action("music");
+      syncSoundUI();
+    });
+    $('#soundHintClose')?.addEventListener("click", dismissSoundHint);
+  }
+
+  /* ---- PUBLIC PROFILE HELPERS ---- */
+  function openGithubProfile() {
+    const login = ghAccount();
+    if (!login) {
+      toast("No GitHub account configured in js/config.js");
+      return;
+    }
+    window.open(`https://github.com/${encodeURIComponent(login)}`, "_blank", "noopener,noreferrer");
   }
 
   /* ---- COMMAND PALETTE (CMD+K) ---- */
   function openCommandPalette() {
+    window.PulseQuests?.action("palette");
     const overlay = $('#paletteOverlay');
     const sheet = $('#paletteSheet');
     state.paletteQuery = "";
@@ -818,10 +1076,45 @@
       // Actions group
       const actions = [
         {
-          title: state.token ? "GitHub Access Token (Connected · 5,000 req/hr)" : "Connect GitHub Access Token (Unlock Private Repos)",
-          sub: "Auth",
-          icon: ICONS.key,
-          action: openTokenModal,
+          title: window.PulseMusic?.isPlaying?.() ? "Pause soundtrack" : "Play soundtrack",
+          sub: "Audio",
+          icon: ICONS.music,
+          action: toggleSoundtrack,
+        },
+        {
+          title: "Soundtrack settings — mood & volume",
+          sub: "Audio",
+          icon: ICONS.volume,
+          action: openSoundSheet,
+        },
+        {
+          title: "Pulse Quests — levels, badges & XP",
+          sub: "Progress",
+          icon: ICONS.award,
+          action: () => window.PulseQuests?.open(),
+        },
+        {
+          title: `3D depth layer: ${window.PulseDepth?.isEnabled?.() === false ? "off" : "on"}`,
+          sub: "Display",
+          icon: ICONS.layers,
+          action: () => {
+            const next = !(window.PulseDepth?.isEnabled?.() ?? true);
+            window.PulseDepth?.setEnabled(next);
+            window.PulseQuests?.action("depth");
+            toast(next ? "3D depth layer enabled" : "3D depth layer disabled");
+          },
+        },
+        {
+          title: "Open GitHub Profile",
+          sub: "GitHub",
+          icon: ICONS.github,
+          action: openGithubProfile,
+        },
+        {
+          title: "Suggest Something (Open an Issue)",
+          sub: "Contact",
+          icon: ICONS.issue,
+          action: openSuggestModal,
         },
         {
           title: `Switch to ${state.theme === "dark" ? "Light" : "Dark"} Theme`,
@@ -830,8 +1123,8 @@
           action: toggleTheme,
         },
         {
-          title: "Sync with GitHub (Live Refresh)",
-          sub: "API",
+          title: "Refresh from GitHub (Live)",
+          sub: "Public API",
           icon: ICONS.refresh,
           action: fetchLive,
         },
@@ -847,9 +1140,40 @@
           icon: ICONS.command,
           action: () => {
             state.selectedRepo = "all";
-            go("command");
+            go("overview");
           },
         },
+        ...accountList().map((a) => ({
+          title: `Open @${a}'s page`,
+          sub: "Account",
+          icon: ICONS.user,
+          action: () => goAccount(a),
+        })),
+        ...accountList().map((a) => ({
+          title: `Show only @${a}`,
+          sub: "Account filter",
+          icon: ICONS.layers,
+          action: () => {
+            state.accountFilter = a;
+            state.selectedRepo = "all";
+            go("overview");
+            toast(`Showing @${a} only`);
+          },
+        })),
+        ...(accountList().length > 1
+          ? [
+              {
+                title: "Show all featured accounts",
+                sub: "Account filter",
+                icon: ICONS.layers,
+                action: () => {
+                  state.accountFilter = "all";
+                  go("overview");
+                  toast("Showing every account");
+                },
+              },
+            ]
+          : []),
         {
           title: "Copy Summary as Markdown",
           sub: "Export",
@@ -876,9 +1200,9 @@
           items.push({
             type: "REPO",
             title: r.name,
-            sub: `${r.language || "code"} · ★${r.stars}${r.isPrivate ? " · Private" : ""}`,
-            icon: r.isPrivate ? ICONS.lock : ICONS.repos,
-            action: () => openInspector(r.name),
+            sub: `${r.language || "code"} · ★${r.stars}`,
+            icon: ICONS.repos,
+            action: () => goProject(r.name),
           });
         }
       });
@@ -949,13 +1273,14 @@
 
     renderPalette();
     overlay.classList.add("open");
-    overlay.setAttribute("aria-hidden", "false");
+    focusSheet(overlay);
   }
 
   function closeCommandPalette() {
     const overlay = $('#paletteOverlay');
     overlay.classList.remove("open");
     overlay.setAttribute("aria-hidden", "true");
+    restoreFocus();
   }
 
   /* ---- WIDGET CUSTOMIZER MODAL ---- */
@@ -969,12 +1294,13 @@
       { key: "issues", label: "Open Issues Metric" },
       { key: "active", label: "Active Repositories (7d)" },
       { key: "primaryLang", label: "Primary Language Card" },
-      { key: "privateCount", label: "Private Repositories Count" },
+      { key: "privateCount", label: "Followers Metric" },
       { key: "pulseChart", label: "Commit Pulse Bar Chart" },
       { key: "heatmap", label: "12-Week Activity Heatmap" },
       { key: "langDistribution", label: "Language Breakdown Stack" },
       { key: "recentActivity", label: "Recent Activity Feed" },
       { key: "topRepos", label: "Top Repositories Leaderboard" },
+      { key: "highlights", label: "Auto Highlights (Overview)" },
     ];
 
     sheet.innerHTML = `
@@ -1004,6 +1330,7 @@
     $('#closeWidgetModalBtn')?.addEventListener("click", () => {
       overlay.classList.remove("open");
       overlay.setAttribute("aria-hidden", "true");
+      restoreFocus();
     });
 
     $('#saveWidgetsBtn')?.addEventListener("click", () => {
@@ -1013,6 +1340,7 @@
       localStorage.setItem("pulse-widgets", JSON.stringify(state.widgets));
       overlay.classList.remove("open");
       overlay.setAttribute("aria-hidden", "true");
+      restoreFocus();
       render();
       toast("Layout preferences updated");
     });
@@ -1022,16 +1350,140 @@
       localStorage.removeItem("pulse-widgets");
       overlay.classList.remove("open");
       overlay.setAttribute("aria-hidden", "true");
+      restoreFocus();
       render();
       toast("Reset widgets to defaults");
     });
 
     overlay.classList.add("open");
-    overlay.setAttribute("aria-hidden", "false");
+    focusSheet(overlay);
+  }
+
+  /* ---- PER-ACCOUNT PAGES (deep-linkable: #/account/<login>) ---- */
+  function accountFor(login) {
+    const summaries = accountSummaries();
+    return (
+      summaries.find((a) => String(a.login).toLowerCase() === String(login || "").toLowerCase()) ||
+      summaries[0] ||
+      null
+    );
+  }
+
+  function renderAccount() {
+    const account = accountFor(state.selectedAccount);
+    if (!account) {
+      return section("Account", "No account found", "", `<div class="card">That account is not part of this showcase.</div>`);
+    }
+    const login = account.login;
+    const repos = repoList().filter((r) => repoOwner(r) === login);
+    const m = account.metrics || {};
+    const cal = state.snapshot?.contributions?.[login];
+    const bytes = repos.reduce((a, r) => a + (r.languageBytes || 0), 0);
+    const langs = Object.entries(
+      repos.reduce((acc, r) => {
+        for (const [lang, b] of Object.entries(r.languages || {})) acc[lang] = (acc[lang] || 0) + b;
+        return acc;
+      }, {})
+    ).sort((a, b) => b[1] - a[1]);
+    const totalLangBytes = langs.reduce((a, [, b]) => a + b, 0) || 1;
+    const top = repos.slice().sort((a, b) => b.stars - a.stars || new Date(b.pushedAt) - new Date(a.pushedAt)).slice(0, 6);
+
+    return section(
+      account.name || login,
+      `@${login}${account.company ? " · " + account.company : ""} · ${repos.length} public repositories · joined ${account.createdAt ? new Date(account.createdAt).getFullYear() : "—"}`,
+      `<button class="btn btn-sm" id="accountBackBtn">${ICONS.back || ICONS.command} All accounts</button>
+       <button class="btn btn-sm" id="accountShareBtn">${ICONS.share} Share</button>
+       <button class="btn btn-sm" id="accountFilterBtn">${ICONS.command} Filter dashboard to @${esc(login)}</button>
+       <a class="btn btn-sm" href="${esc(account.htmlUrl || "https://github.com/" + login)}" target="_blank" rel="noopener noreferrer">${ICONS.github} GitHub profile</a>`,
+      `<div class="card account-hero">
+        <img src="${esc(account.avatar || `https://github.com/${login}.png`)}" alt="" />
+        <div class="account-meta">
+          <div class="account-name">${esc(account.name || login)}</div>
+          ${account.bio ? `<p class="project-pitch" style="margin:6px 0 0">${esc(account.bio)}</p>` : ""}
+          <div class="account-stats">
+            <span><b>${fmtNum(account.followers ?? "—")}</b> followers</span>
+            <span><b>${fmtNum(account.following ?? "—")}</b> following</span>
+            <span><b>${fmtNum(account.publicRepos ?? repos.length)}</b> public repos</span>
+            <span>last push ${fmtAgo(account.latestPush)}</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="height:18px"></div>
+      <div class="bento">
+        ${statCard("Contributions", fmtNum(m.contributionsLastYear ?? cal?.total ?? 0), "last 12 months", "var(--green)", ICONS.pulse)}
+        ${statCard("Active Days", fmtNum(m.activeDays ?? cal?.activeDays ?? 0), `${plural(cal?.currentStreak || m.currentStreak || 0, "day")} current streak`, "var(--cyan)", ICONS.activity)}
+        ${statCard("PRs Merged", fmtNum(m.prsMerged ?? 0), `${fmtNum(m.prsOpened ?? 0)} opened`, "var(--violet)", ICONS.branch)}
+        ${statCard("Issues", fmtNum(m.issuesOpened ?? 0), "authored", "var(--amber)", ICONS.issue)}
+        ${statCard("Code", formatBytes(bytes || account.codeBytes || 0), "in public repos", "var(--blue)", ICONS.layers)}
+        ${statCard("Stars", fmtNum(repos.reduce((a, r) => a + r.stars, 0)), `${fmtNum(repos.reduce((a, r) => a + r.forks, 0))} forks`, "var(--amber)", ICONS.star)}
+      </div>
+
+      <div style="height:18px"></div>
+      <div class="bento">
+        ${contributionHeatmapWidget(login)}
+        ${langs.length ? `
+          <div class="card col2">
+            <div class="card-head">
+              <div class="card-title"><span class="stat-icon" style="color:var(--violet)">${ICONS.code}</span> @${esc(login)}'s Stack</div>
+              <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">${formatBytes(totalLangBytes)} · by bytes</span>
+            </div>
+            <div class="lang-bar">
+              ${langs.map(([lang, b]) => `<div class="lang-seg" style="width:${((b / totalLangBytes) * 100).toFixed(2)}%;background:${getLangColor(lang)}" title="${esc(lang)}: ${formatBytes(b)}"></div>`).join("")}
+            </div>
+            <div class="lang-legend">
+              ${langs.slice(0, 6).map(([lang, b]) => `
+                <div class="lang-item">
+                  <span class="ldot" style="background:${getLangColor(lang)}"></span>
+                  <span>${esc(lang)} <b>${((b / totalLangBytes) * 100).toFixed(1)}%</b> <em>${formatBytes(b)}</em></span>
+                </div>`).join("")}
+            </div>
+          </div>` : ""}
+      </div>
+
+      <div style="height:26px"></div>
+      <div class="card-head">
+        <div class="card-title"><span class="stat-icon" style="color:var(--cyan)">${ICONS.repos}</span> Top work from @${esc(login)}</div>
+      </div>
+      <div class="hl-grid">${top.map((r, i) => highlightCard(r, i)).join("")}</div>`
+    );
+  }
+
+  /* ---- "NOW" STRIP (what is happening right now) ---- */
+  function nowStrip() {
+    const repos = repoList();
+    if (!repos.length) return "";
+    const m = state.snapshot?.metrics || {};
+    const lastPush = repos.map((r) => r.pushedAt).filter(Boolean).sort().at(-1);
+    const week = repos.filter((r) => Date.now() - new Date(r.pushedAt).getTime() < 7 * 864e5);
+    const releases = allReleases();
+    const latest = releases.slice().sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt))[0];
+    const runs = allWorkflowRuns();
+    const lastRun = runs.slice().sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))[0];
+
+    const chip = (icon, value, label, color) => `
+      <div class="now-chip" data-tilt>
+        <span class="stat-icon" style="color:${color}">${icon}</span>
+        <span class="now-value">${value}</span>
+        <span class="now-label">${label}</span>
+      </div>`;
+
+    return `
+      <div class="now-strip">
+        <span class="now-title">${ICONS.pulse} RIGHT NOW</span>
+        <div class="now-chips">
+          ${chip(ICONS.activity, plural(m.currentStreak || 0, "day"), "current streak", "var(--green)")}
+          ${chip(ICONS.zap, String(week.length), `project${week.length === 1 ? "" : "s"} pushed this week`, "var(--cyan)")}
+          ${chip(ICONS.gitCommit, lastPush ? fmtAgo(lastPush) : "—", "last public commit", "var(--violet)")}
+          ${latest ? chip(ICONS.award, esc(latest.name || latest.tagName || "release"), `newest release · ${fmtAgo(latest.publishedAt)}`, "var(--amber)") : ""}
+          ${lastRun ? chip(lastRun.conclusion === "success" ? ICONS.pulse : ICONS.ci, esc(lastRun.conclusion || lastRun.status || "run"), `CI · ${fmtAgo(lastRun.createdAt)}`, lastRun.conclusion === "success" ? "var(--green)" : "var(--amber)") : ""}
+        </div>
+      </div>`;
   }
 
   /* ---- EXPORT MARKDOWN SUMMARY ---- */
   function copyMarkdownSummary() {
+    window.PulseQuests?.action("share");
     const s = state.snapshot;
     const repos = filteredRepos();
     const stars = repos.reduce((a, r) => a + r.stars, 0);
@@ -1053,12 +1505,11 @@
 
   /* ---- PROFILE README VIEW ---- */
   async function loadProfileLive() {
-    const u = state.snapshot?.user?.login;
+    const u = ghAccount();
     if (!u) {
-      toast("Unknown GitHub profile");
+      toast("No GitHub account configured");
       return;
     }
-    const badge = toast;
     try {
       const res = await fetch(`https://raw.githubusercontent.com/${u}/${u}/HEAD/README.md`);
       if (!res.ok) {
@@ -1111,9 +1562,65 @@
     return html + "</tbody></table>";
   }
 
+  /* READMEs are heavily HTML (badges, banners, centred blocks). We allow a
+     small, sanitised subset so profile READMEs render instead of showing raw
+     markup — everything else is escaped, event handlers and scripts dropped. */
+  const MD_ALLOWED_TAGS = new Set([
+    "div", "span", "p", "br", "hr", "img", "a", "b", "strong", "i", "em", "u", "s",
+    "code", "pre", "sub", "sup", "small", "h1", "h2", "h3", "h4", "h5", "h6",
+    "ul", "ol", "li", "table", "thead", "tbody", "tr", "th", "td",
+    "details", "summary", "blockquote", "picture", "source", "center",
+  ]);
+  const MD_ALLOWED_ATTRS = new Set([
+    "href", "src", "alt", "title", "align", "width", "height", "target", "rel",
+    "class", "srcset", "sizes", "colspan", "rowspan", "loading",
+  ]);
+
+  function sanitizeHtml(html) {
+    return String(html)
+      .replace(/<!--[\s\S]*?-->/g, "")
+      .replace(/<(script|style|iframe|object|embed|form|input|link|meta)\b[\s\S]*?<\/\1\s*>/gi, "")
+      .replace(/<(script|style|iframe|object|embed|form|input|link|meta)\b[^>]*\/?>/gi, "")
+      .replace(/<([a-zA-Z][a-zA-Z0-9-]*)((?:\s+[^<>]*?)?)\/?>/g, (match, tag, attrs) => {
+        const name = tag.toLowerCase();
+        if (!MD_ALLOWED_TAGS.has(name)) return "";
+        const kept = [];
+        const attrRe = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)\s*=\s*("([^"]*)"|'([^']*)'|([^\s"'>]+))/g;
+        let m;
+        while ((m = attrRe.exec(attrs || ""))) {
+          const attr = m[1].toLowerCase();
+          const value = (m[3] ?? m[4] ?? m[5] ?? "").trim();
+          if (attr.startsWith("on")) continue; // never keep event handlers
+          if (!MD_ALLOWED_ATTRS.has(attr)) continue;
+          if ((attr === "href" || attr === "src") && /^\s*(javascript|data|vbscript):/i.test(value)) continue;
+          kept.push(`${attr}="${esc(value)}"`);
+        }
+        if (name === "a") {
+          kept.push('target="_blank"');
+          kept.push('rel="noopener noreferrer"');
+        }
+        if (name === "img") kept.push('loading="lazy"');
+        return `<${name}${kept.length ? " " + kept.join(" ") : ""}>`;
+      })
+      .replace(/<\/([a-zA-Z][a-zA-Z0-9-]*)>/g, (m, tag) =>
+        MD_ALLOWED_TAGS.has(tag.toLowerCase()) ? `</${tag.toLowerCase()}>` : ""
+      );
+  }
+
+  /** Sanitised inline HTML mixed with markdown, e.g. `<b>hi</b> and **bold**`. */
+  function inlineMdHTML(s) {
+    return String(s == null ? "" : s)
+      .split(/(<[^>]+>)/g)
+      .map((part) => (part.startsWith("<") ? sanitizeHtml(part) : inlineMd(part)))
+      .join("");
+  }
+
   function renderMarkdown(md) {
     if (!md) return "";
-    const lines = String(md).replace(/\r\n/g, "\n").split("\n");
+    const cleaned = String(md)
+      .replace(/\r\n/g, "\n")
+      .replace(/<!--[\s\S]*?-->/g, ""); // strip html comments up front
+    const lines = cleaned.split("\n");
     let html = "";
     let i = 0;
     let listType = null;
@@ -1188,6 +1695,22 @@
         continue;
       }
 
+      // Standalone / multi-line raw HTML blocks (badges, banners, tables).
+      if (/^\s*<[a-zA-Z!/]/.test(line)) {
+        closeList();
+        const block = [];
+        while (i < lines.length && lines[i].trim() !== "" && /^\s*</.test(lines[i])) {
+          block.push(lines[i]);
+          i++;
+        }
+        const raw = block.join("\n");
+        // A lone inline-html line may just be text; render it as a paragraph.
+        html += /^\s*<(div|p|table|details|center|h[1-6]|img|picture|a|span|br|hr)/i.test(raw)
+          ? `<div class="md-html">${inlineMdHTML(raw)}</div>`
+          : `<p class="md-p">${inlineMdHTML(raw)}</p>`;
+        continue;
+      }
+
       if (line.trim() === "") {
         closeList();
         i++;
@@ -1215,84 +1738,145 @@
     return html;
   }
 
-  function renderProfile() {
+  /* ---- 8. ABOUT (identity, links, profile README, timeline) ---- */
+  function renderAbout() {
     const s = state.snapshot || {};
     const u = s.user || {};
     const p = s.profile;
-    const has = p && p.raw;
+    const login = u.login || ghAccount();
+    const links = displayLinks();
+    const repos = repoList();
+    const years = accountYears();
 
-    if (!has) {
-      const editPath = `${u.login || "yourname"}/${u.login || "yourname"}`;
-      return section(
-        "Profile",
-        "Your GitHub profile README",
-        pill(),
-        `<div class="bento">
-          <div class="card col2">
-            <div class="card-head">
-              <div class="card-title"><span class="stat-icon" style="color:var(--cyan)">${ICONS.readme}</span> No Profile README Yet</div>
-            </div>
-            <div style="font-size:14px;color:var(--text);line-height:1.7">
-              <p><b>@${esc(u.login || "you")}</b> doesn't have a profile README yet. Create a repository named <code>${esc(editPath)}</code> with a <code>README.md</code> to customize your GitHub profile.</p>
-              <p>Once it exists, Pulse will render it here — including shields.io badges, github-readme-stats cards and Capsule Render banners.</p>
-            </div>
-            <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
-              <a class="btn btn-primary" href="https://github.com/new" target="_blank" rel="noopener noreferrer">${ICONS.externalLink} Create Profile Repo</a>
-              <button class="btn" id="refreshProfileBtn">${ICONS.refresh} Sync README</button>
-            </div>
+    const contactRows = [
+      `<a class="btn btn-primary" href="${profileUrl()}" target="_blank" rel="noopener noreferrer">${ICONS.github} GitHub</a>`,
+      ...links.map(
+        (l) => `<a class="btn" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${ICONS.externalLink} ${esc(l.label)}</a>`
+      ),
+      u.blog ? `<a class="btn" href="${esc(u.blog.startsWith("http") ? u.blog : "https://" + u.blog)}" target="_blank" rel="noopener noreferrer">${ICONS.globe} Website</a>` : "",
+      `<button class="btn" id="refreshProfileBtn">${ICONS.refresh} Sync README</button>`,
+    ].filter(Boolean).join("");
+
+    const accounts = accountSummaries();
+
+    const accountCards =
+      accounts.length > 1
+        ? `<div class="card">
+             <div class="card-head">
+               <div class="card-title"><span class="stat-icon" style="color:var(--cyan)">${ICONS.layers}</span> Accounts</div>
+               <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">${accounts.length} featured</span>
+             </div>
+             <div class="account-grid">${accounts
+               .map(
+                 (a) => `
+               <div class="account-card ${state.accountFilter === a.login ? "active" : ""}" data-account="${esc(a.login)}" title="Filter to @${esc(a.login)}">
+                 <img src="${esc(a.avatar || `https://github.com/${a.login}.png`)}" alt="" />
+                 <div class="account-meta">
+                   <div class="account-name">${esc(a.name || a.login)}</div>
+                   <a class="account-login" href="https://github.com/${esc(a.login)}" target="_blank" rel="noopener noreferrer">@${esc(a.login)}</a>
+                   ${a.bio ? `<div class="account-bio">${esc(a.bio)}</div>` : ""}
+                   <div class="account-stats">
+                     <span><b>${fmtNum(a.repoCount || 0)}</b> public repos</span>
+                     <span><b>${a.followers != null ? fmtNum(a.followers) : "—"}</b> followers</span>
+                   </div>
+                 </div>
+               </div>`
+               )
+               .join("")}</div>
+           </div>`
+        : "";
+
+    const identityCard = `
+      <div class="card col2 profile-card">
+        <div class="profile-head">
+          ${u.avatar ? `<img class="profile-avatar" src="${esc(u.avatar)}" alt="" />` : ""}
+          <div>
+            <div class="profile-name">${esc(u.name || login || "")}</div>
+            <div class="profile-login">${esc(accountList().map((a) => "@" + a).join(" + ") || "@" + (login || ""))}${u.location ? " · " + esc(u.location) : ""}${u.followers != null ? " · " + plural(u.followers, "follower") : ""}</div>
           </div>
-        </div>`
-      );
-    }
+        </div>
+        ${u.bio ? `<p class="about-bio">${esc(u.bio)}</p>` : ""}
+        <div class="hero-actions" style="margin-top:14px">${contactRows}</div>
+        <div class="about-facts">
+          <div><span>Public repos</span><b>${fmtNum(repos.length)}</b></div>
+          <div><span>Stars earned</span><b>${fmtNum(repos.reduce((a, r) => a + r.stars, 0))}</b></div>
+          <div><span>On GitHub</span><b>${years != null ? years + "y" : "—"}</b></div>
+          <div><span>Latest push</span><b>${repos[0] ? fmtAgo(repos[0].pushedAt) : "—"}</b></div>
+        </div>
+      </div>`;
+
+    const readmeCard = `
+      <div class="card col2">
+        <div class="card-head">
+          <div class="card-title"><span class="stat-icon" style="color:var(--cyan)">${ICONS.readme}</span> Profile README${p?.owner ? ` · @${esc(p.owner)}` : ""}</div>
+          ${p?.url ? `<a class="btn btn-sm" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer">${ICONS.repos} Source repo</a>` : ""}
+        </div>
+        ${
+          p && p.raw
+            ? `<div class="md-body">${renderMarkdown(p.raw)}</div>`
+            : `<div style="font-size:14px;color:var(--muted);line-height:1.7">
+                 <p><b>@${esc(login || "this account")}</b> has no profile README yet, so GitHub's own profile page is the source of truth.</p>
+                 <p>Create a repository named <code>${esc(login || "login")}/${esc(login || "login")}</code> with a <code>README.md</code> and it will be rendered here automatically.</p>
+               </div>`
+        }
+      </div>`;
 
     return section(
-      "Profile",
-      `${esc(u.login || "")} · GitHub profile README`,
-      pill(),
-      `<div class="bento">
-        <div class="card col2 profile-card">
-          <div class="profile-head">
-            ${u.avatar ? `<img class="profile-avatar" src="${esc(u.avatar)}" alt="" />` : ""}
-            <div>
-              <div class="profile-name">${esc(u.name || u.login || "")}</div>
-              <div class="profile-login">@${esc(u.login || "")} · ${fmtNum(u.followers || 0)} followers</div>
-            </div>
-            <div style="margin-left:auto;display:flex;gap:8px">
-              <button class="btn btn-sm" id="refreshProfileBtn">${ICONS.refresh} Sync</button>
-              <a class="btn btn-sm" href="${esc(p.url || "")}" target="_blank" rel="noopener noreferrer">${ICONS.repos} Repo</a>
-            </div>
-          </div>
-          <div class="md-body">${renderMarkdown(p.raw)}</div>
-        </div>
-      </div>`
+      "About",
+      `${esc(u.name || login || "")} · public GitHub profile`,
+      `<a class="btn btn-sm" href="${profileUrl()}" target="_blank" rel="noopener noreferrer">${ICONS.github} Follow on GitHub</a>`,
+      `<div class="bento">${accountCards}${identityCard}${readmeCard}</div>`
     );
   }
 
   /* ---- RENDER DISPATCH ---- */
   function render() {
+    syncMeta();
     renderTopbar();
     renderSidebar();
     renderMobileNav();
     const stage = $('#stage');
 
     const views = {
-      command: renderCommand,
-      repos: renderRepos,
+      overview: renderOverview,
+      highlights: renderHighlights,
+      numbers: renderNumbers,
       activity: renderActivity,
-      ci: renderCI,
-      community: renderCommunity,
-      health: renderHealth,
-      xp: renderXP,
-      profile: renderProfile,
+      projects: renderProjects,
+      project: renderProject,
+      account: renderAccount,
+      craft: renderCraft,
+      about: renderAbout,
     };
 
-    const fn = views[state.view] || renderCommand;
+    const fn = views[state.view] || renderOverview;
     stage.innerHTML = '<div class="loading"><div class="pulse-ring"></div><span>SYNCHRONIZING</span></div>';
     requestAnimationFrame(() => {
       stage.innerHTML = fn();
       bindStage(stage);
+      // 3D + gamification hooks (both layers are optional and self-contained)
+      window.PulseDepth?.bindTilt(stage);
+      window.PulseDepth?.refresh();
+      window.PulseQuests?.syncSnapshot(state.snapshot);
+      window.PulseQuests?.mount();
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function bindProjectLinks(root) {
+    $$('[data-project]', root || document).forEach((card) =>
+      card.addEventListener("click", (e) => {
+        if (e.target.closest("a")) return; // let real links win
+        goProject(card.dataset.project);
+      })
+    );
+  }
+
+  function updateReposGrid() {
+    const container = $("#reposGridContainer");
+    if (!container) return;
+    container.innerHTML = getFilteredReposHtml();
+    bindProjectLinks(container);
   }
 
   function bindStage(stage) {
@@ -1303,16 +1887,63 @@
       })
     );
 
-    $$('#stage [data-inspect]').forEach((card) =>
-      card.addEventListener("click", () => {
-        openInspector(card.dataset.inspect);
+    bindProjectLinks(stage);
+
+    $$('#stage [data-account]').forEach((b) =>
+      b.addEventListener("click", () => {
+        const id = b.dataset.account;
+        state.accountFilter = id === "all" ? "all" : id;
+        if (state.selectedRepo !== "all" && state.accountFilter !== "all") {
+          const repo = repoList().find((r) => r.name === state.selectedRepo);
+          if (repo && repoOwner(repo) !== state.accountFilter) state.selectedRepo = "all";
+        }
+        if (state.accountFilter !== "all") window.PulseQuests?.action("account");
+        render();
+        toast(state.accountFilter === "all" ? "Showing every account" : `Showing @${state.accountFilter} only`);
       })
     );
+
+    $('#heroSuggestBtn')?.addEventListener("click", () => openSuggestModal());
+    $$('#stage a[href*="omixsystems"], #stage a[href^="https://github.com/"]').forEach((a) =>
+      a.addEventListener("click", () => window.PulseQuests?.action("contact"))
+    );
+
+    $$('#stage [data-nav-jump]').forEach((b) =>
+      b.addEventListener("click", () => go(b.dataset.navJump))
+    );
+    $('#projectBackBtn')?.addEventListener("click", () => go("projects"));
+    $('#projectShareBtn')?.addEventListener("click", shareCurrent);
+    $('#accountBackBtn')?.addEventListener("click", () => go("numbers"));
+    $('#accountShareBtn')?.addEventListener("click", shareCurrent);
+    $('#accountFilterBtn')?.addEventListener("click", () => {
+      state.accountFilter = state.selectedAccount;
+      window.PulseQuests?.action("focus-account");
+      go("overview");
+      toast(`Dashboard filtered to @${state.selectedAccount}`);
+    });
+    $$('[data-account-page]').forEach((el) =>
+      el.addEventListener("click", (e) => {
+        e.stopPropagation();
+        goAccount(el.dataset.accountPage);
+      })
+    );
+    $('#copyHttpsBtn')?.addEventListener("click", () => {
+      const repo = repoList().find((r) => r.name === state.selectedProject);
+      if (!repo) return;
+      navigator.clipboard.writeText(`https://github.com/${repo.fullName}.git`);
+      toast("Copied HTTPS clone URL");
+    });
+    $('#copySshBtn')?.addEventListener("click", () => {
+      const repo = repoList().find((r) => r.name === state.selectedProject);
+      if (!repo) return;
+      navigator.clipboard.writeText(`git@github.com:${repo.fullName}.git`);
+      toast("Copied SSH clone URL");
+    });
 
     $('#customizeWidgetsTrigger')?.addEventListener("click", openWidgetModal);
     $('#exportSummaryTrigger')?.addEventListener("click", copyMarkdownSummary);
 
-    $('#createIssueBtn')?.addEventListener("click", () => openIssueModal());
+    $('#createIssueBtn')?.addEventListener("click", () => openSuggestModal());
     $('#refreshProfileBtn')?.addEventListener("click", () => loadProfileLive());
 
     // Repositories view events
@@ -1344,10 +1975,8 @@
 
     // CI realtime controls
     $('#wfRefreshBtn')?.addEventListener("click", async () => {
-      const headers = { Accept: "application/vnd.github+json" };
-      if (state.token) headers["Authorization"] = `Bearer ${state.token}`;
       toast("Refreshing workflows…");
-      await fetchWorkflowLive(headers, { manual: true });
+      await fetchWorkflowLive(undefined, { manual: true });
       toast("Workflows refreshed");
     });
     $('#wfPollToggleBtn')?.addEventListener("click", () => toggleWorkflowPoll());
@@ -1359,9 +1988,17 @@
     });
   }
 
-  function go(view) {
+  function go(view, opts = {}) {
     state.view = view;
-    if (view === "ci") {
+    window.PulseQuests?.visit(view);
+    // Keep the address bar in sync so any view is directly linkable.
+    if (!opts.keepHash) {
+      try {
+        const target = "#/" + view;
+        if (location.hash !== target) history.replaceState(null, "", target);
+      } catch {}
+    }
+    if (view === "craft" || view === "project") {
       if (!state._pollTimer) scheduleWorkflowPoll();
     } else {
       if (state._pollTimer) stopWorkflowPoll();
@@ -1380,6 +2017,21 @@
       </div>${inner}</div>`;
   }
 
+  /* Account filter chips — only rendered when more than one account exists. */
+  const accountPills = () => {
+    const accounts = accountList();
+    if (accounts.length < 2) return "";
+    const chip = (id, label, avatar) => `
+      <button class="account-pill ${state.accountFilter === id ? "active" : ""}" data-account="${esc(id)}" title="Show ${esc(label)}">
+        ${avatar ? `<img src="${esc(avatar)}" alt="" />` : ICONS.layers}
+        <span>${esc(label)}</span>
+      </button>`;
+    return `<div class="account-pills">
+      ${chip("all", "All accounts", null)}
+      ${accounts.map((a) => chip(a, "@" + a, accountAvatar(a))).join("")}
+    </div>`;
+  };
+
   const pill = () => `
     <button class="repo-pill" data-repolink title="Change repository focus">
       <span class="stat-icon" style="color:var(--cyan)">${ICONS.repos}</span>
@@ -1387,129 +2039,322 @@
       <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </button>`;
 
-  /* ---- 1. COMMAND VIEW ---- */
-  function renderCommand() {
-    const repos = filteredRepos();
+  /* ---- HERO: identity, links and live public status ---- */
+  function heroPanel() {
+    const u = state.snapshot?.user || {};
+    const repos = repoList();
+    const m = momentum();
+    const links = displayLinks();
+    const login = u.login || ghAccount();
+    const joinedYear = u.createdAt ? new Date(u.createdAt).getFullYear() : null;
+    const accounts = accountList();
+    const accountLabel = accounts.length > 1 ? accounts.map((a) => "@" + a).join(" + ") : "@" + login;
+    const chips = [
+      u.location ? `<span class="chip">${ICONS.globe}${esc(u.location)}</span>` : "",
+      u.company ? `<span class="chip">${ICONS.layers}${esc(u.company)}</span>` : "",
+      joinedYear ? `<span class="chip">${ICONS.award}On GitHub since ${joinedYear}</span>` : "",
+      u.followers != null ? `<span class="chip">${ICONS.community}${plural(u.followers, "follower")}</span>` : "",
+      `<span class="chip">${ICONS.repos}${repos.length} public repos</span>`,
+      accounts.length > 1
+        ? `<span class="chip" title="${esc(accountLabel)}">${ICONS.layers}${accounts.length} accounts</span>`
+        : "",
+    ].join("");
+
+    const actions = [
+      ...accountList().map(
+        (a, i) =>
+          `<a class="btn ${i === 0 ? "btn-primary" : ""}" href="https://github.com/${esc(a)}" target="_blank" rel="noopener noreferrer">${ICONS.github} @${esc(a)}</a>`
+      ),
+      ...links.map(
+        (l) => `<a class="btn" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${ICONS.externalLink} ${esc(l.label)}</a>`
+      ),
+      `<button class="btn" id="heroSuggestBtn">${ICONS.issue} Suggest Something</button>`,
+    ].join("");
+
+    return `
+      <div class="card hero" data-tilt>
+        <div class="hero-main">
+          <img class="hero-avatar" data-depth="10" src="${esc(u.avatar || "icons/icon.svg")}" alt="${esc(login || "GitHub")}" />
+          <div class="hero-id">
+            <div class="hero-name">${esc(u.name || login || "GitHub account")}</div>
+            <div class="hero-handles">
+              ${accounts.length > 1
+                ? accounts
+                    .map(
+                      (a) =>
+                        `<a class="hero-handle" href="https://github.com/${esc(a)}" target="_blank" rel="noopener noreferrer">@${esc(a)}</a>`
+                    )
+                    .join('<span class="hero-handle-sep">·</span>')
+                : `<a class="hero-handle" href="${profileUrl()}" target="_blank" rel="noopener noreferrer">@${esc(login || "github")}</a>`}
+            </div>
+            <p class="hero-bio">${esc(u.bio || displayConfig().tagline || "Public repositories, activity and release history — read straight from GitHub, no login required.")}</p>
+            <div class="hero-chips">${chips}</div>
+          </div>
+        </div>
+        <div class="hero-side">
+          <div class="hero-live">
+            <span class="status ok"><span class="sdot"></span>${m.latest ? "LAST PUSH " + fmtAgo(m.latest.pushedAt).toUpperCase() : "AWAITING DATA"}</span>
+            <div class="hero-live-sub">${m.latest ? `Most recently active: <b>${esc(m.latest.name)}</b>` : "Repository data is still loading"}</div>
+            <div class="hero-momentum">
+              <span><b>${fmtNum(m.week)}</b> repos active this week</span>
+              <span><b>${fmtNum(m.month)}</b> this month</span>
+            </div>
+          </div>
+          <div class="hero-actions">${actions}</div>
+        </div>
+      </div>`;
+  }
+
+  /* ---- HIGHLIGHT CARD (auto-derived, no hand-written content needed) ---- */
+  function highlightCard(r, index) {
+    const langCol = getLangColor(r.language);
+    const st = repoStatus(r);
+    const summary = (r.readmeExcerpt || r.description || "No description yet — open the project for the full picture.").slice(0, 240);
+    const topics = (r.topics || []).slice(0, 3);
+    return `
+      <div class="card hl-card" data-tilt data-project="${esc(r.name)}" title="Open ${esc(r.name)}">
+        <div class="hl-head">
+          <span class="hl-rank">${String(index + 1).padStart(2, "0")}</span>
+          <span class="status ${st === "active" ? "ok" : st === "archived" ? "warn" : "run"}"><span class="sdot"></span>${st.toUpperCase()}</span>
+        </div>
+        <div class="hl-title">${esc(r.name)}</div>
+        <p class="hl-pitch">${esc(summary)}</p>
+        <div class="hl-stack">
+          ${r.language ? `<span class="lang-tag" style="background:${langCol}22;color:${langCol}">${esc(r.language)}</span>` : ""}
+          ${topics.map((t) => `<span class="priv-tag">${esc(t)}</span>`).join("")}
+        </div>
+        <div class="hl-foot">
+          ${accountList().length > 1 ? `<span class="owner-tag">@${esc(repoOwner(r))}</span>` : ""}
+          <span><span class="stat-icon" style="color:var(--amber)">${ICONS.star}</span>${fmtNum(r.stars)}</span>
+          <span><span class="stat-icon" style="color:var(--violet)">${ICONS.fork}</span>${fmtNum(r.forks)}</span>
+          <span><span class="stat-icon" style="color:var(--cyan)">${ICONS.gitCommit}</span>${fmtAgo(r.pushedAt)}</span>
+          <span class="hl-open">Open project →</span>
+        </div>
+      </div>`;
+  }
+
+  function statCard(label, value, sub, color, icon) {
+    return `
+      <div class="card" data-tilt>
+        <div class="card-head">
+          <div class="card-title"><span class="stat-icon" style="color:${color}">${icon}</span> ${label}</div>
+        </div>
+        <div class="metric" style="color:${color}">${value}</div>
+        <div class="metric-sub">${sub}</div>
+      </div>`;
+  }
+
+  /* ---- 1. OVERVIEW ---- */
+  function renderOverview() {
+    const repos = repoList();
+    const u = state.snapshot?.user || {};
+    const m = momentum();
+    const stars = repos.reduce((a, r) => a + r.stars, 0);
+    const forks = repos.reduce((a, r) => a + r.forks, 0);
+    const languages = new Set(repos.filter((r) => r.language).map((r) => r.language));
+    const topLang = Object.entries(
+      repos.reduce((acc, r) => (r.language ? { ...acc, [r.language]: (acc[r.language] || 0) + 1 } : acc), {})
+    ).sort((a, b) => b[1] - a[1])[0]?.[0];
+    const w = state.widgets;
+    const featured = featuredRepos(3);
+
+    const actions = `
+      ${accountPills()}
+      ${pill()}
+      <button class="btn btn-sm" id="customizeWidgetsTrigger" title="Customize cards">${ICONS.settings} Widgets</button>
+      <button class="btn btn-sm" id="exportSummaryTrigger" title="Copy a markdown summary">${ICONS.share} Share</button>`;
+
+    return section(
+      "Overview",
+      `Public work from ${accountList().map((a) => "@" + a).join(" and ") || "GitHub"} · ${repos.length} repositories${state.accountFilter === "all" ? "" : " · @" + state.accountFilter}`,
+      actions,
+      `${heroPanel()}
+       ${nowStrip()}
+       <div class="bento" style="margin-top:18px">
+         ${statCard("Public Repos", fmtNum(repos.length), `${languages.size} languages`, "var(--cyan)", ICONS.repos)}
+         ${statCard("Stars", fmtNum(stars), "developer appreciation", "var(--amber)", ICONS.star)}
+         ${statCard("Forks", fmtNum(forks), "community reuse", "var(--violet)", ICONS.fork)}
+         ${statCard("Active This Week", fmtNum(m.week), m.month ? `${m.month} in the last 30 days` : "no recent pushes", "var(--green)", ICONS.zap)}
+         ${statCard("Primary Stack", esc(topLang || "—"), "most used language", "var(--blue)", ICONS.code)}
+         ${statCard("Followers", u.followers != null ? fmtNum(u.followers) : "—", u.following != null ? `following ${fmtNum(u.following)}` : "public profile", "var(--red)", ICONS.community)}
+       </div>
+       <div style="height:18px"></div>
+       <div class="bento" id="questStrip"></div>
+       <div style="height:18px"></div>
+       <div class="bento">
+         <div class="card col2 overview-featured" data-tilt>
+           <div class="card-head">
+             <div class="card-title"><span class="stat-icon" style="color:var(--cyan)">${ICONS.zap}</span> What I've Been Building</div>
+             <button class="btn btn-sm" data-nav-jump="highlights">All highlights →</button>
+           </div>
+           <div class="hl-grid compact">${featured.map((r, i) => highlightCard(r, i)).join("")}</div>
+         </div>
+         ${w.recentActivity ? recentActivityWidget() : ""}
+         ${w.pulseChart ? commitPulseWidget() : ""}
+         ${w.heatmap ? contributionHeatmapWidget() : ""}
+         ${w.topRepos ? topRepositoriesWidget() : ""}
+       </div>`
+    );
+  }
+
+  /* ---- 2. HIGHLIGHTS ---- */
+  function renderHighlights() {
+    const featured = featuredRepos(6);
+    return section(
+      "Highlights",
+      `The work that best represents what I build${state.accountFilter === "all" ? "" : " · @" + state.accountFilter}`,
+      `${accountPills()}${pill()}`,
+      `<div class="callout-box" style="margin-bottom:16px">
+        These are derived automatically from public GitHub signals — recency of work,
+        reach (stars/forks) and how complete each repository looks (description, live
+        site, topics, license). No hand-curated list to go stale.
+      </div>
+      <div class="hl-grid">
+        ${featured.map((r, i) => highlightCard(r, i)).join("") ||
+          '<div class="card" style="padding:32px;text-align:center;color:var(--faint)">No public repositories to highlight yet.</div>'}
+      </div>`
+    );
+  }
+
+  /* Per-account comparison — only meaningful with more than one account. */
+  function accountComparisonCard() {
+    const accounts = accountSummaries();
+    if (accounts.length < 2) return "";
+    const rows = accounts
+      .map((a) => {
+        const own = repoList().filter((r) => repoOwner(r) === a.login);
+        const stars = own.reduce((s, r) => s + r.stars, 0);
+        return `
+        <div class="account-card ${state.accountFilter === a.login ? "active" : ""}" data-account="${esc(a.login)}" title="Filter to @${esc(a.login)}">
+          <img src="${esc(a.avatar || `https://github.com/${a.login}.png`)}" alt="" />
+          <div class="account-meta">
+            <div class="account-name">${esc(a.name || a.login)}</div>
+            <a class="account-login" href="https://github.com/${esc(a.login)}" target="_blank" rel="noopener noreferrer">@${esc(a.login)}</a>
+            ${a.bio ? `<div class="account-bio">${esc(a.bio)}</div>` : ""}
+            <div class="account-stats">
+              <span><b>${fmtNum(own.length || a.repoCount || 0)}</b> repos</span>
+              <span><b>${fmtNum(stars || a.stars || 0)}</b> stars</span>
+              <span><b>${a.followers != null ? fmtNum(a.followers) : "—"}</b> followers</span>
+              <span>last push ${fmtAgo(a.latestPush || own[0]?.pushedAt)}</span>
+            </div>
+            <button class="btn btn-sm account-page-btn" data-account-page="${esc(a.login)}">Open @${esc(a.login)}'s page →</button>
+          </div>
+        </div>`;
+      })
+      .join("");
+
+    return `
+      <div class="card" style="margin-bottom:18px">
+        <div class="card-head">
+          <div class="card-title"><span class="stat-icon" style="color:var(--cyan)">${ICONS.layers}</span> Featured Accounts</div>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">click to filter</span>
+        </div>
+        <div class="account-grid">${rows}</div>
+      </div>`;
+  }
+
+  /* ---- 3. NUMBERS ---- */
+  function renderNumbers() {
+    const repos = repoList();
+    const m = state.snapshot?.metrics || {};
+    const u = state.snapshot?.user || {};
+    const releases = allReleases();
+    const runs = allWorkflowRuns();
+    const completed = runs.filter((r) => r.status === "completed");
+    const passed = completed.filter((r) => r.conclusion === "success");
+    const passRate = completed.length ? Math.round((passed.length / completed.length) * 100) : null;
     const stars = repos.reduce((a, r) => a + r.stars, 0);
     const forks = repos.reduce((a, r) => a + r.forks, 0);
     const issues = repos.reduce((a, r) => a + r.openIssues, 0);
-    const privateCount = repos.filter((r) => r.isPrivate).length;
+    const years = accountYears();
 
-    const langs = {};
-    repos.forEach((r) => {
-      if (r.language) langs[r.language] = (langs[r.language] || 0) + 1;
-    });
-    const topLang = Object.entries(langs).sort((a, b) => b[1] - a[1])[0]?.[0] || "—";
-    const active = repos.filter((r) => Date.now() - new Date(r.pushedAt).getTime() < 7 * 864e5).length;
+    const leaderboard = repos
+      .slice()
+      .sort((a, b) => b.stars - a.stars || new Date(b.pushedAt) - new Date(a.pushedAt))
+      .slice(0, 6)
+      .map(
+        (r, i) => `
+      <div class="mini-row" data-project="${esc(r.name)}" title="Open ${esc(r.name)}">
+        <div class="av" style="background:linear-gradient(135deg,var(--amber),var(--violet))">${i + 1}</div>
+        <div class="meta">
+          <div class="t">${esc(r.name)}</div>
+          <div class="s">${esc(r.language || "stack")} · ${fmtNum(r.forks)} forks · ${fmtAgo(r.pushedAt)}</div>
+        </div>
+        <div class="r" style="display:flex;align-items:center;gap:3px;color:var(--amber)">
+          <span class="stat-icon" style="color:var(--amber)">${ICONS.star}</span>
+          <span>${fmtNum(r.stars)}</span>
+        </div>
+      </div>`
+      )
+      .join("");
 
-    const w = state.widgets;
-
-    // Header actions
-    const actions = `
-      ${pill()}
-      <button class="btn btn-sm" id="customizeWidgetsTrigger" title="Customize Cards">
-        ${ICONS.settings} Widgets
-      </button>
-      <button class="btn btn-sm" id="exportSummaryTrigger" title="Export Markdown">
-        ${ICONS.share} Share
-      </button>`;
-
-    // Metric cards
-    let metricCardsHtml = "";
-    if (w.stars) {
-      metricCardsHtml += `
-        <div class="card">
-          <div class="glow" style="background:var(--cyan)"></div>
-          <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--cyan)">${ICONS.star}</span>
-              Total Stars
-            </div>
-          </div>
-          <div class="metric" style="color:var(--cyan)">${fmtNum(stars)}</div>
-          <div class="metric-sub">across ${repos.length} repos</div>
-        </div>`;
-    }
-    if (w.forks) {
-      metricCardsHtml += `
-        <div class="card">
-          <div class="glow" style="background:var(--violet)"></div>
-          <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--violet)">${ICONS.fork}</span>
-              Forks
-            </div>
-          </div>
-          <div class="metric" style="color:var(--violet)">${fmtNum(forks)}</div>
-          <div class="metric-sub">community reuse</div>
-        </div>`;
-    }
-    if (w.issues) {
-      metricCardsHtml += `
-        <div class="card">
-          <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--amber)">${ICONS.issue}</span>
-              Open Issues
-            </div>
-          </div>
-          <div class="metric" style="color:var(--amber)">${fmtNum(issues)}</div>
-          <div class="metric-sub">${issues === 0 ? "clean queue" : "action required"}</div>
-        </div>`;
-    }
-    if (w.active) {
-      metricCardsHtml += `
-        <div class="card">
-          <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--green)">${ICONS.zap}</span>
-              Active Repos
-            </div>
-          </div>
-          <div class="metric" style="color:var(--green)">${fmtNum(active)}<small>/ ${repos.length}</small></div>
-          <div class="metric-sub">pushed past 7 days</div>
-        </div>`;
-    }
-    if (w.primaryLang) {
-      metricCardsHtml += `
-        <div class="card">
-          <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--blue)">${ICONS.code}</span>
-              Primary Stack
-            </div>
-          </div>
-          <div class="metric" style="font-size:24px;text-transform:uppercase;color:var(--blue)">${esc(topLang)}</div>
-          <div class="metric-sub">most used language</div>
-        </div>`;
-    }
-    if (w.privateCount) {
-      metricCardsHtml += `
-        <div class="card">
-          <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--red)">${ICONS.lock}</span>
-              Private Repos
-            </div>
-          </div>
-          <div class="metric" style="color:var(--red)">${fmtNum(privateCount)}</div>
-          <div class="metric-sub">of ${repos.length} total repos</div>
-        </div>`;
-    }
+    const milestones = [
+      u.createdAt ? ["Joined GitHub", new Date(u.createdAt).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })] : null,
+      years != null ? ["Account age", `${years} years`] : null,
+      repos.length ? ["First public repo", repos[repos.length - 1]?.name] : null,
+      repos.length ? ["Newest public repo", repos[0]?.name] : null,
+      releases.length ? ["Latest release", releases[0]?.tag] : null,
+    ].filter(Boolean);
 
     return section(
-      "Command Center",
-      state.selectedRepo === "all" ? `Live telemetry across ${repos.length} repositories` : `Focus Mode · ${state.selectedRepo}`,
-      actions,
-      `<div class="bento">${metricCardsHtml}</div>
-       <div style="height:18px"></div>
-       <div class="bento">
-         ${w.pulseChart ? commitPulseWidget() : ""}
-         ${w.heatmap ? commitHeatmapWidget() : ""}
-         ${w.langDistribution ? languageDistributionWidget() : ""}
-         ${w.recentActivity ? recentActivityWidget() : ""}
-         ${w.topRepos ? topRepositoriesWidget() : ""}
-       </div>`
+      "Numbers",
+      state.accountFilter === "all"
+        ? `The measurable footprint of ${accountList().length > 1 ? "both accounts" : "this account"}`
+        : `The measurable footprint of @${state.accountFilter}`,
+      `${accountPills()}${pill()}`,
+      `${accountComparisonCard()}
+      <div class="bento">
+        ${statCard("Contributions", fmtNum(m.contributionsLastYear), "last 12 months (public)", "var(--green)", ICONS.pulse)}
+        ${statCard("Active Days", fmtNum(m.activeDays), `${plural(m.currentStreak || 0, "day")} current streak`, "var(--cyan)", ICONS.activity)}
+        ${statCard("PRs Merged", fmtNum(m.prsMerged), `${fmtNum(m.prsOpened)} opened`, "var(--violet)", ICONS.branch)}
+        ${statCard("Issues Opened", fmtNum(m.issuesOpened), "authored issues", "var(--amber)", ICONS.issue)}
+        ${statCard("Code Written", formatBytes(m.codeBytes), "across public repos", "var(--blue)", ICONS.layers)}
+        ${statCard("Best Streak", `${fmtNum(m.longestStreak)}d`, "consecutive active days", "var(--red)", ICONS.zap)}
+      </div>
+      <div style="height:18px"></div>
+      <div class="bento">
+        ${trendCard("stars", "Stars", "var(--amber)", ICONS.star)}
+        ${trendCard("followers", "Followers", "var(--red)", ICONS.community)}
+        ${trendCard("repos", "Repos", "var(--cyan)", ICONS.repos)}
+      </div>
+      <div style="height:18px"></div>
+      <div class="bento">
+        ${statCard("Public Repos", fmtNum(repos.length), "on GitHub", "var(--cyan)", ICONS.repos)}
+        ${statCard("Stars", fmtNum(stars), "across all repos", "var(--amber)", ICONS.star)}
+        ${statCard("Forks", fmtNum(forks), "community copies", "var(--violet)", ICONS.fork)}
+        ${statCard("Open Issues", fmtNum(issues), issues === 0 ? "clean queue" : "tracked work", "var(--red)", ICONS.issue)}
+        ${statCard("Releases", fmtNum(releases.length), "published tags", "var(--green)", ICONS.award)}
+        ${statCard("Followers", u.followers != null ? fmtNum(u.followers) : "—", `${plural(u.following || 0, "following")}`, "var(--blue)", ICONS.community)}
+        ${statCard("Workflow Runs", fmtNum(runs.length), passRate != null ? `${passRate}% passing` : "tracked recent runs", "var(--blue)", ICONS.pipeline)}
+        ${statCard("Account Age", years != null ? `${years}y` : "—", "since first commit here", "var(--cyan)", ICONS.clock || ICONS.activity)}
+      </div>
+      <div style="height:18px"></div>
+      <div class="bento">
+        ${contributionHeatmapWidget()}
+        <div class="card col2">
+          <div class="card-head">
+            <div class="card-title"><span class="stat-icon" style="color:var(--amber)">${ICONS.award}</span> Most Starred</div>
+            <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">top ${Math.min(6, repos.length)}</span>
+          </div>
+          <div class="mini-list">${leaderboard || '<div style="color:var(--faint);font-size:13px;padding:8px 0">No repositories yet</div>'}</div>
+        </div>
+        <div class="card col2">
+          <div class="card-head">
+            <div class="card-title"><span class="stat-icon" style="color:var(--cyan)">${ICONS.clock || ICONS.activity}</span> Timeline</div>
+          </div>
+          <div class="mini-list">
+            ${milestones
+              .map(
+                ([label, value]) => `
+              <div class="mini-row">
+                <div class="av" style="background:linear-gradient(135deg,var(--cyan),var(--blue))">${ICONS.pulse}</div>
+                <div class="meta"><div class="t">${esc(String(value ?? "—"))}</div><div class="s">${esc(label)}</div></div>
+              </div>`
+              )
+              .join("")}
+          </div>
+        </div>
+      </div>`
     );
   }
 
@@ -1563,6 +2408,205 @@
         </div>
       </div>`;
   }
+
+  /* ---- PUBLIC CONTRIBUTION CALENDAR (real data, build-time scrape) ----
+     Merges every featured account (or just the filtered one) into a 53-week
+     grid with exact counts, streaks and totals. Falls back to a derived view
+     when the calendar is unavailable. */
+  function contributionDays(scope) {
+    const all = state.snapshot?.contributions || {};
+    const filter = scope || state.accountFilter;
+    const logins = filter === "all" ? Object.keys(all) : [filter];
+    const counts = new Map();
+    let covered = false;
+    for (const login of logins) {
+      const cal = all[login];
+      if (!cal?.days) continue;
+      covered = true;
+      for (const [date, count] of cal.days) counts.set(date, (counts.get(date) || 0) + count);
+    }
+    if (!covered) return null;
+    const days = [...counts.entries()].sort((a, b) => a[0].localeCompare(b[0])).map(([date, count]) => ({ date, count }));
+    const total = days.reduce((a, d) => a + d.count, 0);
+    const active = days.filter((d) => d.count > 0).length;
+    const best = days.reduce((a, d) => (d.count > a.count ? d : a), days[0] || { count: 0 });
+    let longest = 0;
+    let run = 0;
+    for (const d of days) {
+      run = d.count > 0 ? run + 1 : 0;
+      longest = Math.max(longest, run);
+    }
+    let current = 0;
+    for (let i = days.length - 1; i >= 0; i--) {
+      if (days[i].count > 0) current++;
+      else if (i === days.length - 1) continue;
+      else break;
+    }
+    return { days, total, active, best, current, longest, accounts: logins.length };
+  }
+
+  const levelFor = (count) => (count <= 0 ? 0 : count <= 1 ? 1 : count <= 4 ? 2 : count <= 9 ? 3 : 4);
+
+  function contributionHeatmapWidget(scope) {
+    const data = contributionDays(scope);
+    if (!data) return commitHeatmapWidget(); // graceful fallback
+    const cells = data.days
+      .map(
+        (d) =>
+          `<div class="contrib-cell" data-level="${levelFor(d.count)}" title="${d.count} contribution${d.count === 1 ? "" : "s"} on ${new Date(d.date + "T00:00:00").toDateString()}"></div>`
+      )
+      .join("");
+
+    const months = (() => {
+      const out = [];
+      let last = "";
+      data.days.forEach((d, i) => {
+        const m = new Date(d.date + "T00:00:00").toLocaleString(undefined, { month: "short" });
+        if (m !== last) {
+          out.push(`<span style="grid-column: ${Math.floor(i / 7) + 1}">${m}</span>`);
+          last = m;
+        }
+      });
+      return out.join("");
+    })();
+
+    return `
+      <div class="card col2">
+        <div class="card-head">
+          <div class="card-title"><span class="stat-icon" style="color:var(--green)">${ICONS.pulse}</span> Contribution Calendar</div>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">last 12 months · public</span>
+        </div>
+        <div class="contrib-stats">
+          <span><b>${fmtNum(data.total)}</b> contributions</span>
+          <span><b>${fmtNum(data.active)}</b> active days</span>
+          <span><b>${fmtNum(data.current)}</b> day streak</span>
+          <span><b>${fmtNum(data.longest)}</b> best streak</span>
+        </div>
+        <div class="contrib-wrap">
+          <div class="contrib-months" style="grid-template-columns: repeat(${Math.ceil(data.days.length / 7)}, 12px)">${months}</div>
+          <div class="contrib-grid">${cells}</div>
+        </div>
+        <div class="contrib-foot">
+          <span>${data.accounts > 1 ? `merged across ${data.accounts} accounts` : "single account"} · public contribution graph only</span>
+          <span class="contrib-legend">Less
+            <i data-level="0"></i><i data-level="1"></i><i data-level="2"></i><i data-level="3"></i><i data-level="4"></i>
+          More</span>
+        </div>
+      </div>`;
+  }
+
+  /* ---- CODE COMPOSITION BY BYTES (real language statistics) ---- */
+  function languageBytesWidget() {
+    const totals = state.snapshot?.languageBytes || {};
+    const entries = Object.entries(totals).filter(([, bytes]) => bytes > 0);
+    const sum = entries.reduce((a, [, b]) => a + b, 0);
+    if (!entries.length) return languageDistributionWidget();
+
+    const segments = entries
+      .map(([lang, bytes]) => {
+        const pct = (bytes / sum) * 100;
+        return `<div class="lang-seg" style="width:${pct.toFixed(2)}%;background:${getLangColor(lang)}" title="${esc(lang)}: ${pct.toFixed(1)}% (${formatBytes(bytes)})"></div>`;
+      })
+      .join("");
+
+    const legend = entries
+      .slice(0, 8)
+      .map(([lang, bytes]) => {
+        const pct = (bytes / sum) * 100;
+        return `
+          <div class="lang-item">
+            <span class="ldot" style="background:${getLangColor(lang)}"></span>
+            <span>${esc(lang)} <b>${pct.toFixed(1)}%</b> <em>${formatBytes(bytes)}</em></span>
+          </div>`;
+      })
+      .join("");
+
+    return `
+      <div class="card col2" data-tilt>
+        <div class="card-head">
+          <div class="card-title"><span class="stat-icon" style="color:var(--violet)">${ICONS.layers}</span> Code by Language</div>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">${formatBytes(sum)} · ${entries.length} languages</span>
+        </div>
+        <div class="lang-bar">${segments}</div>
+        <div class="lang-legend">${legend}</div>
+        <div class="metric-sub" style="margin-top:10px">Measured in bytes of code across every public repository</div>
+      </div>`;
+  }
+
+  /* ---- 52-WEEK COMMIT SPARKLINE (per repo, from GitHub stats) ---- */
+  function activitySparkline(weeks, { label = "52-week commit activity" } = {}) {
+    if (!Array.isArray(weeks) || !weeks.length) return "";
+    const max = Math.max(1, ...weeks);
+    const w = weeks.length * 4;
+    const h = 34;
+    const points = weeks
+      .map((v, i) => `${i * 4 + 2},${h - Math.round((v / max) * (h - 4))}`)
+      .join(" ");
+    const area = `2,${h} ${points} ${weeks.length * 4 - 2},${h}`;
+    const total = weeks.reduce((a, b) => a + b, 0);
+    return `
+      <div class="spark">
+        <svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="${esc(label)}: ${total} commits over 52 weeks">
+          <polygon points="${area}" fill="color-mix(in srgb, var(--cyan) 18%, transparent)"></polygon>
+          <polyline points="${points}" fill="none" stroke="var(--cyan)" stroke-width="1.6" stroke-linejoin="round"></polyline>
+        </svg>
+        <div class="spark-meta">${fmtNum(total)} commits · 52 weeks</div>
+      </div>`;
+  }
+
+  /* ---- TREND DELTAS / GROWTH SPARKLINE (from committed history) ---- */
+  function historySeries(field, scope = "totals") {
+    const entries = state.history || [];
+    if (entries.length < 2) return [];
+    const pick = (e) => (scope === "totals" ? e.totals?.[field] : e.accounts?.find((a) => a.login === scope)?.[field]);
+    return entries.map((e) => ({ date: e.date, value: pick(e) })).filter((p) => typeof p.value === "number");
+  }
+
+  function trendCard(field, label, color, icon, scope = "totals") {
+    const series = historySeries(field, scope);
+    const current = series.length ? series[series.length - 1].value : null;
+    const delta = (days) => {
+      if (!series.length) return null;
+      const cutoff = Date.now() - days * 864e5;
+      const past = [...series].reverse().find((p) => new Date(p.date).getTime() <= cutoff);
+      const base = past ? past.value : series[0].value;
+      return current != null ? current - base : null;
+    };
+    const d7 = delta(7);
+    const d30 = delta(30);
+    const arrow = (d) =>
+      d == null ? "—" : d > 0 ? `▲ ${fmtNum(d)}` : d < 0 ? `▼ ${fmtNum(Math.abs(d))}` : "no change";
+    const points = series.map((p) => p.value);
+    const spark = points.length > 1 ? (() => {
+      const max = Math.max(...points);
+      const min = Math.min(...points);
+      const span = Math.max(1, max - min);
+      return points
+        .map((v, i) => `${(i / (points.length - 1)) * 100},${28 - ((v - min) / span) * 24}`)
+        .join(" ");
+    })() : "";
+
+    return `
+      <div class="card" data-tilt>
+        <div class="card-head">
+          <div class="card-title"><span class="stat-icon" style="color:${color}">${icon}</span> ${label}</div>
+          <span style="font-family:var(--mono);font-size:10.5px;color:var(--muted)">${series.length}d tracked</span>
+        </div>
+        <div class="metric" style="color:${color}">${current != null ? fmtNum(current) : "—"}</div>
+        <div class="trend-deltas">
+          <span>7d <b>${arrow(d7)}</b></span>
+          <span>30d <b>${arrow(d30)}</b></span>
+        </div>
+        ${spark ? `<svg class="trend-spark" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"><polyline points="${spark}" fill="none" stroke="${color}" stroke-width="1.4" vector-effect="non-scaling-stroke"></polyline></svg>` : ""}
+      </div>`;
+  }
+
+  const formatBytes = (bytes) => {
+    if (!bytes) return "0 B";
+    const units = ["B", "KB", "MB", "GB"];
+    const i = Math.min(units.length - 1, Math.floor(Math.log(bytes) / Math.log(1024)));
+    return `${(bytes / Math.pow(1024, i)).toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
+  };
 
   /* ---- 12-WEEK COMMIT HEATMAP WIDGET ---- */
   function commitHeatmapWidget() {
@@ -1662,7 +2706,7 @@
   function recentActivityWidget() {
     const repos = filteredRepos();
     const rows = repos.slice(0, 5).map((r, i) => `
-      <div class="mini-row" data-inspect="${esc(r.name)}" title="Inspect repository">
+      <div class="mini-row" data-project="${esc(r.name)}" title="Open project">
         <div class="av">${initials(r.name)}</div>
         <div class="meta">
           <div class="t">${esc(r.name.replace(/[-_]/g, " "))}</div>
@@ -1688,7 +2732,7 @@
   function topRepositoriesWidget() {
     const repos = filteredRepos().slice().sort((a, b) => b.stars - a.stars).slice(0, 4);
     const rows = repos.map((r, i) => `
-      <div class="mini-row" data-inspect="${esc(r.name)}" title="Inspect repository">
+      <div class="mini-row" data-project="${esc(r.name)}" title="Open project">
         <div class="av" style="background:linear-gradient(135deg,var(--violet),var(--blue))">${i + 1}</div>
         <div class="meta">
           <div class="t">${esc(r.name)}</div>
@@ -1713,19 +2757,62 @@
       </div>`;
   }
 
-  /* ---- 2. REPOSITORIES VIEW WITH FILTER & SEARCH ---- */
-  function renderRepos() {
+  /* ---- PROJECT CARD (links to a shareable project page) ---- */
+  function projectCard(r) {
+    const langCol = getLangColor(r.language);
+    const st = repoStatus(r);
+    const topics = (r.topics || []).slice(0, 3);
+    return `
+      <div class="card repo-card" data-tilt data-project="${esc(r.name)}" title="Open ${esc(r.name)}">
+        <div class="card-head">
+          <div class="name">
+            <span class="dot" style="background:${st === "archived" ? "var(--amber)" : st === "active" ? "var(--green)" : "var(--faint)"}"></span>
+            ${esc(r.name)}
+          </div>
+          <span class="priv-tag" style="display:inline-flex;align-items:center;gap:3px">
+            <span class="stat-icon" style="width:11px;height:11px">${r.archived ? ICONS.lock : ICONS.globe}</span>
+            ${st.toUpperCase()}
+          </span>
+        </div>
+        <div class="desc">${esc(r.description || "No description provided.")}</div>
+        ${topics.length ? `<div class="hl-stack">${topics.map((t) => `<span class="priv-tag">${esc(t)}</span>`).join("")}</div>` : ""}
+        <div class="stats">
+          <span style="display:inline-flex;align-items:center;gap:3px">
+            <span class="stat-icon" style="color:var(--amber)">${ICONS.star}</span>
+            <b>${fmtNum(r.stars)}</b>
+          </span>
+          <span style="display:inline-flex;align-items:center;gap:3px">
+            <span class="stat-icon" style="color:var(--violet)">${ICONS.fork}</span>
+            <b>${fmtNum(r.forks)}</b>
+          </span>
+          <span style="display:inline-flex;align-items:center;gap:3px">
+            <span class="stat-icon" style="color:var(--cyan)">${ICONS.issue}</span>
+            <b>${fmtNum(r.openIssues)}</b>
+          </span>
+        </div>
+        <div class="foot">
+          <span class="lang-tag" style="background:${langCol}22;color:${langCol}">${esc(r.language || "—")}</span>
+          ${accountList().length > 1 ? `<span class="owner-tag">@${esc(repoOwner(r))}</span>` : ""}
+          <span style="font-family:var(--mono);font-size:11px;color:var(--faint)">${fmtAgo(r.pushedAt)}</span>
+        </div>
+      </div>`;
+  }
+
+  /* ---- 5. PROJECTS ---- */
+  function renderProjects() {
     const all = repoList();
     const languages = ["all", ...new Set(all.map((r) => r.language).filter(Boolean))];
 
     return section(
-      "Repositories",
-      state.selectedRepo === "all" ? `Tracking ${all.length} repositories with full metrics` : `Focus · ${state.selectedRepo}`,
-      pill(),
+      "Projects",
+      state.selectedRepo === "all"
+        ? `Every public repository, grouped by activity · ${all.length} projects${state.accountFilter === "all" ? "" : " · @" + state.accountFilter}`
+        : `Focus · ${state.selectedRepo}`,
+      `${accountPills()}${pill()}`,
       `<div class="control-bar">
         <div class="search-box">
           <span class="search-icon">${ICONS.search}</span>
-          <input type="text" id="repoSearchInput" placeholder="Search repos by name or description..." value="${esc(state.repoSearchQuery)}" />
+          <input type="text" id="repoSearchInput" placeholder="Search projects by name, description or topic..." value="${esc(state.repoSearchQuery)}" />
         </div>
 
         <div style="display:flex;gap:10px;align-items:center">
@@ -1746,7 +2833,7 @@
         </div>
       </div>
 
-      <div class="repos-grid" id="reposGridContainer">
+      <div id="reposGridContainer">
         ${getFilteredReposHtml()}
       </div>`
     );
@@ -1758,7 +2845,10 @@
 
     if (q) {
       repos = repos.filter(
-        (r) => r.name.toLowerCase().includes(q) || (r.description || "").toLowerCase().includes(q)
+        (r) =>
+          r.name.toLowerCase().includes(q) ||
+          (r.description || "").toLowerCase().includes(q) ||
+          (r.topics || []).some((t) => t.toLowerCase().includes(q))
       );
     }
 
@@ -1774,58 +2864,203 @@
     else repos.sort((a, b) => new Date(b.pushedAt) - new Date(a.pushedAt));
 
     if (repos.length === 0) {
-      return `<div class="card col4" style="text-align:center;padding:48px 24px;color:var(--faint)">
-        <div style="font-size:28px;margin-bottom:8px">${ICONS.search}</div>
-        <div style="font-size:16px;font-weight:700;color:var(--text)">No repositories matched your filters</div>
-        <div style="font-size:13px;margin-top:4px">Try adjusting search terms or language selections.</div>
+      return `<div class="card" style="text-align:center;padding:48px 24px;color:var(--faint)">
+        <div style="font-size:28px;margin-bottom:8px;display:flex;justify-content:center;width:32px;margin:0 auto 8px">${ICONS.search}</div>
+        <div style="font-size:16px;font-weight:700;color:var(--text)">No projects matched your filters</div>
+        <div style="font-size:13px;margin-top:4px">Try adjusting the search or language selection.</div>
       </div>`;
     }
 
-    return repos
-      .map((r) => {
-        const langCol = getLangColor(r.language);
-        return `
-        <div class="card repo-card" data-inspect="${esc(r.name)}">
-          <div class="card-head">
-            <div class="name">
-              <span class="dot" style="background:${r.isPrivate ? "var(--red)" : "var(--green)"}"></span>
-              ${esc(r.name)}
-            </div>
-            <span class="priv-tag" style="display:inline-flex;align-items:center;gap:3px">
-              <span class="stat-icon" style="width:11px;height:11px">${r.isPrivate ? ICONS.lock : ICONS.globe}</span>
-              ${r.isPrivate ? "PRIV" : "PUB"}
-            </span>
-          </div>
-          <div class="desc">${esc(r.description || "No description provided.")}</div>
-          <div class="stats">
-            <span style="display:inline-flex;align-items:center;gap:3px">
-              <span class="stat-icon" style="color:var(--amber)">${ICONS.star}</span>
-              <b>${fmtNum(r.stars)}</b>
-            </span>
-            <span style="display:inline-flex;align-items:center;gap:3px">
-              <span class="stat-icon" style="color:var(--violet)">${ICONS.fork}</span>
-              <b>${fmtNum(r.forks)}</b>
-            </span>
-            <span style="display:inline-flex;align-items:center;gap:3px">
-              <span class="stat-icon" style="color:var(--cyan)">${ICONS.issue}</span>
-              <b>${fmtNum(r.openIssues)}</b>
-            </span>
-          </div>
-          <div class="foot">
-            <span class="lang-tag" style="background:${langCol}22;color:${langCol}">${esc(r.language || "—")}</span>
-            <span style="font-family:var(--mono);font-size:11px;color:var(--faint)">${fmtAgo(r.pushedAt)}</span>
-          </div>
-        </div>`;
-      })
+    // Group into a story: what's active, what's resting, what's archived.
+    const groups = { active: [], quiet: [], archived: [] };
+    repos.forEach((r) => groups[repoStatus(r)].push(r));
+
+    const blocks = [
+      ["active", "Active", "Pushed within the last 90 days"],
+      ["quiet", "Quiet", "Complete, but no recent pushes"],
+      ["archived", "Archived", "Kept for history"],
+    ]
+      .filter(([key]) => groups[key].length)
+      .map(
+        ([key, title, sub]) => `
+        <div class="group-head">
+          <h2>${title}</h2>
+          <span>${sub} · ${groups[key].length}</span>
+        </div>
+        <div class="repos-grid">${groups[key].map(projectCard).join("")}</div>`
+      )
       .join("");
+
+    return blocks;
   }
 
-  function updateReposGrid() {
-    const container = $('#reposGridContainer');
-    if (!container) return;
-    container.innerHTML = getFilteredReposHtml();
-    $$('#reposGridContainer [data-inspect]').forEach((card) =>
-      card.addEventListener("click", () => openInspector(card.dataset.inspect))
+  /* ---- README LOADER (public sources only) ---- */
+  async function loadReadme(repo) {
+    try {
+      const res = await fetch(`https://raw.githubusercontent.com/${repo.fullName}/HEAD/README.md`);
+      if (res.ok) {
+        const text = await res.text();
+        if (text.trim()) return text;
+      }
+    } catch (e) {
+      /* fall through to the API */
+    }
+    try {
+      const res = await fetch(`https://api.github.com/repos/${repo.fullName}/readme`, {
+        headers: { Accept: "application/vnd.github.raw" },
+      });
+      if (res.ok) {
+        const text = await res.text();
+        if (text.trim()) return text;
+      }
+    } catch (e) {}
+    return repo.readmeExcerpt || "";
+  }
+
+  /* ---- 6. PROJECT DETAIL (#/project/<name>) ---- */
+  function renderProject() {
+    const repos = repoList();
+    const repo =
+      repos.find((r) => (r.name || "").toLowerCase() === String(state.selectedProject || "").toLowerCase()) ||
+      repos.find((r) => (r.fullName || "").toLowerCase() === String(state.selectedProject || "").toLowerCase()) ||
+      repos[0];
+
+    if (!repo) {
+      return section(
+        "Project",
+        "Nothing to show",
+        pill(),
+        `<div class="card" style="padding:32px;text-align:center;color:var(--faint)">No public repositories available.</div>`
+      );
+    }
+
+    state.selectedProject = repo.name;
+    window.PulseQuests?.openProject(repo.name);
+    const extras = extrasFor(repo.fullName) || {};
+    const runs = (extras.runs || []).slice(0, 5);
+    const releases = (extras.releases || []).slice(0, 4);
+    const langCol = getLangColor(repo.language);
+    const httpsClone = `https://github.com/${repo.fullName}.git`;
+    const sshClone = `git@github.com:${repo.fullName}.git`;
+    const st = repoStatus(repo);
+    const topics = repo.topics || [];
+
+    // README is fetched live and cached for the session.
+    // Chain: raw.githubusercontent.com -> public GitHub API -> snapshot excerpt.
+    const cached = state.readmeCache[repo.fullName];
+    if (!cached) {
+      state.readmeCache[repo.fullName] = { loading: true };
+      loadReadme(repo).then((raw) => {
+        state.readmeCache[repo.fullName] = { raw: raw || "" };
+        if (state.view === "project" && state.selectedProject === repo.name) render();
+      });
+    }
+
+    const readmeHtml = !cached || cached.loading
+      ? `<div class="readme-loading"><div class="pulse-ring"></div><span>LOADING README</span></div>`
+      : cached.raw
+      ? `<div class="md-body">${renderMarkdown(cached.raw)}</div>`
+      : repo.readmeExcerpt
+      ? `<p class="project-pitch">${esc(repo.readmeExcerpt)}…</p>
+         <a class="btn btn-sm" href="${esc(repo.htmlUrl)}#readme" target="_blank" rel="noopener noreferrer">${ICONS.github} Read the full README on GitHub</a>`
+      : `<div style="color:var(--faint);font-size:13.5px;padding:8px 0">This repository has no README yet — the source code is the documentation.</div>`;
+
+    return section(
+      repo.name,
+      `${repo.fullName} · ${st} · last push ${fmtAgo(repo.pushedAt)}`,
+      `<button class="btn btn-sm" id="projectBackBtn">${ICONS.back || ICONS.command} All projects</button>
+       <button class="btn btn-sm" id="projectShareBtn">${ICONS.share} Share</button>
+       <a class="btn btn-sm" href="${esc(repo.htmlUrl)}" target="_blank" rel="noopener noreferrer">${ICONS.github} Repository</a>
+       ${repo.homepage ? `<a class="btn btn-sm btn-primary" href="${esc(repo.homepage)}" target="_blank" rel="noopener noreferrer">${ICONS.externalLink} Live site</a>` : ""}`,
+      `<div class="card">
+        <div class="hl-head">
+          <span class="status ${st === "active" ? "ok" : st === "archived" ? "warn" : "run"}"><span class="sdot"></span>${st.toUpperCase()}</span>
+          ${repo.language ? `<span class="lang-tag" style="background:${langCol}22;color:${langCol}">${esc(repo.language)}</span>` : ""}
+          ${repo.license ? `<span class="priv-tag">${esc(repo.license)}</span>` : ""}
+          <span class="priv-tag">${esc(repo.defaultBranch || "main")}</span>
+        </div>
+        <p class="project-pitch">${esc(repo.description || "No repository description provided.")}</p>
+        ${topics.length ? `<div class="hl-stack">${topics.map((t) => `<span class="priv-tag">${esc(t)}</span>`).join("")}</div>` : ""}
+      </div>
+
+      <div style="height:18px"></div>
+      <div class="bento">
+        ${statCard("Stars", fmtNum(repo.stars), "appreciation", "var(--amber)", ICONS.star)}
+        ${statCard("Forks", fmtNum(repo.forks), "derivations", "var(--violet)", ICONS.fork)}
+        ${statCard("Open Issues", fmtNum(repo.openIssues), "tracked work", "var(--cyan)", ICONS.issue)}
+        ${statCard("Size", repo.size ? `${fmtNum(Math.round((repo.size || 0) / 1024 * 10) / 10)} MB` : "—", "repository size", "var(--blue)", ICONS.layers)}
+      </div>
+
+      ${repo.activity ? `<div class="card" data-tilt>${activitySparkline(repo.activity, { label: `${repo.name} commit activity` })}</div>` : ""}
+      ${repo.languages ? `
+        <div class="card col2" data-tilt>
+          <div class="card-head">
+            <div class="card-title"><span class="stat-icon" style="color:var(--violet)">${ICONS.code}</span> Code Composition</div>
+            <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">${formatBytes(repo.languageBytes || 0)} · by bytes</span>
+          </div>
+          <div class="lang-bar">
+            ${Object.entries(repo.languages)
+              .map(([lang, bytes]) => `<div class="lang-seg" style="width:${((bytes / (repo.languageBytes || 1)) * 100).toFixed(2)}%;background:${getLangColor(lang)}" title="${esc(lang)}: ${formatBytes(bytes)}"></div>`)
+              .join("")}
+          </div>
+          <div class="lang-legend">
+            ${Object.entries(repo.languages)
+              .slice(0, 6)
+              .map(([lang, bytes]) => `
+                <div class="lang-item">
+                  <span class="ldot" style="background:${getLangColor(lang)}"></span>
+                  <span>${esc(lang)} <b>${((bytes / (repo.languageBytes || 1)) * 100).toFixed(1)}%</b> <em>${formatBytes(bytes)}</em></span>
+                </div>`)
+              .join("")}
+          </div>
+        </div>` : ""}
+
+      <div style="height:18px"></div>
+      <div class="bento">
+        <div class="card col2">
+          <div class="card-head"><div class="card-title"><span class="stat-icon" style="color:var(--cyan)">${ICONS.readme}</span> README</div></div>
+          ${readmeHtml}
+        </div>
+        <div class="card col2">
+          <div class="card-head"><div class="card-title"><span class="stat-icon" style="color:var(--blue)">${ICONS.terminal}</span> Clone</div></div>
+          <div class="clone-box">
+            <code>${esc(httpsClone)}</code>
+            <button class="btn btn-sm" id="copyHttpsBtn">${ICONS.copy} Copy</button>
+          </div>
+          <div class="clone-box">
+            <code>${esc(sshClone)}</code>
+            <button class="btn btn-sm" id="copySshBtn">${ICONS.copy} Copy</button>
+          </div>
+
+          <div class="card-head" style="margin-top:18px">
+            <div class="card-title"><span class="stat-icon" style="color:var(--amber)">${ICONS.award}</span> Releases</div>
+          </div>
+          <div class="mini-list">
+            ${releases.length
+              ? releases.map((r) => `
+                <div class="mini-row">
+                  <div class="av" style="background:linear-gradient(135deg,var(--amber),var(--violet))">${ICONS.award}</div>
+                  <div class="meta"><div class="t">${esc(r.tag)}</div><div class="s">${fmtAgo(r.publishedAt)}${r.prerelease ? " · pre-release" : ""}</div></div>
+                  <a class="btn btn-sm btn-icon" href="${esc(r.htmlUrl)}" target="_blank" rel="noopener noreferrer">${ICONS.externalLink}</a>
+                </div>`).join("")
+              : '<div style="color:var(--faint);font-size:13px;padding:8px 0">No releases published.</div>'}
+          </div>
+
+          <div class="card-head" style="margin-top:18px">
+            <div class="card-title"><span class="stat-icon" style="color:var(--blue)">${ICONS.ci}</span> Recent Workflow Runs</div>
+          </div>
+          <div class="mini-list">
+            ${runs.length
+              ? runs.map((r) => `
+                <div class="mini-row">
+                  <div class="av" style="background:linear-gradient(135deg,var(--blue),var(--green))">${initials(repo.name)}</div>
+                  <div class="meta"><div class="t">${esc(r.displayTitle || r.name || "workflow")}</div><div class="s">${esc(r.headBranch || "")} · ${fmtAgo(r.updatedAt || r.createdAt)}</div></div>
+                  <span class="status ${runStatusClass(r)}"><span class="sdot"></span>${runStatusLabel(r)}</span>
+                </div>`).join("")
+              : '<div style="color:var(--faint);font-size:13px;padding:8px 0">No workflow runs recorded.</div>'}
+          </div>
+        </div>
+      </div>`
     );
   }
 
@@ -1835,11 +3070,13 @@
     const extras = s.extras || [];
 
     // Real cross-repo events, filtered by global repo selection
-    const events = (s.events || []).filter(
-      (e) =>
+    const events = (s.events || []).filter((e) => {
+      if (state.accountFilter !== "all" && e.repo.split("/")[0] !== state.accountFilter) return false;
+      return (
         state.selectedRepo === "all" ||
         e.repo.split("/").pop() === state.selectedRepo.split("/").pop()
-    );
+      );
+    });
 
     const eventFeed = events
       .slice(0, 25)
@@ -1942,12 +3179,12 @@
       .join("");
 
     const createIssueBtn = `
-      <button class="btn btn-primary" id="createIssueBtn" style="margin-right:10px">${ICONS.issue} New Issue</button>`;
+      <button class="btn btn-primary" id="createIssueBtn" style="margin-right:10px">${ICONS.issue} Suggest Something</button>`;
 
     return section(
       "Activity Stream",
-      "Real-time activity, running workflows and releases",
-      `${createIssueBtn}${pill()}`,
+      `Union of every featured account's public activity${state.accountFilter === "all" ? "" : " · @" + state.accountFilter}`,
+      `${createIssueBtn}${accountPills()}${pill()}`,
       `<div class="bento">
         <div class="card col2">
           <div class="card-head">
@@ -1988,92 +3225,77 @@
     );
   }
 
-  /* ---- CREATE ISSUE MODAL ---- */
-  function openIssueModal(preRepo) {
+  /* ---- SUGGEST / CONTACT MODAL (public: hands off to GitHub) ----
+     Visitors cannot create issues from Pulse without an account, so this
+     builds a prefilled GitHub "new issue" URL and opens it in a new tab.
+     Nothing is stored and nothing is sent anywhere by Pulse itself. */
+  function openSuggestModal(preRepo) {
+    window.PulseQuests?.action("suggest");
     const overlay = $("#issueOverlay");
     const sheet = $("#issueSheet");
-    const repos = repoList().filter((r) => !r.isPrivate);
-    const pre = preRepo || state.selectedRepo !== "all" ? state.selectedRepo : "";
-    const token = state.token;
+    const repos = repoList().filter((r) => !r.isPrivate && !r.archived);
+    const pre = preRepo || (state.selectedRepo !== "all" ? state.selectedRepo : "");
+    const preFull = repos.find((r) => r.name === pre)?.fullName || repos[0]?.fullName || "";
 
     sheet.innerHTML = `
       <div class="sheet-head">
         <div>
-          <div class="inspector-title">New Issue</div>
-          <div class="sheet-sub">Create an issue directly from Pulse</div>
+          <div class="inspector-title">Suggest Something</div>
+          <div class="sheet-sub">Open a prefilled issue on GitHub — no account needed here</div>
         </div>
         <button class="sheet-close" id="closeIssueBtn">✕</button>
       </div>
 
-      ${token ? "" : `
-      <div class="status warn" style="margin-bottom:16px;display:flex;gap:8px;align-items:center">
-        <span class="sdot"></span> Creating issues requires a GitHub token.
-        <button class="btn btn-sm" id="issueGotToken" style="margin-left:auto">Connect →</button>
-      </div>`}
+      <div class="callout-box" style="margin-bottom:16px">
+        Pulse is a read-only public view of ${esc(accountList().map((a) => "@" + a).join(" and ") || "this account")}.
+        Your suggestion opens on <b>github.com</b> where GitHub handles sign-in and posting for you.
+      </div>
 
       <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--faint);margin-bottom:8px">Repository</div>
       <select id="issueRepo" class="form-input" style="width:100%;margin-bottom:14px">
-        ${repos.map((r) => `<option value="${esc(r.fullName)}" ${r.fullName === pre ? "selected" : ""}>${esc(r.fullName)}</option>`).join("")}
+        ${repos.map((r) => `<option value="${esc(r.fullName)}" ${r.fullName === preFull ? "selected" : ""}>${esc(r.fullName)}</option>`).join("")}
       </select>
 
       <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--faint);margin-bottom:8px">Title</div>
-      <input id="issueTitle" class="form-input" placeholder="Summarize the issue" style="width:100%;margin-bottom:14px" />
+      <input id="issueTitle" class="form-input" placeholder="Summarize your suggestion" style="width:100%;margin-bottom:14px" />
 
-      <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--faint);margin-bottom:8px">Body (Markdown)</div>
-      <textarea id="issueBody" class="form-input" rows="6" placeholder="Describe the problem, steps to reproduce, expected vs actual…" style="width:100%;margin-bottom:18px"></textarea>
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--faint);margin-bottom:8px">Details (Markdown)</div>
+      <textarea id="issueBody" class="form-input" rows="5" placeholder="Describe the idea, bug or question…" style="width:100%;margin-bottom:18px"></textarea>
 
       <div style="display:flex;gap:10px;justify-content:flex-end">
         <button class="btn" id="cancelIssueBtn">Cancel</button>
-        <button class="btn btn-primary" id="submitIssueBtn" ${token ? "" : "disabled"}>${ICONS.issue} Create Issue</button>
+        <button class="btn btn-primary" id="submitIssueBtn" ${repos.length ? "" : "disabled"}>${ICONS.github} Continue on GitHub</button>
       </div>`;
 
     overlay.classList.add("open");
-    overlay.setAttribute("aria-hidden", "false");
+    focusSheet(overlay);
 
     const close = () => {
       overlay.classList.remove("open");
       overlay.setAttribute("aria-hidden", "true");
+      restoreFocus();
     };
     $("#closeIssueBtn")?.addEventListener("click", close);
     $("#cancelIssueBtn")?.addEventListener("click", close);
     overlay.addEventListener("click", (e) => {
       if (e.target === overlay) close();
     });
-    $("#issueGotToken")?.addEventListener("click", () => {
-      close();
-      openTokenModal();
-    });
 
-    $("#submitIssueBtn")?.addEventListener("click", async () => {
-      const full = $("#issueRepo").value;
-      const title = $("#issueTitle").value.trim();
-      const body = $("#issueBody").value.trim();
-      if (!full || !title) {
-        toast("Please provide a repository and issue title");
+    $("#submitIssueBtn")?.addEventListener("click", () => {
+      const full = $("#issueRepo")?.value;
+      const title = ($("#issueTitle")?.value || "").trim();
+      const body = ($("#issueBody")?.value || "").trim();
+      if (!full) {
+        toast("No public repository available for suggestions");
         return;
       }
-      const btn = $("#submitIssueBtn");
-      btn.disabled = true;
-      btn.textContent = "Creating…";
-      try {
-        const res = await fetch(`https://api.github.com/repos/${full}/issues`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${state.token}`,
-          },
-          body: JSON.stringify({ title, body }),
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "Request failed");
-        toast(`Issue created: ${data.html_url}`);
-        close();
-        fetchLive();
-      } catch (err) {
-        toast(`Failed to create issue: ${err.message}`);
-        btn.disabled = false;
-        btn.textContent = "Create Issue";
-      }
+      const params = new URLSearchParams();
+      if (title) params.set("title", title);
+      if (body) params.set("body", body);
+      const url = `https://github.com/${full}/issues/new${params.toString() ? "?" + params.toString() : ""}`;
+      close();
+      window.open(url, "_blank", "noopener,noreferrer");
+      toast("Opening GitHub to post your suggestion");
     });
   }
 
@@ -2123,7 +3345,7 @@
     const h = Math.floor(m / 60);
     return h + "h " + (m % 60) + "m";
   }
-  function renderCI() {
+  function renderCraft() {
     const allRuns = getAllLiveRuns();
     const live = state.live || {};
     const running = allRuns.filter((r) => ["in_progress", "queued", "waiting", "requested"].includes(r.status));
@@ -2141,7 +3363,7 @@
     }).slice(0, 30);
     const lastSync = live.lastFetchAt ? fmtAgo(live.lastFetchAt) : (state.snapshot?.generatedAt ? fmtAgo(state.snapshot.generatedAt) + " (snapshot)" : "—");
     const liveDot = live.isPolling ? '<span class="status run"><span class="sdot"></span>POLLING</span>' : (live.error ? `<span class="status bad"><span class="sdot"></span>STALE</span>` : '<span class="status ok"><span class="sdot"></span>LIVE</span>');
-    const staleHint = (!state.token && !live.lastFetchAt) ? `<div class="callout-box" style="margin-top:12px">Showing build-time snapshot. <b>Connect a token</b> for continuous realtime polling. Public API: 60 req/hr.</div>` : "";
+    const staleHint = (!live.lastFetchAt) ? `<div class="callout-box" style="margin-top:12px">Showing the latest <b>build-time snapshot</b>. Public GitHub data is refreshed automatically while you stay on this view (unauthenticated API: 60 req/hr per visitor).</div>` : "";
     const rows = filtered.map((r) => {
       const cls = runStatusClass(r);
       const label = runStatusLabel(r);
@@ -2163,9 +3385,9 @@
       <button class="filter-pill${f === k ? " active" : ""}" data-ci-filter="${k}">${k === "all" ? "All" : k === "running" ? `Running (${running.length})` : k === "failed" ? `Failed (${failed.length})` : `Passed (${passed.length})`}</button>
     `).join("");
     return section(
-      "CI & Workflows",
-      `Realtime pipeline health · last sync ${lastSync}`,
-      `${pill()}`,
+      "How I Build",
+      `Pipeline health, stack and release cadence · last sync ${lastSync}`,
+      `${accountPills()}${pill()}`,
       `<div class="bento">
         <div class="card">
           <div class="card-head">
@@ -2193,211 +3415,49 @@
             <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">newest first · realtime</span>
           </div>
           <div class="filter-pills" style="margin-top:12px">${filterPills}</div>
-          <div class="mini-list">${rows || '<div style="color:var(--faint);font-size:13px;padding:8px 0">No workflow runs yet — connect a token or push to trigger Actions.</div>'}</div>
+          <div class="mini-list">${rows || '<div style="color:var(--faint);font-size:13px;padding:8px 0">No workflow runs yet — GitHub Actions activity will appear here once a run is triggered.</div>'}</div>
         </div>
-      </div>`
-    );
-  }
-
-  /* ---- 5. COMMUNITY VIEW ---- */
-  function renderCommunity() {
-    const repos = filteredRepos().slice().sort((a, b) => b.stars - a.stars).slice(0, 6);
-    const rows = repos
-      .map(
-        (r, i) => `
-      <div class="mini-row" data-inspect="${esc(r.name)}">
-        <div class="av" style="background:linear-gradient(135deg,var(--amber),var(--violet))">${i + 1}</div>
-        <div class="meta">
-          <div class="t">${esc(r.name)}</div>
-          <div class="s">${esc(r.language || "stack")} · ${fmtNum(r.forks)} forks</div>
-        </div>
-        <div class="r" style="display:flex;align-items:center;gap:3px;color:var(--amber)">
-          <span class="stat-icon" style="color:var(--amber)">${ICONS.star}</span>
-          <span>${fmtNum(r.stars)}</span>
-        </div>
-      </div>`
-      )
-      .join("");
-
-    const totalStars = filteredRepos().reduce((a, r) => a + r.stars, 0);
-    const totalForks = filteredRepos().reduce((a, r) => a + r.forks, 0);
-
-    return section(
-      "Community Signal",
-      "Repository reach, developer engagement, and forks",
-      pill(),
-      `<div class="bento">
-        <div class="card">
-          <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--amber)">${ICONS.star}</span>
-              Total Stars
-            </div>
-          </div>
-          <div class="metric" style="color:var(--amber)">${fmtNum(totalStars)}</div>
-          <div class="metric-sub">developer appreciation</div>
-        </div>
-        <div class="card">
-          <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--violet)">${ICONS.fork}</span>
-              Total Forks
-            </div>
-          </div>
-          <div class="metric" style="color:var(--violet)">${fmtNum(totalForks)}</div>
-          <div class="metric-sub">community derivations</div>
-        </div>
+        ${languageBytesWidget()}
         <div class="card col2">
           <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--amber)">${ICONS.award}</span>
-              Star Leaderboard
-            </div>
-            <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">Top repositories</span>
+            <div class="card-title"><span class="stat-icon" style="color:var(--amber)">${ICONS.award}</span> Release Cadence</div>
+            <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">${allReleases().length} published</span>
           </div>
-          <div class="mini-list">${rows || '<div style="color:var(--faint);font-size:13px;padding:8px 0">No community data</div>'}</div>
-        </div>
-      </div>`
-    );
-  }
-
-  /* ---- 6. HEALTH VIEW ---- */
-  function renderHealth() {
-    const repos = filteredRepos();
-    const recent = repos.filter((r) => Date.now() - new Date(r.pushedAt).getTime() < 30 * 864e5).length;
-    const pct = Math.round((recent / Math.max(1, repos.length)) * 100);
-
-    const rows = repos.slice(0, 6).map((r) => {
-      const isFresh = Date.now() - new Date(r.pushedAt).getTime() < 30 * 864e5;
-      return `
-        <div class="mini-row" data-inspect="${esc(r.name)}">
-          <div class="av" style="background:${isFresh ? "linear-gradient(135deg,var(--green),var(--cyan))" : "linear-gradient(135deg,var(--amber),var(--red))"}">${initials(r.name)}</div>
-          <div class="meta">
-            <div class="t">${esc(r.name)}</div>
-            <div class="s">${fmtNum(r.openIssues)} open issues · updated ${fmtAgo(r.pushedAt)}</div>
+          <div class="mini-list">
+            ${
+              allReleases()
+                .slice(0, 8)
+                .map(
+                  (r) => `
+              <div class="mini-row">
+                <div class="av" style="background:linear-gradient(135deg,var(--amber),var(--violet))">${ICONS.award}</div>
+                <div class="meta">
+                  <div class="t">${esc(r.tag)}${r.prerelease ? ' <span class="priv-tag" style="font-size:10px">PRE</span>' : ""}</div>
+                  <div class="s">${esc(r.repo)} · ${fmtAgo(r.publishedAt)}</div>
+                </div>
+                <a class="btn btn-sm btn-icon" href="${esc(r.htmlUrl)}" target="_blank" rel="noopener noreferrer">${ICONS.externalLink}</a>
+              </div>`
+                )
+                .join("") ||
+              '<div style="color:var(--faint);font-size:13px;padding:8px 0">No releases published yet.</div>'
+            }
           </div>
-          <div><span class="status ${isFresh ? "ok" : "warn"}"><span class="sdot"></span>${isFresh ? "MAINTAINED" : "STALE"}</span></div>
-        </div>`;
-    }).join("");
-
-    return section(
-      "Repository Health",
-      "Maintenance velocity and issue pressure index",
-      pill(),
-      `<div class="bento">
-        <div class="card">
-          <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--green)">${ICONS.shield}</span>
-              Maintained Repos
-            </div>
-          </div>
-          <div class="metric" style="color:var(--green)">${fmtNum(recent)}<small>/ ${repos.length}</small></div>
-          <div class="metric-sub">updated within 30 days</div>
-        </div>
-        <div class="card">
-          <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--cyan)">${ICONS.activity}</span>
-              Freshness Ratio
-            </div>
-          </div>
-          <div class="ring-row">
-            <div class="ring" style="--p:${pct}"><div class="inner">${pct}%</div></div>
-            <div class="ring-legend">
-              <div class="ln"><span>Active</span><b>${pct}%</b></div>
-              <div class="ln"><span>Inactive</span><b>${100 - pct}%</b></div>
-            </div>
-          </div>
-        </div>
-        <div class="card col2">
-          <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--green)">${ICONS.health}</span>
-              Repository Health Audit
-            </div>
-            <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">Inspection audit</span>
-          </div>
-          <div class="mini-list">${rows || '<div style="color:var(--faint);font-size:13px;padding:8px 0">No repositories</div>'}</div>
-        </div>
-      </div>`
-    );
-  }
-
-  /* ---- 7. XP & REWARDS VIEW ---- */
-  const XP_LEVELS = ["OPERATOR", "ENGINEER", "ARCHITECT", "LEAD SHIPPER", "DISTINGUISHED TECH TITAN"];
-  function renderXP() {
-    const repos = filteredRepos();
-    const stars = repos.reduce((a, r) => a + r.stars, 0);
-    const forks = repos.reduce((a, r) => a + r.forks, 0);
-    const xp = stars * 60 + forks * 30 + repos.length * 100;
-    const levelIdx = Math.min(XP_LEVELS.length - 1, Math.floor(xp / 500));
-    const level = XP_LEVELS[levelIdx];
-    const next = XP_LEVELS[levelIdx + 1];
-    const pct = next ? Math.min(100, ((xp - levelIdx * 500) / 500) * 100) : 100;
-
-    const achievements = [
-      { n: "FIRST CODEBASE", x: 100, got: repos.length >= 1, icon: ICONS.zap },
-      { n: "STAR COLLECTOR", x: 150, got: stars > 0, icon: ICONS.star },
-      { n: "COMMUNITY FORK", x: 120, got: forks > 0, icon: ICONS.fork },
-      { n: "PORTFOLIO EXPANSION", x: 250, got: repos.length >= 5, icon: ICONS.repos },
-      { n: "COMMAND SHIPPER", x: 200, got: repos.length >= 8, icon: ICONS.award },
-      { n: "FULL STACK POLYGLOT", x: 300, got: new Set(repos.map((r) => r.language).filter(Boolean)).size >= 3, icon: ICONS.layers },
-    ]
-      .map(
-        (a) => `
-      <div class="ach ${a.got ? "" : "locked"}">
-        <div class="badge"><span>${a.icon}</span></div>
-        <div>
-          <div style="font-weight:700;font-size:14px;color:var(--text-bright)">${a.n}</div>
-          <div style="font-size:11.5px;color:var(--faint)">${a.got ? "Unlocked" : "In Progress"}</div>
-        </div>
-        <div class="xp">+${a.x} XP</div>
-      </div>`
-      )
-      .join("");
-
-    return section(
-      "XP & Rewards",
-      "Gamified developer shipping metrics and achievement progression",
-      pill(),
-      `<div class="bento">
-        <div class="card col2">
-          <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--violet)">${ICONS.xp}</span>
-              Rank · Tier ${levelIdx + 1}
-            </div>
-            <span class="priv-tag">${level}</span>
-          </div>
-          <div class="metric" style="font-size:48px;color:var(--violet)">${fmtNum(xp)}<small>XP</small></div>
-          <div class="xp-track">
-            <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
-            <div class="xp-levels">
-              <span>${level}</span>
-              <span>${next ? `NEXT: ${next}` : "MAX RANK ACHIEVED"}</span>
-            </div>
-          </div>
-          <div class="metric-sub" style="margin-top:14px">
-            Calculated from ${repos.length} repos, ${stars} stars, and ${forks} forks.
-          </div>
-        </div>
-
-        <div class="card col2">
-          <div class="card-head">
-            <div class="card-title">
-              <span class="stat-icon" style="color:var(--cyan)">${ICONS.award}</span>
-              Milestones & Badges
-            </div>
-            <span style="font-family:var(--mono);font-size:11px;color:var(--cyan)">Progression</span>
-          </div>
-          <div style="margin-top:8px">${achievements}</div>
         </div>
       </div>`
     );
   }
 
   /* ---- DATA LOADING & SYNC ---- */
+  /** Trend history (stars/followers/repos per day, appended by each build). */
+  async function loadHistory() {
+    try {
+      const res = await fetch("data/history.json", { cache: "no-store" });
+      if (!res.ok) return;
+      const data = await res.json();
+      if (Array.isArray(data?.entries)) state.history = data.entries;
+    } catch {}
+  }
+
   async function loadSnapshot() {
     try {
       const res = await fetch("data/snapshot.json", { cache: "no-store" });
@@ -2405,6 +3465,16 @@
       const data = await res.json();
       if (data && data.repos) {
         state.snapshot = data;
+        const login = ghAccount();
+        if (login) {
+          const u = data.user || {};
+          state.snapshot.user = {
+            ...u,
+            login: u.login || login,
+            avatar: u.avatar || `https://github.com/${encodeURIComponent(login)}.png`,
+            htmlUrl: u.htmlUrl || `https://github.com/${encodeURIComponent(login)}`,
+          };
+        }
         return true;
       }
     } catch (e) {
@@ -2414,38 +3484,50 @@
   }
 
   async function fetchLive() {
-    toast(state.token ? "Syncing authenticated GitHub data..." : "Syncing public GitHub data...");
+    const accounts = accountList();
+    if (!accounts.length) {
+      toast("No GitHub account configured — set github.accounts in js/config.js");
+      return;
+    }
+    if (!isLiveEnabled()) {
+      toast("Live refresh is disabled in js/config.js");
+      return;
+    }
+    toast(accounts.length > 1 ? `Refreshing ${accounts.length} public accounts…` : "Refreshing public GitHub data…");
     try {
       const chip = $('#rateChip');
       const headers = { Accept: "application/vnd.github+json" };
-      if (state.token) {
-        headers["Authorization"] = `Bearer ${state.token}`;
-      }
 
-      // If token present, fetch both public and private repos (owner and collaborator)
-      const url = state.token
-        ? "https://api.github.com/user/repos?per_page=100&sort=updated&affiliation=owner,collaborator"
-        : "https://api.github.com/user/repos?per_page=100&sort=updated";
+      // Public, read-only reads. No credential of any kind is attached.
+      const results = await Promise.all(
+        accounts.map(async (account) => {
+          const [reposRes, userRes] = await Promise.all([
+            fetch(`https://api.github.com/users/${encodeURIComponent(account)}/repos?per_page=100&sort=updated&type=owner`, { headers }),
+            fetch(`https://api.github.com/users/${encodeURIComponent(account)}`, { headers }),
+          ]);
+          if (reposRes.headers) {
+            const limit = reposRes.headers.get("X-RateLimit-Limit");
+            const remain = reposRes.headers.get("X-RateLimit-Remaining");
+            if (limit) state.api.rateLimit = Number(limit);
+            if (remain) state.api.rateRemaining = Number(remain);
+            if (chip && remain) {
+              chip.style.display = "inline";
+              chip.textContent = `${remain} / ${state.api.rateLimit} reqs`;
+            }
+          }
+          if (!reposRes.ok) throw new Error(`${account}: HTTP ${reposRes.status}`);
+          const rawRepos = await reposRes.json();
+          const profile = userRes.ok ? await userRes.json().catch(() => null) : null;
+          return { account, rawRepos: Array.isArray(rawRepos) ? rawRepos : [], profile };
+        })
+      );
 
-      const res = await fetch(url, { headers });
-
-      if (res.headers) {
-        const limit = res.headers.get("X-RateLimit-Limit");
-        const remain = res.headers.get("X-RateLimit-Remaining");
-        if (limit) state.api.rateLimit = Number(limit);
-        if (remain) state.api.rateRemaining = Number(remain);
-        if (chip) {
-          chip.style.display = "inline";
-          chip.textContent = `${remain} / ${state.api.rateLimit} reqs`;
-        }
-      }
-
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const repos = await res.json();
-      if (Array.isArray(repos) && repos.length) {
-        const enriched = repos
-          .filter((r) => !r.fork)
-          .map((r) => ({
+      {
+        const enriched = results
+          .flatMap(({ account, rawRepos }) =>
+            rawRepos
+              .filter((r) => !r.fork)
+              .map((r) => ({
             name: r.name,
             fullName: r.full_name,
             description: r.description,
@@ -2457,62 +3539,84 @@
             openIssues: r.open_issues_count,
             watchers: r.watchers_count,
             license: r.license?.spdx_id || null,
-            isPrivate: r.private,
-            archived: r.archived,
-            defaultBranch: r.default_branch,
-            createdAt: r.created_at,
-            updatedAt: r.updated_at,
-            pushedAt: r.pushed_at,
-          }));
+              isPrivate: false, // public showroom: only public work is listed
+              archived: r.archived,
+              topics: r.topics || [],
+              defaultBranch: r.default_branch,
+              createdAt: r.created_at,
+              updatedAt: r.updated_at,
+              pushedAt: r.pushed_at,
+              owner: account,
+            }))
+          )
+          .sort((a, b) => new Date(b.pushedAt) - new Date(a.pushedAt));
 
-        // Fetch user info if token is connected
-        let userInfo = state.snapshot?.user;
-        if (state.token) {
-          try {
-            const userRes = await fetch("https://api.github.com/user", { headers });
-            if (userRes.ok) {
-              const u = await userRes.json();
-              userInfo = {
-                login: u.login,
-                name: u.name,
-                avatar: u.avatar_url,
-                publicRepos: u.public_repos,
-                followers: u.followers,
-                following: u.following,
-              };
-            }
-          } catch (e) {}
-        }
+        // Account summaries (bio, followers, links) straight from the public API.
+        const summaries = results.map(({ account, profile, rawRepos }) => {
+          const own = enriched.filter((r) => r.owner === account);
+          return {
+            login: account,
+            name: profile?.name || null,
+            avatar: profile?.avatar_url || `https://github.com/${account}.png`,
+            bio: profile?.bio || null,
+            company: profile?.company || null,
+            blog: profile?.blog || null,
+            location: profile?.location || null,
+            followers: profile?.followers ?? null,
+            following: profile?.following ?? null,
+            publicRepos: profile?.public_repos ?? own.length,
+            htmlUrl: `https://github.com/${account}`,
+            createdAt: profile?.created_at || null,
+            repoCount: own.length,
+            stars: own.reduce((a, r) => a + r.stars, 0),
+            latestPush: own[0]?.pushedAt || null,
+          };
+        });
+
+        const primary =
+          summaries.find((s) => s.login === ghAccount()) || summaries[0] || state.snapshot?.user || {};
 
         state.snapshot = {
           ...(state.snapshot || {}),
           generatedAt: new Date().toISOString(),
-          user: userInfo,
+          account: primary.login,
+          accounts: summaries,
+          user: {
+            ...primary,
+            publicRepos: enriched.length,
+            followers: summaries.reduce((a, s) => a + (s.followers || 0), 0),
+            following: summaries.reduce((a, s) => a + (s.following || 0), 0),
+          },
           repos: enriched,
           totalStars: enriched.reduce((a, r) => a + r.stars, 0),
           totalForks: enriched.reduce((a, r) => a + r.forks, 0),
           totalOpenIssues: enriched.reduce((a, r) => a + r.openIssues, 0),
         };
         state.live.lastFetchAt = new Date().toISOString();
+        state.live.error = null;
         render();
-        // Kick off workflow live data in background (respects throttling + rate-low guard)
-        const _hdr = { Accept: "application/vnd.github+json" };
-        if (state.token) _hdr["Authorization"] = `Bearer ${state.token}`;
-        fetchWorkflowLive(_hdr).catch(() => {});
-        toast(state.token ? "Synced private & public repos with full API quota" : "Live GitHub data synchronized");
+        fetchWorkflowLive().catch(() => {});
+        toast(
+          summaries.length > 1
+            ? `Showing public work from ${summaries.map((s) => "@" + s.login).join(" and ")}`
+            : `Showing @${primary.login}'s public repositories`
+        );
       }
     } catch (e) {
       console.warn("Live sync warning:", e);
-      toast("Showing latest snapshot data");
+      state.live.error = String(e.message || e);
+      toast("Showing the latest snapshot data");
     }
   }
 
-  async function fetchWorkflowLive(headers, opts = {}) {
+  async function fetchWorkflowLive(opts = {}) {
+    if (!isLiveEnabled()) return null;
     const s = state.snapshot || {};
     const all = (s.repos || []).slice(0, 12);
     if (!all.length) return null;
+    const headers = { Accept: "application/vnd.github+json" };
     const remaining = state.api.rateRemaining;
-    const limit = state.api.rateLimit || (state.token ? 5000 : 60);
+    const limit = state.api.rateLimit || 60;
     if (!opts.manual && remaining != null && remaining < Math.min(15, Math.ceil(limit * 0.08))) {
       state.live.error = "rate-low";
       return null;
@@ -2521,7 +3625,7 @@
       const sel = state.selectedRepo;
       const targetRepos = sel !== "all"
         ? all.filter((r) => (r.fullName || "").split("/").pop() === String(sel).split("/").pop() || r.name === sel).slice(0, 1)
-        : all.slice(0, state.token ? 8 : 3);
+        : all.slice(0, 3);
       if (!targetRepos.length) return null;
       const results = await Promise.all(targetRepos.map(async (r) => {
         try {
@@ -2564,12 +3668,12 @@
         state.snapshot = { ...s, extras: [...extrasMap.values()], generatedAt: new Date().toISOString() };
         state.live.lastFetchAt = new Date().toISOString();
         state.live.error = null;
-        if (state.view === "ci" || state.view === "activity") render();
+        if (state.view === "craft" || state.view === "activity" || state.view === "project") render();
         return true;
       }
       state.live.lastFetchAt = new Date().toISOString();
       state.live.error = null;
-      if (state.view === "ci") render();
+      if (state.view === "craft") render();
       return false;
     } catch (e) {
       console.warn("Workflow live fetch failed", e);
@@ -2582,16 +3686,17 @@
     state.live.isPolling = false;
   }
   function scheduleWorkflowPoll() {
+    if (!isLiveEnabled()) return;
     if (state._pollTimer) { clearInterval(state._pollTimer); state._pollTimer = null; }
-    const base = state.token ? 30000 : 120000;
+    // Public API budget is 60 req/hr per visitor IP and CI refresh costs one
+    // request per repo, so this stays slow and pauses in background tabs.
+    const base = Math.max(60000, Number(liveConfig().ciRefreshMs) || 600000);
     const jitter = Math.floor(Math.random() * 8000);
     const intervalMs = base + jitter;
     state.live.isPolling = true;
     const tick = async () => {
       if (document.hidden) return;
-      const headers = { Accept: "application/vnd.github+json" };
-      if (state.token) headers["Authorization"] = `Bearer ${state.token}`;
-      await fetchWorkflowLive(headers);
+      await fetchWorkflowLive();
     };
     setTimeout(tick, 4000);
     state._pollTimer = setInterval(tick, intervalMs);
@@ -2611,109 +3716,49 @@
     toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
   }
 
+  function goAccount(login) {
+    if (!login) return;
+    state.selectedAccount = login;
+    window.PulseQuests?.visit("account");
+    try {
+      const target = `#/account/${encodeURIComponent(login)}`;
+      if (location.hash !== target) history.replaceState(null, "", target);
+    } catch {}
+    go("account", { keepHash: true });
+  }
+
+  function goProject(name) {
+    state.selectedProject = name;
+    window.PulseQuests?.openProject(name);
+    try {
+      const target = `#/project/${encodeURIComponent(name)}`;
+      if (location.hash !== target) history.replaceState(null, "", target);
+    } catch {}
+    go("project", { keepHash: true });
+  }
+
   /* ---- BOOT ---- */
-  /* ---- LOGIN GATE (mandatory GitHub OAuth) ---- */
-  function authRequired() {
-    const c = oauthConfig();
-    return !!(c && c.requiredLogin);
-  }
-  function renderLoginGate() {
-    const gate = $('#loginGate');
-    if (!gate) return;
-    gate.hidden = false;
-    gate.setAttribute("aria-hidden", "false");
-    const c = oauthConfig();
-    const configured = c && c.enabled && c.clientId && c.workerUrl;
-    const doLogin = () => { if (configured) startOAuth(); else toast("OAuth isn't configured yet."); };
-    const lfCard = (ic, t, d) => `<div class="lf-card"><div class="lf-card-ic">${ic}</div><div class="lf-card-t">${t}</div><div class="lf-card-d">${d}</div></div>`;
-    const step = (n, t, d) => `<div class="how-step"><div class="how-num">${n}</div><div class="how-t">${t}</div><div class="how-d">${d}</div></div>`;
-    gate.innerHTML = `
-      <div class="landing">
-        <header class="landing-nav">
-          <div class="landing-brand"><span class="brand-icon">${ICONS.pulse}</span><span class="brand-name">PULSE</span></div>
-          <button class="btn btn-primary btn-sm" id="loginBtn">${ICONS.key} Continue with GitHub</button>
-        </header>
-        <main class="landing-main">
-          <section class="landing-hero">
-            <div class="hero-chip">&#9889; Developer operations cockpit</div>
-            <h1>Your GitHub <span>command center</span></h1>
-            <p class="hero-sub">Repositories, pull requests, issues, CI, releases &amp; activity — live in one dark-first cockpit. Sign in to build a focused workspace around your repos.</p>
-            <button class="btn btn-primary btn-lg" id="loginBtnHero">${ICONS.key} Continue with GitHub</button>
-            <div class="hero-meta">Private repos &middot; 5,000 req/hr &middot; PWA &middot; Zero-knowledge browser auth</div>
-            ${configured ? "" : '<div class="login-err">OAuth not configured — add clientId + workerUrl in js/config.js.</div>'}
-          </section>
-
-          <section class="landing-features">
-            <div class="lf-head"><h2>One cockpit for your whole dev life</h2><p>Everything Pulse reads from GitHub, visualized instantly.</p></div>
-            <div class="lf-grid">
-              ${lfCard(ICONS.command, "Command Center", "A live overview of every project, star and signal at a glance.")}
-              ${lfCard(ICONS.activity, "Activity Stream", "Real-time commits, PRs, issues and releases across your repos.")}
-              ${lfCard(ICONS.pipeline, "CI & Workflows", "Track GitHub Actions runs and pipeline health in real time.")}
-              ${lfCard(ICONS.repos, "Private Repos", "OAuth access to your private repositories, fully authenticated.")}
-              ${lfCard(ICONS.issue, "Ship Faster", "Create issues and triage work right from Pulse.")}
-              ${lfCard(ICONS.xp, "XP & Rewards", "Your shipping turned into momentum, levels and badges.")}
-            </div>
-          </section>
-
-          <section class="landing-how">
-            <div class="lf-head"><h2>How it works</h2></div>
-            <div class="how-steps">
-              ${step(1, "Sign in", "Continue with GitHub — secure OAuth, no passwords to remember.")}
-              ${step(2, "Connect", "Pulse reads your public and private repositories.")}
-              ${step(3, "Command", "Monitor CI, activity, releases and issues from one place.")}
-            </div>
-          </section>
-        </main>
-        <footer class="landing-foot">Pulse &mdash; your developer operations cockpit &middot; your token never leaves this browser.</footer>
-      </div>`;
-    $('#loginBtn')?.addEventListener("click", doLogin);
-    $('#loginBtnHero')?.addEventListener("click", doLogin);
-  }
-
-function hideLoginGate() {
-    const gate = $('#loginGate');
-    if (!gate) return;
-    gate.hidden = true;
-    gate.setAttribute("aria-hidden", "true");
-  }
-  function checkAuth() {
-    const required = authRequired();
-    if (required && !state.token) {
-      document.body.classList.add("locked");
-      renderLoginGate();
-      return false;
-    }
-    document.body.classList.remove("locked");
-    hideLoginGate();
-    return true;
-  }
-  function logout() {
-    state.token = "";
-    localStorage.removeItem("pulse-gh-token");
-    state.api.rateLimit = 60;
-    state.api.rateRemaining = null;
-    // clear cached snapshot so a new user never sees stale data
-    state.snapshot = null;
-    checkAuth();
-  }
-
   let _wfVisibilityWired = false;
   async function boot() {
     applyTheme(state.theme);
 
-    // Resolve any pending OAuth callback (code) BEFORE deciding auth state
-    await handleOAuthCallback();
+    // Soundtrack: sync the HUD, offer the hint once, follow playback events.
+    syncSoundUI();
+    setTimeout(renderSoundHint, 2600);
+    document.addEventListener("pulse:music", syncSoundUI);
+    document.addEventListener("pulse:mood", syncSoundUI);
 
+    // No login, no gate: the snapshot renders immediately for every visitor.
     const ok = await loadSnapshot();
-    const authed = checkAuth();
-    if (authed) render();
+    await loadHistory();
+    render();
 
     // Register Service Worker on supported http(s) protocols
     if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
       navigator.serviceWorker.register("sw.js").catch((e) => console.warn("SW not registered", e));
     }
 
-    if (ok && authed) {
+    if (ok && isLiveEnabled()) {
       setTimeout(fetchLive, 900);
       scheduleWorkflowPoll();
     }
@@ -2722,10 +3767,8 @@ function hideLoginGate() {
       _wfVisibilityWired = true;
       document.addEventListener("visibilitychange", () => {
         if (document.hidden) return;
-        if (state.view === "ci") {
-          const headers = { Accept: "application/vnd.github+json" };
-          if (state.token) headers["Authorization"] = `Bearer ${state.token}`;
-          fetchWorkflowLive(headers).catch(() => {});
+        if (state.view === "craft" || state.view === "project") {
+          fetchWorkflowLive().catch(() => {});
         }
       });
     }
@@ -2737,10 +3780,12 @@ function hideLoginGate() {
     $('#paletteOverlay')?.addEventListener("click", (e) => {
       if (e.target.id === "paletteOverlay") closeCommandPalette();
     });
-    $('#inspectorOverlay')?.addEventListener("click", (e) => {
-      if (e.target.id === "inspectorOverlay") {
-        $('#inspectorOverlay').classList.remove("open");
-        $('#inspectorOverlay').setAttribute("aria-hidden", "true");
+    $('#audioOverlay')?.addEventListener("click", (e) => {
+      if (e.target.id === "audioOverlay") {
+        e.target.classList.remove("open");
+        e.target.setAttribute("aria-hidden", "true");
+        closeSheets();
+        e.target.setAttribute("aria-hidden", "true");
       }
     });
     $('#widgetOverlay')?.addEventListener("click", (e) => {
@@ -2749,10 +3794,6 @@ function hideLoginGate() {
         $('#widgetOverlay').setAttribute("aria-hidden", "true");
       }
     });
-    $('#tokenOverlay')?.addEventListener("click", (e) => {
-      if (e.target.id === "tokenOverlay") closeTokenModal();
-    });
-
     // Global keyboard shortcuts
     window.addEventListener("keydown", (e) => {
       // ⌘K or Ctrl+K or / (when not focused on input)
@@ -2765,18 +3806,36 @@ function hideLoginGate() {
       } else if (e.key === "Escape") {
         closeOverlay();
         closeCommandPalette();
-        closeTokenModal();
-        $('#inspectorOverlay')?.classList.remove("open");
-        $('#widgetOverlay')?.classList.remove("open");
-        $('#issueOverlay')?.classList.remove("open");
+        closeSheets();
       }
     });
   }
 
   // Deep-link support: #/view-name
   const applyHash = () => {
-    const h = (location.hash || "").replace(/^#/, "").split("/")[0].toLowerCase();
-    if (h && NAV.some((n) => n.id === h)) go(h);
+    const parts = (location.hash || "")
+      .replace(/^#\/?/, "")
+      .split("/")
+      .filter(Boolean);
+    const view = (parts[0] || "").toLowerCase();
+    const arg = parts.slice(1).join("/");
+
+    // Shareable project pages: #/project/<repo-name>
+    if (view === "project" && arg) {
+      state.selectedProject = decodeURIComponent(arg);
+      go("project", { keepHash: true });
+      return;
+    }
+    // Shareable account pages: #/account/<login>
+    if (view === "account" && arg) {
+      state.selectedAccount = decodeURIComponent(arg).replace(/^@/, "");
+      go("account", { keepHash: true });
+      return;
+    }
+    // Legacy links (#/command, #/repos, #/ci, #/profile...) map to new views.
+    const LEGACY = { command: "overview", repos: "projects", ci: "craft", profile: "about", community: "numbers", health: "numbers", xp: "overview" };
+    const target = LEGACY[view] || view;
+    if (target && NAV.some((n) => n.id === target)) go(target, { keepHash: true });
   };
   window.addEventListener("hashchange", applyHash);
 

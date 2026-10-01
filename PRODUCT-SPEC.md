@@ -1,5 +1,14 @@
 # Pulse — Personal GitHub Command Center (Product Spec)
 
+> **Status update (2026-10-01): Pulse is now a public, read-only showcase.**
+> The mandatory GitHub login gate, OAuth flow, PAT storage and the OAuth Worker
+> have been removed. Pulse reads public GitHub data only and renders for any
+> visitor with no account. Private repositories are out of scope by design and
+> are filtered out of both the snapshot and the runtime data layer.
+> The restructure plan lives in [`SHOWCASE-PLAN.md`](SHOWCASE-PLAN.md); the
+> sections below describe the original cockpit vision and remain useful as
+> component/visual guidance.
+
 ---
 
 ## 1. Product Overview

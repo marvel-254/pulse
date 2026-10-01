@@ -1,14 +1,23 @@
 {
   "name": "pulse",
   "version": "1.0.0",
-  "description": "Pulse — personal, mobile-first developer operations command center powered by GitHub.",
+  "description": "Pulse \u2014 a public, read-only showcase of a GitHub account. No login, no OAuth, no tokens.",
   "type": "module",
   "scripts": {
     "build": "node build.mjs",
     "start": "npx serve .",
-    "preview": "node build.mjs && npx serve ."
+    "preview": "node build.mjs && npx serve .",
+    "smoke": "node scripts/smoke-test.mjs",
+    "audit": "node scripts/layout-audit.mjs",
+    "check": "node scripts/ci-check.mjs",
+    "verify": "npm run check && npm run audit && npm run a11y",
+    "a11y": "node scripts/a11y-test.mjs"
   },
   "engines": {
     "node": ">=18"
+  },
+  "devDependencies": {
+    "axe-core": "^4.13.0",
+    "jsdom": "^26.0.0"
   }
 }

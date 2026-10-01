@@ -1,9 +1,17 @@
-const CACHE = "pulse-v1";
+const CACHE = "pulse-v8";
 const ASSETS = [
   "./",
   "./index.html",
   "./css/styles.css",
+  "./fonts/inter-latin-wght.woff2",
+  "./fonts/inter-latin-ext-wght.woff2",
+  "./fonts/jetbrains-mono-latin-wght.woff2",
+  "./fonts/jetbrains-mono-latin-ext-wght.woff2",
+  "./js/config.js",
   "./js/app.js",
+  "./js/depth.js",
+  "./js/game.js",
+  "./js/music.js",
   "./data/snapshot.json",
   "./manifest.webmanifest",
   "./icons/icon.svg",
