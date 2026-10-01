@@ -10,12 +10,14 @@
     "smoke": "node scripts/smoke-test.mjs",
     "audit": "node scripts/layout-audit.mjs",
     "check": "node scripts/ci-check.mjs",
-    "verify": "npm run check && npm run audit"
+    "verify": "npm run check && npm run audit && npm run a11y",
+    "a11y": "node scripts/a11y-test.mjs"
   },
   "engines": {
     "node": ">=18"
   },
   "devDependencies": {
+    "axe-core": "^4.13.0",
     "jsdom": "^26.0.0"
   }
 }

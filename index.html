@@ -42,9 +42,8 @@
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="icons/icon.svg" />
   <title>Pulse — Public GitHub Showcase</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- Fonts are self-hosted (fonts/*.woff2): no third-party requests. -->
+  <link rel="preload" href="fonts/inter-latin-wght.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="css/styles.css" />
   <script>
     // Prevent theme flash
@@ -55,6 +54,8 @@
   </script>
 </head>
 <body>
+  <a class="skip-link" href="#stage">Skip to content</a>
+
   <div class="grid-bg" aria-hidden="true"></div>
   <canvas id="depthScene" class="depth-scene" aria-hidden="true"></canvas>
   <div class="depth-vignette" aria-hidden="true"></div>
@@ -64,9 +65,9 @@
 
   <!-- Reachable global content -->
   <div class="app">
-    <aside class="sidebar" id="sidebar"></aside>
+    <aside class="sidebar" id="sidebar" aria-label="Sections and tools"></aside>
 
-    <main class="stage" id="stage">
+    <main class="stage" id="stage" tabindex="-1">
       <div class="loading" id="loading">
         <div class="pulse-ring"></div>
         <span>BOOTING PULSE</span>
@@ -78,32 +79,32 @@
   <nav class="mobilenav" id="mobilenav"></nav>
 
   <!-- Repo selector overlay -->
-  <div class="overlay" id="repoOverlay" aria-hidden="true">
+  <div class="overlay" id="repoOverlay" role="dialog" aria-modal="true" aria-label="Repository details" aria-hidden="true">
     <div class="sheet" id="repoSheet"></div>
   </div>
 
   <!-- Command Palette overlay -->
-  <div class="overlay" id="paletteOverlay" aria-hidden="true">
+  <div class="overlay" id="paletteOverlay" role="dialog" aria-modal="true" aria-label="Command palette" aria-hidden="true">
     <div class="palette" id="paletteSheet"></div>
   </div>
 
   <!-- Widget Customizer overlay -->
-  <div class="overlay" id="widgetOverlay" aria-hidden="true">
+  <div class="overlay" id="widgetOverlay" role="dialog" aria-modal="true" aria-label="Customise dashboard" aria-hidden="true">
     <div class="sheet" id="widgetSheet"></div>
   </div>
 
   <!-- Suggest / Contact overlay -->
-  <div class="overlay" id="issueOverlay" aria-hidden="true">
+  <div class="overlay" id="issueOverlay" role="dialog" aria-modal="true" aria-label="Issue feed" aria-hidden="true">
     <div class="sheet" id="issueSheet"></div>
   </div>
 
   <!-- Soundtrack overlay -->
-  <div class="overlay" id="audioOverlay" aria-hidden="true">
+  <div class="overlay" id="audioOverlay" role="dialog" aria-modal="true" aria-label="Soundtrack settings" aria-hidden="true">
     <div class="sheet" id="audioSheet"></div>
   </div>
 
   <!-- Pulse Quests (levels / badges) overlay -->
-  <div class="overlay" id="questOverlay" aria-hidden="true">
+  <div class="overlay" id="questOverlay" role="dialog" aria-modal="true" aria-label="Pulse quests and badges" aria-hidden="true">
     <div class="sheet quest-sheet" id="questSheet"></div>
   </div>
 

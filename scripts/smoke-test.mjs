@@ -261,6 +261,24 @@ doc.querySelector("#shareBtn")?.dispatchEvent(new dom.window.MouseEvent("click",
 await wait(200);
 assert("sharing does not break the view", doc.title === beforeShare && !!doc.querySelector("#stage")?.textContent.trim());
 
+// ---- accessibility structure ----
+assert("skip link exists and targets the stage", !!doc.querySelector('a.skip-link[href="#stage"]'));
+assert("stage can take focus", doc.querySelector("#stage")?.getAttribute("tabindex") === "-1");
+assert("primary nav marks the active section", !!doc.querySelector('.sidebar [aria-current="page"]'));
+assert(
+  "sheet overlays are labelled dialogs",
+  [...doc.querySelectorAll('.overlay[role="dialog"]')].every((o) => o.getAttribute("aria-label") && o.getAttribute("aria-modal") === "true")
+);
+assert("icon-only topbar buttons have labels", !!doc.querySelector("#themeToggleBtn")?.getAttribute("aria-label"));
+const questChip = doc.querySelector("#questChipBtn");
+questChip?.click();
+await wait(350);
+assert("opening a sheet sets aria-hidden=false", doc.querySelector("#questOverlay")?.getAttribute("aria-hidden") === "false");
+assert("opening a sheet moves focus into it", doc.activeElement?.closest("#questOverlay") !== null);
+doc.dispatchEvent(new dom.window.KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+await wait(250);
+assert("Escape closes the sheet again", doc.querySelector("#questOverlay")?.getAttribute("aria-hidden") === "true");
+
 // ---- phone viewport simulation ----
 dom.window.innerWidth = 390;
 dom.window.innerHeight = 844;

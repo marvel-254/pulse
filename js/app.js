@@ -515,7 +515,7 @@
 
         <span id="questChip" class="quest-chip-host"></span>
 
-        <button class="topbar-btn sound-btn" id="soundToggleBtn" title="Background soundtrack" aria-pressed="false">
+        <button class="topbar-btn sound-btn" id="soundToggleBtn" title="Background soundtrack" aria-label="Background soundtrack" aria-pressed="false">
           ${ICONS.music}
         </button>
 
@@ -523,15 +523,15 @@
           ${ICONS.share}
         </button>
 
-        <button class="topbar-btn depth-btn" id="depthToggleBtn" title="Toggle the 3D depth layer">
+        <button class="topbar-btn depth-btn" id="depthToggleBtn" title="Toggle the 3D depth layer" aria-label="Toggle the 3D depth layer" aria-pressed="true">
           ${ICONS.layers}
         </button>
 
-        <a class="topbar-btn" id="githubProfileBtn" href="${esc(state.snapshot?.user?.htmlUrl || (ghAccount() ? "https://github.com/" + ghAccount() : "https://github.com"))}" target="_blank" rel="noopener noreferrer" title="Open GitHub profile">
+        <a class="topbar-btn" id="githubProfileBtn" href="${esc(state.snapshot?.user?.htmlUrl || (ghAccount() ? "https://github.com/" + ghAccount() : "https://github.com"))}" target="_blank" rel="noopener noreferrer" title="Open GitHub profile" aria-label="Open GitHub profile (new tab)">
           ${ICONS.github}
         </a>
 
-        <button class="topbar-btn" id="themeToggleBtn" title="Toggle Dark/Light Mode">
+        <button class="topbar-btn" id="themeToggleBtn" title="Toggle Dark/Light Mode" aria-label="Toggle dark or light mode">
           ${isDark ? ICONS.sun : ICONS.moon}
         </button>
 
@@ -572,11 +572,13 @@
     if (!sidebar) return;
 
     sidebar.innerHTML = `
-      <div class="nav-label">Pulse Cockpit</div>
+      <nav class="nav-label" id="primaryNavLabel">Pulse Cockpit</nav>
       ${NAV.map((n) => {
         const badge = n.badge();
+        const active = state.view === n.id;
         return `
-          <button class="nav-item ${state.view === n.id ? "active" : ""}" data-nav="${n.id}">
+          <button class="nav-item ${active ? "active" : ""}" data-nav="${n.id}"
+            ${active ? 'aria-current="page"' : ""} aria-label="${esc(n.label)} section">
             <span class="ic">${n.ic}</span>
             <span>${n.label}</span>
             ${badge != null ? `<span class="nav-badge">${badge}</span>` : ""}
@@ -825,14 +827,41 @@
     openOverlay();
   }
 
+  /* Move focus into the sheet that just opened; remember where we came from. */
+  function focusSheet(overlay) {
+    if (!overlay) return;
+    state._lastFocus = document.activeElement;
+    overlay.setAttribute("aria-hidden", "false");
+    const target = overlay.querySelector(".sheet");
+    if (target && !target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
+    target?.focus({ preventScroll: true });
+  }
+
+  /* Return focus to the control that opened a sheet. */
+  function restoreFocus() {
+    const el = state._lastFocus;
+    state._lastFocus = null;
+    try { el?.focus?.({ preventScroll: true }); } catch {}
+  }
+
+  function closeSheets() {
+    document.querySelectorAll('.overlay[role="dialog"].open').forEach((o) => {
+      o.classList.remove("open");
+      o.setAttribute("aria-hidden", "true");
+    });
+    restoreFocus();
+  }
+
   function openOverlay() {
-    $('#repoOverlay').classList.add("open");
-    $('#repoOverlay').setAttribute("aria-hidden", "false");
+    const ov = $('#repoOverlay');
+    ov.classList.add("open");
+    focusSheet(ov);
   }
 
   function closeOverlay() {
     $('#repoOverlay').classList.remove("open");
     $('#repoOverlay').setAttribute("aria-hidden", "true");
+    restoreFocus();
   }
 
   /* ---- SOUNDTRACK (background music) ----
@@ -943,11 +972,12 @@
       choice + volume are remembered only in this browser.</div>`;
 
     overlay.classList.add("open");
-    overlay.setAttribute("aria-hidden", "false");
+    focusSheet(overlay);
 
     $('#closeSoundSheet')?.addEventListener("click", () => {
       overlay.classList.remove("open");
       overlay.setAttribute("aria-hidden", "true");
+      restoreFocus();
     });
     $('#soundPlayBtn')?.addEventListener("click", () => {
       toggleSoundtrack();
@@ -1226,13 +1256,14 @@
 
     renderPalette();
     overlay.classList.add("open");
-    overlay.setAttribute("aria-hidden", "false");
+    focusSheet(overlay);
   }
 
   function closeCommandPalette() {
     const overlay = $('#paletteOverlay');
     overlay.classList.remove("open");
     overlay.setAttribute("aria-hidden", "true");
+    restoreFocus();
   }
 
   /* ---- WIDGET CUSTOMIZER MODAL ---- */
@@ -1282,6 +1313,7 @@
     $('#closeWidgetModalBtn')?.addEventListener("click", () => {
       overlay.classList.remove("open");
       overlay.setAttribute("aria-hidden", "true");
+      restoreFocus();
     });
 
     $('#saveWidgetsBtn')?.addEventListener("click", () => {
@@ -1291,6 +1323,7 @@
       localStorage.setItem("pulse-widgets", JSON.stringify(state.widgets));
       overlay.classList.remove("open");
       overlay.setAttribute("aria-hidden", "true");
+      restoreFocus();
       render();
       toast("Layout preferences updated");
     });
@@ -1300,12 +1333,13 @@
       localStorage.removeItem("pulse-widgets");
       overlay.classList.remove("open");
       overlay.setAttribute("aria-hidden", "true");
+      restoreFocus();
       render();
       toast("Reset widgets to defaults");
     });
 
     overlay.classList.add("open");
-    overlay.setAttribute("aria-hidden", "false");
+    focusSheet(overlay);
   }
 
   /* ---- EXPORT MARKDOWN SUMMARY ---- */
@@ -3077,11 +3111,12 @@
       </div>`;
 
     overlay.classList.add("open");
-    overlay.setAttribute("aria-hidden", "false");
+    focusSheet(overlay);
 
     const close = () => {
       overlay.classList.remove("open");
       overlay.setAttribute("aria-hidden", "true");
+      restoreFocus();
     };
     $("#closeIssueBtn")?.addEventListener("click", close);
     $("#cancelIssueBtn")?.addEventListener("click", close);
@@ -3581,6 +3616,8 @@
       if (e.target.id === "audioOverlay") {
         e.target.classList.remove("open");
         e.target.setAttribute("aria-hidden", "true");
+        closeSheets();
+        e.target.setAttribute("aria-hidden", "true");
       }
     });
     $('#widgetOverlay')?.addEventListener("click", (e) => {
@@ -3601,8 +3638,7 @@
       } else if (e.key === "Escape") {
         closeOverlay();
         closeCommandPalette();
-        $('#widgetOverlay')?.classList.remove("open");
-        $('#issueOverlay')?.classList.remove("open");
+        closeSheets();
       }
     });
   }

@@ -255,8 +255,12 @@ Visitor sees fresh data even if the snapshot is hours old
 - CI: `scripts/ci-check.mjs` + layout audit on every PR (`.github/workflows/ci.yml`). ✅
 - Prerendered static project pages with their own meta tags. ⏳ still open
   (deep links are hash routes today; the sitemap lists the views).
-- Accessibility pass (skip link, focus rings, ARIA sweep). ⏳ still open
-- Self-hosted fonts + minification. ⏳ still open
+- Accessibility pass (skip link, focus rings, ARIA sweep). ✅ skip link, visible
+  focus, labelled dialogs with focus management, landmarks, `aria-current`,
+  axe-core gate in CI (0 serious/critical violations across 10 surfaces).
+- Self-hosted fonts. ✅ Inter + JetBrains Mono variable subsets in `fonts/`
+  (OFL) — zero third-party requests now.
+- Minification. ⏳ still open (Pages serves the repo as-is; needs a build step).
 - Curated case studies, a "Now" strip and share cards as images. ⏳ still open
 
 ### Phase 5b — optional

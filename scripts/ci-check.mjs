@@ -39,6 +39,10 @@ const required = [
   "icons/og.png",
   "robots.txt",
   "sitemap.xml",
+  "fonts/inter-latin-wght.woff2",
+  "fonts/jetbrains-mono-latin-wght.woff2",
+  "fonts/OFL-Inter.txt",
+  "scripts/a11y-test.mjs",
 ];
 required.forEach((f) => assert(`exists: ${f}`, has(f)));
 
@@ -92,6 +96,9 @@ assert("index.html has og:image", /property="og:image"\s+content="https?:\/\/[^"
 assert("index.html has twitter card", /name="twitter:card"\s+content="summary_large_image"/.test(html));
 assert("index.html has description", /name="description"/.test(html));
 assert("index.html has JSON-LD", /application\/ld\+json/.test(html));
+assert("index.html has a skip link", /class="skip-link"[^>]*href="#stage"/.test(html));
+assert("stage is a focus target", /<main class="stage" id="stage" tabindex="-1">/.test(html));
+assert("sheets are dialogs", (html.match(/role="dialog"/g) || []).length >= 6);
 assert("index.html loads the music engine", /js\/music\.js/.test(html));
 assert("no login / token UI in HTML", !/access token|sign in with github|oauth/i.test(html));
 
@@ -113,6 +120,8 @@ assert("no bundled audio files", !/\.(mp3|wav|ogg|m4a|flac)["')]/i.test(appJs) |
 const tracked = [...html.matchAll(/<(?:script|link|img)[^>]*?(?:src|href)="(https?:\/\/[^"]+)"/g)]
   .filter((m) => !/rel="(canonical|alternate|me)"/.test(m[0]))
   .map((m) => m[1]);
+assert("fonts are self-hosted", /\.\.\/fonts\//.test(read("css/styles.css")) && !/fonts\.googleapis\.com/.test(html));
+assert("no third-party requests at all", tracked.length === 0);
 assert(
   "third-party requests limited to fonts",
   tracked.every((u) => /^https:\/\/(fonts\.googleapis\.com|fonts\.gstatic\.com)(\/|$)/.test(u))

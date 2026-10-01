@@ -429,6 +429,8 @@
     bindChip();
   }
 
+  let lastFocus = null;
+
   function bindChip() {
     document.getElementById("questChipBtn")?.addEventListener("click", openSheet);
     document.getElementById("questOpenBtn")?.addEventListener("click", openSheet);
@@ -439,8 +441,11 @@
     const sheet = document.getElementById("questSheet");
     if (!overlay || !sheet) return;
     sheet.innerHTML = sheetHtml();
+    lastFocus = document.activeElement;
     overlay.classList.add("open");
     overlay.setAttribute("aria-hidden", "false");
+    if (!sheet.hasAttribute("tabindex")) sheet.setAttribute("tabindex", "-1");
+    sheet.focus?.({ preventScroll: true });
 
     document.getElementById("questCloseBtn")?.addEventListener("click", closeSheet);
     document.getElementById("questResetBtn")?.addEventListener("click", () => {
@@ -463,6 +468,8 @@
     if (!overlay) return;
     overlay.classList.remove("open");
     overlay.setAttribute("aria-hidden", "true");
+    try { lastFocus?.focus?.({ preventScroll: true }); } catch {}
+    lastFocus = null;
   }
 
   /* ---- init ---- */

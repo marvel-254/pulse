@@ -159,6 +159,25 @@ checks the CSS for mobile overflow risks.
 - **`robots.txt` + `sitemap.xml`** — crawlable, points at the canonical site
   URL.
 
+## Accessibility
+
+- **Skip link** to `#stage`, visible on focus, above every overlay.
+- **Visible focus** for keyboard users on every link, button, field and
+  `[tabindex]` element (`:focus-visible` only — mouse clicks stay quiet).
+- **Dialogs** — every sheet is a labelled `role="dialog" aria-modal="true"`
+  surface: opening one moves focus inside, Escape or the backdrop closes it and
+  focus returns to the control that opened it. `aria-hidden` tracks open state.
+- **Landmarks & state** — `main`/`aside` landmarks, `aria-current="page"` on the
+  active nav item, labels on icon-only buttons, `role="status"` for toasts.
+- **Reduced motion** — the 3D layer, tilt and transitions respect
+  `prefers-reduced-motion`.
+- **Self-hosted fonts** — Inter + JetBrains Mono (variable, latin/latin-ext,
+  OFL) ship in `fonts/`, so the site makes **zero third-party requests**.
+- **Verified with axe-core** — `npm run a11y` boots the site in JSDOM and audits
+  every view, the project page and two sheets; it fails on serious/critical
+  violations. Currently: 0 violations across 10 surfaces. The same check runs in
+  CI.
+
 ## Checks (CI)
 
 `.github/workflows/ci.yml` runs on every pull request and non-`main` push:
@@ -167,6 +186,7 @@ checks the CSS for mobile overflow risks.
 | --- | --- |
 | `npm run check` | Every JS/JSON file parses, every asset referenced by `index.html` and `sw.js` exists, the social card is a real 1200×630 PNG, robots/sitemap are present, and no login/token/analytics/third-party script has crept back in. Offline and deterministic. |
 | `npm run audit` | Static CSS audit for mobile overflow risks. |
+| `npm run a11y` | axe-core across every view, a project page and the sheets; fails on serious/critical violations. |
 | `npm run smoke` | Informational only (needs the public GitHub API, so shared-runner rate limits would make it flaky). Run it locally before opening a PR. |
 
 ## Data depth
