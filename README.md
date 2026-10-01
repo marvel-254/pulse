@@ -20,7 +20,7 @@ Visitor-first sections, each with its own shareable URL:
 | **Activity** | `#/activity` | Public event feed, workflow runs, releases |
 | **Projects** | `#/projects` | Every repo, grouped Active / Quiet / Archived |
 | **How I build** | `#/craft` | Pipeline health, stack and release cadence |
-| **About** | `#/about` | Profile README, links and contact |
+| **About** | `#/about` | Profile README, per-account cards, links and contact |
 | **Project page** | `#/project/<name>` | One page per project: README, stats, clone URLs, CI |
 
 Highlights are derived automatically — no hand-curated list to go stale.
@@ -42,6 +42,20 @@ GitHub (public REST)
   while a relevant view is open.
 - If the network fails, the snapshot still renders — the site is never blank.
 
+## Multiple accounts
+
+Pulse can showcase more than one GitHub account. Public repos from every
+account are merged into a single showcase, and visitors can filter the whole
+site down to one account with the account chips (also available from ⌘K):
+
+```
+#/overview   All accounts · @marvel-254 · @oliver4441
+#/numbers    side-by-side comparison of the featured accounts
+#/about      one profile card per account
+```
+
+Highlights round-robin across accounts so neither dominates the page.
+
 ## Configure
 
 Everything visitor-facing lives in one file:
@@ -49,13 +63,19 @@ Everything visitor-facing lives in one file:
 ```js
 // js/config.js
 window.PULSE_CONFIG = {
-  github: { username: "marvel-254" },   // the account shown on the site
-  display: { tagline: "", email: "", website: "" },
+  github: {
+    username: "marvel-254",                      // primary identity
+    accounts: ["marvel-254", "oliver4441"],      // everything featured
+  },
+  display: {
+    tagline: "…",                                // hero fallback line
+    links: [{ label: "Portfolio", url: "https://admin.omixsystems.store" }],
+  },
   live: { enabled: true, ciRefreshMs: 600000 },
 };
 ```
 
-Change `username` and the whole site re-points.
+Add or remove accounts in `accounts` and the whole site re-points.
 
 ## Local development
 
@@ -65,9 +85,10 @@ npm run start     # serve the static site
 npm run smoke     # jsdom smoke test: every view, no auth UI, no errors
 ```
 
-`npm run build` uses the public API and needs no credentials. Setting
-`PULSE_USERNAME` overrides the account; setting `GITHUB_TOKEN`/`GH_TOKEN` only
-raises the rate limit — it can never pull in private data.
+`npm run build` uses the public API and needs no credentials. `PULSE_ACCOUNTS`
+(comma-separated) or `PULSE_USERNAME` override the configured accounts;
+`GITHUB_TOKEN`/`GH_TOKEN` only raises the rate limit — it can never pull in
+private data.
 
 ## Deploy to GitHub Pages
 

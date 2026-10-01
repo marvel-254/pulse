@@ -2,8 +2,9 @@
 
 **A structured, visitor-first way to view one GitHub account.**
 
-Status: **Phase 0 (login/OAuth removal) and Phase 1 (visitor-first IA) shipped.**
-Phase 2 (data depth) is next.
+Status: **Phases 0, 1 and 4 shipped** (login/OAuth removed, visitor-first IA,
+multi-account showcase). Phase 2 (data depth: contribution heatmap, authored
+PR/issue counts, language bytes) is next.
 Owner: `@marvel-254` · Data source: public GitHub only · No login, ever.
 
 ---
@@ -201,10 +202,23 @@ Visitor sees fresh data even if the snapshot is hours old
 - Per-project "case study" layout for the featured 3–5.
 - Motion/accessibility pass (respect `prefers-reduced-motion`, focus states).
 
-### Phase 4 — optional
-- Multi-account mode (a `PULSE_USERNAME` list) for collaborations.
+### Phase 4 — multi-account — ✅ SHIPPED
+- [x] `github.accounts` lists every featured account; the build merges their
+      public repos, events, extras and profile READMEs into one snapshot.
+- [x] Account filter chips across Overview, Highlights, Numbers, Activity,
+      Projects and How I build (plus ⌘K actions) — one click narrows the whole
+      site to a single account.
+- [x] Numbers compares accounts side by side; About gives each one an identity
+      card with links.
+- [x] Highlights round-robin across accounts and exclude GitHub-config profile
+      repos, so neither account dominates and non-projects stay out.
+- [x] README rendering hardened: HTML comments stripped and a sanitised HTML
+      subset (badges, banners, centred blocks) now renders instead of raw markup.
+
+### Phase 5 — optional
 - Embeddable widget (`<iframe src="…/#/project/stor1">`).
-- Visitor-facing "compare accounts" or "timeline of everything shipped".
+- Open Graph share cards per account and per project.
+- "Timeline of everything shipped" across both accounts.
 
 ---
 
@@ -213,7 +227,8 @@ Visitor sees fresh data even if the snapshot is hours old
 **Answered (2026-10-01):** visitor-first showcase IA; XP & Health dropped and
 Community folded into Numbers; highlights derived automatically; portfolio
 (`admin.omixsystems.store`) and blog (`blog.omixsystems.store`) links added in
-`js/config.js`.
+`js/config.js`; both accounts (`marvel-254`, `oliver4441`) are featured and
+merged into one showcase with an account filter.
 
 **Still open**
 

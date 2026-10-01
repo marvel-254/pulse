@@ -98,6 +98,41 @@ assert("hero shows the account", /@marvel-254/.test(home));
 assert("hero links to the portfolio", !!doc.querySelector('.hero-actions a[href*="omixsystems"]'));
 assert("hero has a suggest action", !!doc.querySelector("#heroSuggestBtn"));
 
+// Multi-account: both accounts visible, filter chips actually filter.
+const heroText = doc.querySelector("#stage")?.textContent || "";
+assert("hero names both accounts", /@marvel-254/.test(heroText) && /@oliver4441/.test(heroText));
+assert("account filter chips rendered", doc.querySelectorAll("[data-account]").length >= 2);
+
+dom.window.location.hash = "#/projects";
+dom.window.dispatchEvent(new dom.window.HashChangeEvent("hashchange"));
+await wait(500);
+const allCards = doc.querySelectorAll("#stage [data-project]").length;
+const chip = [...doc.querySelectorAll("#stage [data-account]")].find((c) => c.dataset.account === "oliver4441");
+chip?.dispatchEvent(new dom.window.MouseEvent("click", { bubbles: true }));
+await wait(500);
+const filteredCards = doc.querySelectorAll("#stage [data-project]").length;
+const filteredText = doc.querySelector("#stage")?.textContent || "";
+assert("account chip filters the project list", filteredCards > 0 && filteredCards < allCards);
+assert("filtered view names the account", /@oliver4441/.test(filteredText));
+
+dom.window.location.hash = "#/numbers";
+dom.window.dispatchEvent(new dom.window.HashChangeEvent("hashchange"));
+await wait(500);
+assert("numbers compares the accounts", (doc.querySelector("#stage")?.textContent || "").match(/Featured Accounts/) && /oliver4441/.test(doc.querySelector("#stage")?.textContent || ""));
+
+// README rendering: markdown + a sanitised HTML subset (badges/banners).
+dom.window.location.hash = "#/about";
+dom.window.dispatchEvent(new dom.window.HashChangeEvent("hashchange"));
+await wait(800);
+const md = doc.querySelector(".md-body");
+if (md) {
+  const mdHtml = md.innerHTML;
+  assert("readme renders without raw html comments", !mdHtml.includes("<!--"));
+  assert("readme drops script tags", !/<script/i.test(mdHtml));
+  assert("readme drops javascript: urls", !/javascript:/i.test(mdHtml));
+  assert("readme drops inline event handlers", !/\son[a-z]+=/i.test(mdHtml));
+}
+
 // Public interactions: palette, repo selector, widget modal, suggest modal.
 const click = (sel) => doc.querySelector(sel)?.dispatchEvent(new dom.window.MouseEvent("click", { bubbles: true }));
 click("#topbarSearchTrigger");

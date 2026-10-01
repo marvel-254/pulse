@@ -28,16 +28,31 @@ const OUT = join(__dirname, "data", "snapshot.json");
 const API = "https://api.github.com";
 const TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "";
 
-/** Resolve the public account: env var -> js/config.js -> repo-owner fallback. */
-function configuredUsername() {
-  const env = (process.env.PULSE_USERNAME || "").trim().replace(/^@/, "");
-  if (env) return env;
+/** Resolve the accounts to publish: env -> js/config.js -> repo-owner fallback. */
+function configuredAccounts() {
+  const clean = (list) =>
+    [...new Set(list.map((u) => String(u).trim().replace(/^@/, "")).filter((u) => u && u !== "your-username"))];
+
+  const envAccounts = (process.env.PULSE_ACCOUNTS || "").split(",").map((x) => x.trim()).filter(Boolean);
+  if (envAccounts.length) return clean(envAccounts);
+
+  const envUser = (process.env.PULSE_USERNAME || "").trim().replace(/^@/, "");
+  if (envUser) return clean([envUser]);
+
   try {
     const cfg = readFileSync(join(__dirname, "js", "config.js"), "utf8");
-    const m = cfg.match(/username:\s*["']([^"']+)["']/);
-    if (m && m[1] && m[1] !== "your-username") return m[1];
+    const listMatch = cfg.match(/accounts:\s*\[([^\]]*)\]/);
+    if (listMatch) {
+      const list = listMatch[1]
+        .split(",")
+        .map((x) => x.trim().replace(/^["']|["']$/g, ""))
+        .filter(Boolean);
+      if (list.length) return clean(list);
+    }
+    const single = cfg.match(/username:\s*["']([^"']+)["']/);
+    if (single) return clean([single[1]]);
   } catch {}
-  return "";
+  return [];
 }
 
 async function api(path) {
@@ -121,24 +136,31 @@ function enrichRepo(r) {
 
 /* ------------------------------------------------------------------ */
 
-const login = configuredUsername();
-if (!login) {
-  console.error("No GitHub account resolved. Set PULSE_USERNAME or github.username in js/config.js.");
+const accounts = configuredAccounts();
+if (!accounts.length) {
+  console.error("No GitHub account resolved. Set PULSE_ACCOUNTS / PULSE_USERNAME or github.accounts in js/config.js.");
   process.exit(1);
 }
 
-console.log(`Pulse public snapshot → @${login}${TOKEN ? " (rate-limit token present)" : " (anonymous)"}`);
+const login = accounts[0]; // primary account (identity + page meta)
+console.log(
+  `Pulse public snapshot → ${accounts.map((a) => "@" + a).join(", ")}${TOKEN ? " (rate-limit token present)" : " (anonymous)"}`
+);
 
-const [user, rawRepos, eventsRaw, profileReadme] = await Promise.all([
-  api(`/users/${login}`),
-  api(`/users/${login}/repos?per_page=100&sort=updated&type=owner`),
-  api(`/users/${login}/events/public?per_page=60`),
-  api(`/repos/${login}/${login}/readme`),
-]);
+const profiles = await Promise.all(accounts.map((account) => api(`/users/${account}`)));
 
-const repos = (Array.isArray(rawRepos) ? rawRepos : [])
-  .filter((r) => !r.fork && !r.private)
-  .map(enrichRepo);
+const repoLists = await Promise.all(
+  accounts.map(async (account) => {
+    const list = await api(`/users/${account}/repos?per_page=100&sort=updated&type=owner`);
+    return (Array.isArray(list) ? list : [])
+      .filter((r) => !r.fork && !r.private)
+      .map((r) => ({ ...enrichRepo(r), owner: account }));
+  })
+);
+
+const repos = repoLists.flat().sort((a, b) => new Date(b.pushedAt) - new Date(a.pushedAt));
+
+const eventLists = await Promise.all(accounts.map((account) => api(`/users/${account}/events/public?per_page=60`)));
 
 // Safety: never replace a good snapshot with an empty one (e.g. rate-limited run).
 if (!repos.length) {
@@ -150,7 +172,8 @@ if (!repos.length) {
   process.exit(1);
 }
 
-const events = (Array.isArray(eventsRaw) ? eventsRaw : [])
+const events = eventLists
+  .flatMap((list) => (Array.isArray(list) ? list : []))
   .map((ev) => {
     const verb = EVENT_VERBS[ev.type];
     if (!verb || !ev.repo) return null;
@@ -168,20 +191,25 @@ const events = (Array.isArray(eventsRaw) ? eventsRaw : [])
     };
   })
   .filter(Boolean)
-  .filter((e) => e.repo.split("/")[0] === login)
+  .filter((e) => accounts.includes(e.repo.split("/")[0]))
+  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
   .slice(0, 40);
 
-// Deep enrichment (releases + workflow runs) for the most recently active repos.
-const DEEP = TOKEN ? 12 : 8;
+// Deep enrichment (releases + workflow runs) is limited to keep the build
+// within GitHub's rate limits. README excerpts are cheap (1 request each) and
+// are collected for every repo when a token is available.
+const DEEP = TOKEN ? 40 : 10;
 const deepRepos = repos.slice(0, DEEP);
 const extras = [];
+const EXCERPT_SET = TOKEN ? repos : deepRepos;
 for (const repo of deepRepos) {
   const full = repo.fullName;
+  const wantsExcerpt = EXCERPT_SET.includes(repo);
   const [releasesRaw, runsRaw, workflowsRaw, readmeRaw] = await Promise.all([
     api(`/repos/${full}/releases?per_page=5`),
     api(`/repos/${full}/actions/runs?per_page=10`),
     TOKEN ? api(`/repos/${full}/actions/workflows?per_page=20`) : Promise.resolve(null),
-    api(`/repos/${full}/readme`),
+    wantsExcerpt ? api(`/repos/${full}/readme`) : Promise.resolve(null),
   ]);
 
   const releases = (Array.isArray(releasesRaw) ? releasesRaw : []).map((rel) => ({
@@ -231,36 +259,59 @@ for (const repo of deepRepos) {
   }
 }
 
-const profile = profileReadme?.content
-  ? {
-      owner: login,
-      name: profileReadme.name,
-      raw: Buffer.from(profileReadme.content, "base64").toString("utf8"),
-      url: `https://github.com/${login}/${login}`,
-      rawUrl: `https://raw.githubusercontent.com/${login}/${login}/HEAD/README.md`,
-      fetchedAt: new Date().toISOString(),
-    }
-  : null;
+const profileReadmes = await Promise.all(accounts.map((account) => api(`/repos/${account}/${account}/readme`)));
+const profile =
+  profileReadmes
+    .map((readme, i) =>
+      readme?.content
+        ? {
+            owner: accounts[i],
+            name: readme.name,
+            raw: Buffer.from(readme.content, "base64").toString("utf8"),
+            url: `https://github.com/${accounts[i]}/${accounts[i]}`,
+            rawUrl: `https://raw.githubusercontent.com/${accounts[i]}/${accounts[i]}/HEAD/README.md`,
+            fetchedAt: new Date().toISOString(),
+          }
+        : null
+    )
+    .find(Boolean) || null;
+
+const accountSummaries = accounts.map((account, i) => {
+  const profile = profiles[i];
+  const own = repos.filter((r) => r.owner === account);
+  return {
+    login: account,
+    name: profile?.name || null,
+    avatar: profile?.avatar_url || `https://github.com/${account}.png`,
+    bio: profile?.bio || null,
+    company: profile?.company || null,
+    blog: profile?.blog || null,
+    location: profile?.location || null,
+    followers: profile?.followers ?? null,
+    following: profile?.following ?? null,
+    publicRepos: profile?.public_repos ?? own.length,
+    htmlUrl: `https://github.com/${account}`,
+    createdAt: profile?.created_at || null,
+    repoCount: own.length,
+    stars: own.reduce((a, r) => a + r.stars, 0),
+    latestPush: own.slice().sort((a, b) => new Date(b.pushedAt) - new Date(a.pushedAt))[0]?.pushedAt || null,
+  };
+});
 
 const snapshot = {
   generatedAt: new Date().toISOString(),
   account: login,
+  accounts: accountSummaries,
+  // Primary account identity (the hero/topbar/page meta).
   user: {
-    login,
-    name: user?.name || null,
-    avatar: user?.avatar_url || `https://github.com/${login}.png`,
-    bio: user?.bio || null,
-    company: user?.company || null,
-    blog: user?.blog || null,
-    location: user?.location || null,
-    twitter: user?.twitter_username || null,
-    hireable: user?.hireable ?? null,
-    publicRepos: user?.public_repos ?? repos.length,
-    publicGists: user?.public_gists ?? null,
-    followers: user?.followers ?? null,
-    following: user?.following ?? null,
-    htmlUrl: user?.html_url || `https://github.com/${login}`,
-    createdAt: user?.created_at || null,
+    ...accountSummaries[0],
+    twitter: profiles[0]?.twitter_username || null,
+    hireable: profiles[0]?.hireable ?? null,
+    publicGists: profiles[0]?.public_gists ?? null,
+    // Aggregate across every featured account
+    publicRepos: repos.length,
+    followers: accountSummaries.reduce((a, s) => a + (s.followers || 0), 0),
+    following: accountSummaries.reduce((a, s) => a + (s.following || 0), 0),
   },
   totalStars: repos.reduce((a, r) => a + r.stars, 0),
   totalForks: repos.reduce((a, r) => a + r.forks, 0),

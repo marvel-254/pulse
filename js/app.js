@@ -76,6 +76,7 @@
   const state = {
     snapshot: null,
     selectedRepo: "all",
+    accountFilter: "all", // "all" | account login
     view: "overview",
     api: { rateLimit: 60, rateRemaining: null },
     theme: localStorage.getItem("pulse-theme") || "dark",
@@ -106,6 +107,38 @@
     if (configured && configured !== "your-username") return configured;
     return (state.snapshot?.user?.login || "").trim();
   }
+
+  /** Every account featured on the site (config list, else the primary one). */
+  function accountList() {
+    const configured = (accountConfig().accounts || [])
+      .map((a) => String(a).trim().replace(/^@/, ""))
+      .filter(Boolean);
+    if (configured.length) return [...new Set(configured)];
+    const single = ghAccount();
+    return single ? [single] : [];
+  }
+
+  /** Account summaries from the snapshot (falls back to what the repos reveal). */
+  function accountSummaries() {
+    const fromSnapshot = state.snapshot?.accounts;
+    if (Array.isArray(fromSnapshot) && fromSnapshot.length) return fromSnapshot;
+    return accountList().map((login) => {
+      const own = repoList().filter((r) => repoOwner(r) === login);
+      return {
+        login,
+        avatar: `https://github.com/${login}.png`,
+        htmlUrl: `https://github.com/${login}`,
+        repoCount: own.length,
+        stars: own.reduce((a, r) => a + r.stars, 0),
+        latestPush: own[0]?.pushedAt || null,
+        followers: null,
+      };
+    });
+  }
+
+  const repoOwner = (r) => r?.owner || (r?.fullName || "").split("/")[0] || "";
+  const accountAvatar = (login) =>
+    accountSummaries().find((a) => a.login === login)?.avatar || `https://github.com/${login}.png`;
 
   const isLiveEnabled = () => liveConfig().enabled !== false;
 
@@ -185,8 +218,14 @@
       .sort((a, b) => new Date(b.pushedAt) - new Date(a.pushedAt));
   };
 
-  const filteredRepos = () => {
+  const accountRepos = () => {
     const list = repoList();
+    if (state.accountFilter === "all") return list;
+    return list.filter((r) => repoOwner(r) === state.accountFilter);
+  };
+
+  const filteredRepos = () => {
+    const list = accountRepos();
     if (state.selectedRepo === "all") return list;
     return list.filter((r) => r.name === state.selectedRepo);
   };
@@ -222,9 +261,23 @@
 
   const repoStatus = (r) => (r.archived ? "archived" : daysSince(r.pushedAt) <= 90 ? "active" : "quiet");
 
+  /* Repos that exist to configure GitHub itself (profile README repo, dotfiles,
+     topic-only repos) are not projects — they never belong in Highlights. */
+  const isProfileRepo = (r) => {
+    const owner = repoOwner(r);
+    const name = (r.name || "").toLowerCase();
+    const topics = (r.topics || []).map((t) => t.toLowerCase());
+    if (owner && name === owner.toLowerCase()) return true;
+    if (topics.includes("github-config") || topics.includes("profile")) return true;
+    if (/^config files for my github profile/i.test(r.description || "")) return true;
+    if (!r.language && !r.readmeExcerpt && !(r.description || "").trim()) return true;
+    return false;
+  };
+
   /* Auto-derived highlights — no hand-written content required.
      Recent work first, then reach (stars/forks), then how complete the repo
-     looks (description, live site, topics, license). */
+     looks (description, live site, README, topics, license). Results are
+     spread across accounts so one account cannot dominate the page. */
   const featuredRepos = (limit = 6) => {
     const score = (r) => {
       const age = daysSince(r.pushedAt);
@@ -233,14 +286,37 @@
         recency +
         (r.stars || 0) * 12 +
         (r.forks || 0) * 6 +
+        (r.readmeExcerpt ? 10 : 0) +
         (r.description ? 6 : 0) +
-        (r.homepage ? 6 : 0) +
+        (r.homepage ? 8 : 0) +
         ((r.topics || []).length ? 4 : 0) +
-        (r.license ? 2 : 0) -
+        (r.license ? 2 : 0) +
+        (r.language ? 3 : 0) -
         (r.archived ? 40 : 0)
       );
     };
-    return repoList().slice().sort((a, b) => score(b) - score(a)).slice(0, limit);
+
+    const ranked = repoList()
+      .filter((r) => !isProfileRepo(r))
+      .sort((a, b) => score(b) - score(a));
+
+    // Round-robin across accounts so every account is represented early.
+    const perOwnerCap = Math.max(1, Math.ceil(limit / Math.max(1, accountList().length)));
+    const picked = [];
+    const capped = [];
+    const counts = {};
+    for (const r of ranked) {
+      const owner = repoOwner(r);
+      if ((counts[owner] || 0) < perOwnerCap) {
+        counts[owner] = (counts[owner] || 0) + 1;
+        picked.push(r);
+      } else {
+        capped.push(r);
+      }
+      if (picked.length >= limit) break;
+    }
+    // Top up with the best remaining repos if an account had too few.
+    return picked.concat(capped).slice(0, limit);
   };
 
   const extrasFor = (fullName) => (state.snapshot?.extras || []).find((x) => x.fullName === fullName) || null;
@@ -655,6 +731,31 @@
             go("overview");
           },
         },
+        ...accountList().map((a) => ({
+          title: `Show only @${a}`,
+          sub: "Account filter",
+          icon: ICONS.layers,
+          action: () => {
+            state.accountFilter = a;
+            state.selectedRepo = "all";
+            go("overview");
+            toast(`Showing @${a} only`);
+          },
+        })),
+        ...(accountList().length > 1
+          ? [
+              {
+                title: "Show all featured accounts",
+                sub: "Account filter",
+                icon: ICONS.layers,
+                action: () => {
+                  state.accountFilter = "all";
+                  go("overview");
+                  toast("Showing every account");
+                },
+              },
+            ]
+          : []),
         {
           title: "Copy Summary as Markdown",
           sub: "Export",
@@ -916,9 +1017,65 @@
     return html + "</tbody></table>";
   }
 
+  /* READMEs are heavily HTML (badges, banners, centred blocks). We allow a
+     small, sanitised subset so profile READMEs render instead of showing raw
+     markup — everything else is escaped, event handlers and scripts dropped. */
+  const MD_ALLOWED_TAGS = new Set([
+    "div", "span", "p", "br", "hr", "img", "a", "b", "strong", "i", "em", "u", "s",
+    "code", "pre", "sub", "sup", "small", "h1", "h2", "h3", "h4", "h5", "h6",
+    "ul", "ol", "li", "table", "thead", "tbody", "tr", "th", "td",
+    "details", "summary", "blockquote", "picture", "source", "center",
+  ]);
+  const MD_ALLOWED_ATTRS = new Set([
+    "href", "src", "alt", "title", "align", "width", "height", "target", "rel",
+    "class", "srcset", "sizes", "colspan", "rowspan", "loading",
+  ]);
+
+  function sanitizeHtml(html) {
+    return String(html)
+      .replace(/<!--[\s\S]*?-->/g, "")
+      .replace(/<(script|style|iframe|object|embed|form|input|link|meta)\b[\s\S]*?<\/\1\s*>/gi, "")
+      .replace(/<(script|style|iframe|object|embed|form|input|link|meta)\b[^>]*\/?>/gi, "")
+      .replace(/<([a-zA-Z][a-zA-Z0-9-]*)((?:\s+[^<>]*?)?)\/?>/g, (match, tag, attrs) => {
+        const name = tag.toLowerCase();
+        if (!MD_ALLOWED_TAGS.has(name)) return "";
+        const kept = [];
+        const attrRe = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)\s*=\s*("([^"]*)"|'([^']*)'|([^\s"'>]+))/g;
+        let m;
+        while ((m = attrRe.exec(attrs || ""))) {
+          const attr = m[1].toLowerCase();
+          const value = (m[3] ?? m[4] ?? m[5] ?? "").trim();
+          if (attr.startsWith("on")) continue; // never keep event handlers
+          if (!MD_ALLOWED_ATTRS.has(attr)) continue;
+          if ((attr === "href" || attr === "src") && /^\s*(javascript|data|vbscript):/i.test(value)) continue;
+          kept.push(`${attr}="${esc(value)}"`);
+        }
+        if (name === "a") {
+          kept.push('target="_blank"');
+          kept.push('rel="noopener noreferrer"');
+        }
+        if (name === "img") kept.push('loading="lazy"');
+        return `<${name}${kept.length ? " " + kept.join(" ") : ""}>`;
+      })
+      .replace(/<\/([a-zA-Z][a-zA-Z0-9-]*)>/g, (m, tag) =>
+        MD_ALLOWED_TAGS.has(tag.toLowerCase()) ? `</${tag.toLowerCase()}>` : ""
+      );
+  }
+
+  /** Sanitised inline HTML mixed with markdown, e.g. `<b>hi</b> and **bold**`. */
+  function inlineMdHTML(s) {
+    return String(s == null ? "" : s)
+      .split(/(<[^>]+>)/g)
+      .map((part) => (part.startsWith("<") ? sanitizeHtml(part) : inlineMd(part)))
+      .join("");
+  }
+
   function renderMarkdown(md) {
     if (!md) return "";
-    const lines = String(md).replace(/\r\n/g, "\n").split("\n");
+    const cleaned = String(md)
+      .replace(/\r\n/g, "\n")
+      .replace(/<!--[\s\S]*?-->/g, ""); // strip html comments up front
+    const lines = cleaned.split("\n");
     let html = "";
     let i = 0;
     let listType = null;
@@ -993,6 +1150,22 @@
         continue;
       }
 
+      // Standalone / multi-line raw HTML blocks (badges, banners, tables).
+      if (/^\s*<[a-zA-Z!/]/.test(line)) {
+        closeList();
+        const block = [];
+        while (i < lines.length && lines[i].trim() !== "" && /^\s*</.test(lines[i])) {
+          block.push(lines[i]);
+          i++;
+        }
+        const raw = block.join("\n");
+        // A lone inline-html line may just be text; render it as a paragraph.
+        html += /^\s*<(div|p|table|details|center|h[1-6]|img|picture|a|span|br|hr)/i.test(raw)
+          ? `<div class="md-html">${inlineMdHTML(raw)}</div>`
+          : `<p class="md-p">${inlineMdHTML(raw)}</p>`;
+        continue;
+      }
+
       if (line.trim() === "") {
         closeList();
         i++;
@@ -1039,13 +1212,42 @@
       `<button class="btn" id="refreshProfileBtn">${ICONS.refresh} Sync README</button>`,
     ].filter(Boolean).join("");
 
+    const accounts = accountSummaries();
+
+    const accountCards =
+      accounts.length > 1
+        ? `<div class="card">
+             <div class="card-head">
+               <div class="card-title"><span class="stat-icon" style="color:var(--cyan)">${ICONS.layers}</span> Accounts</div>
+               <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">${accounts.length} featured</span>
+             </div>
+             <div class="account-grid">${accounts
+               .map(
+                 (a) => `
+               <div class="account-card ${state.accountFilter === a.login ? "active" : ""}" data-account="${esc(a.login)}" title="Filter to @${esc(a.login)}">
+                 <img src="${esc(a.avatar || `https://github.com/${a.login}.png`)}" alt="" />
+                 <div class="account-meta">
+                   <div class="account-name">${esc(a.name || a.login)}</div>
+                   <a class="account-login" href="https://github.com/${esc(a.login)}" target="_blank" rel="noopener noreferrer">@${esc(a.login)}</a>
+                   ${a.bio ? `<div class="account-bio">${esc(a.bio)}</div>` : ""}
+                   <div class="account-stats">
+                     <span><b>${fmtNum(a.repoCount || 0)}</b> public repos</span>
+                     <span><b>${a.followers != null ? fmtNum(a.followers) : "—"}</b> followers</span>
+                   </div>
+                 </div>
+               </div>`
+               )
+               .join("")}</div>
+           </div>`
+        : "";
+
     const identityCard = `
       <div class="card col2 profile-card">
         <div class="profile-head">
           ${u.avatar ? `<img class="profile-avatar" src="${esc(u.avatar)}" alt="" />` : ""}
           <div>
             <div class="profile-name">${esc(u.name || login || "")}</div>
-            <div class="profile-login">@${esc(login || "")}${u.location ? " · " + esc(u.location) : ""}${u.followers != null ? " · " + plural(u.followers, "follower") : ""}</div>
+            <div class="profile-login">${esc(accountList().map((a) => "@" + a).join(" + ") || "@" + (login || ""))}${u.location ? " · " + esc(u.location) : ""}${u.followers != null ? " · " + plural(u.followers, "follower") : ""}</div>
           </div>
         </div>
         ${u.bio ? `<p class="about-bio">${esc(u.bio)}</p>` : ""}
@@ -1061,7 +1263,7 @@
     const readmeCard = `
       <div class="card col2">
         <div class="card-head">
-          <div class="card-title"><span class="stat-icon" style="color:var(--cyan)">${ICONS.readme}</span> Profile README</div>
+          <div class="card-title"><span class="stat-icon" style="color:var(--cyan)">${ICONS.readme}</span> Profile README${p?.owner ? ` · @${esc(p.owner)}` : ""}</div>
           ${p?.url ? `<a class="btn btn-sm" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer">${ICONS.repos} Source repo</a>` : ""}
         </div>
         ${
@@ -1078,7 +1280,7 @@
       "About",
       `${esc(u.name || login || "")} · public GitHub profile`,
       `<a class="btn btn-sm" href="${profileUrl()}" target="_blank" rel="noopener noreferrer">${ICONS.github} Follow on GitHub</a>`,
-      `<div class="bento">${identityCard}${readmeCard}</div>`
+      `<div class="bento">${accountCards}${identityCard}${readmeCard}</div>`
     );
   }
 
@@ -1134,6 +1336,19 @@
     );
 
     bindProjectLinks(stage);
+
+    $$('#stage [data-account]').forEach((b) =>
+      b.addEventListener("click", () => {
+        const id = b.dataset.account;
+        state.accountFilter = id === "all" ? "all" : id;
+        if (state.selectedRepo !== "all" && state.accountFilter !== "all") {
+          const repo = repoList().find((r) => r.name === state.selectedRepo);
+          if (repo && repoOwner(repo) !== state.accountFilter) state.selectedRepo = "all";
+        }
+        render();
+        toast(state.accountFilter === "all" ? "Showing every account" : `Showing @${state.accountFilter} only`);
+      })
+    );
 
     $('#heroSuggestBtn')?.addEventListener("click", () => openSuggestModal());
     $$('#stage [data-nav-jump]').forEach((b) =>
@@ -1229,6 +1444,21 @@
       </div>${inner}</div>`;
   }
 
+  /* Account filter chips — only rendered when more than one account exists. */
+  const accountPills = () => {
+    const accounts = accountList();
+    if (accounts.length < 2) return "";
+    const chip = (id, label, avatar) => `
+      <button class="account-pill ${state.accountFilter === id ? "active" : ""}" data-account="${esc(id)}" title="Show ${esc(label)}">
+        ${avatar ? `<img src="${esc(avatar)}" alt="" />` : ICONS.layers}
+        <span>${esc(label)}</span>
+      </button>`;
+    return `<div class="account-pills">
+      ${chip("all", "All accounts", null)}
+      ${accounts.map((a) => chip(a, "@" + a, accountAvatar(a))).join("")}
+    </div>`;
+  };
+
   const pill = () => `
     <button class="repo-pill" data-repolink title="Change repository focus">
       <span class="stat-icon" style="color:var(--cyan)">${ICONS.repos}</span>
@@ -1244,16 +1474,24 @@
     const links = displayLinks();
     const login = u.login || ghAccount();
     const joinedYear = u.createdAt ? new Date(u.createdAt).getFullYear() : null;
+    const accounts = accountList();
+    const accountLabel = accounts.length > 1 ? accounts.map((a) => "@" + a).join(" + ") : "@" + login;
     const chips = [
       u.location ? `<span class="chip">${ICONS.globe}${esc(u.location)}</span>` : "",
       u.company ? `<span class="chip">${ICONS.layers}${esc(u.company)}</span>` : "",
       joinedYear ? `<span class="chip">${ICONS.award}On GitHub since ${joinedYear}</span>` : "",
       u.followers != null ? `<span class="chip">${ICONS.community}${plural(u.followers, "follower")}</span>` : "",
       `<span class="chip">${ICONS.repos}${repos.length} public repos</span>`,
+      accounts.length > 1
+        ? `<span class="chip" title="${esc(accountLabel)}">${ICONS.layers}${accounts.length} accounts</span>`
+        : "",
     ].join("");
 
     const actions = [
-      `<a class="btn btn-primary" href="${profileUrl()}" target="_blank" rel="noopener noreferrer">${ICONS.github} GitHub Profile</a>`,
+      ...accountList().map(
+        (a, i) =>
+          `<a class="btn ${i === 0 ? "btn-primary" : ""}" href="https://github.com/${esc(a)}" target="_blank" rel="noopener noreferrer">${ICONS.github} @${esc(a)}</a>`
+      ),
       ...links.map(
         (l) => `<a class="btn" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${ICONS.externalLink} ${esc(l.label)}</a>`
       ),
@@ -1266,7 +1504,16 @@
           <img class="hero-avatar" src="${esc(u.avatar || "icons/icon.svg")}" alt="${esc(login || "GitHub")}" />
           <div class="hero-id">
             <div class="hero-name">${esc(u.name || login || "GitHub account")}</div>
-            <a class="hero-handle" href="${profileUrl()}" target="_blank" rel="noopener noreferrer">@${esc(login || "github")}</a>
+            <div class="hero-handles">
+              ${accounts.length > 1
+                ? accounts
+                    .map(
+                      (a) =>
+                        `<a class="hero-handle" href="https://github.com/${esc(a)}" target="_blank" rel="noopener noreferrer">@${esc(a)}</a>`
+                    )
+                    .join('<span class="hero-handle-sep">·</span>')
+                : `<a class="hero-handle" href="${profileUrl()}" target="_blank" rel="noopener noreferrer">@${esc(login || "github")}</a>`}
+            </div>
             <p class="hero-bio">${esc(u.bio || displayConfig().tagline || "Public repositories, activity and release history — read straight from GitHub, no login required.")}</p>
             <div class="hero-chips">${chips}</div>
           </div>
@@ -1304,6 +1551,7 @@
           ${topics.map((t) => `<span class="priv-tag">${esc(t)}</span>`).join("")}
         </div>
         <div class="hl-foot">
+          ${accountList().length > 1 ? `<span class="owner-tag">@${esc(repoOwner(r))}</span>` : ""}
           <span><span class="stat-icon" style="color:var(--amber)">${ICONS.star}</span>${fmtNum(r.stars)}</span>
           <span><span class="stat-icon" style="color:var(--violet)">${ICONS.fork}</span>${fmtNum(r.forks)}</span>
           <span><span class="stat-icon" style="color:var(--cyan)">${ICONS.gitCommit}</span>${fmtAgo(r.pushedAt)}</span>
@@ -1338,13 +1586,14 @@
     const featured = featuredRepos(3);
 
     const actions = `
+      ${accountPills()}
       ${pill()}
       <button class="btn btn-sm" id="customizeWidgetsTrigger" title="Customize cards">${ICONS.settings} Widgets</button>
       <button class="btn btn-sm" id="exportSummaryTrigger" title="Copy a markdown summary">${ICONS.share} Share</button>`;
 
     return section(
       "Overview",
-      `Public work from @${ghAccount() || "GitHub"} · ${repos.length} repositories`,
+      `Public work from ${accountList().map((a) => "@" + a).join(" and ") || "GitHub"} · ${repos.length} repositories${state.accountFilter === "all" ? "" : " · @" + state.accountFilter}`,
       actions,
       `${heroPanel()}
        <div class="bento" style="margin-top:18px">
@@ -1377,8 +1626,8 @@
     const featured = featuredRepos(6);
     return section(
       "Highlights",
-      "The work that best represents what I build",
-      pill(),
+      `The work that best represents what I build${state.accountFilter === "all" ? "" : " · @" + state.accountFilter}`,
+      `${accountPills()}${pill()}`,
       `<div class="callout-box" style="margin-bottom:16px">
         These are derived automatically from public GitHub signals — recency of work,
         reach (stars/forks) and how complete each repository looks (description, live
@@ -1389,6 +1638,42 @@
           '<div class="card" style="padding:32px;text-align:center;color:var(--faint)">No public repositories to highlight yet.</div>'}
       </div>`
     );
+  }
+
+  /* Per-account comparison — only meaningful with more than one account. */
+  function accountComparisonCard() {
+    const accounts = accountSummaries();
+    if (accounts.length < 2) return "";
+    const rows = accounts
+      .map((a) => {
+        const own = repoList().filter((r) => repoOwner(r) === a.login);
+        const stars = own.reduce((s, r) => s + r.stars, 0);
+        return `
+        <div class="account-card ${state.accountFilter === a.login ? "active" : ""}" data-account="${esc(a.login)}" title="Filter to @${esc(a.login)}">
+          <img src="${esc(a.avatar || `https://github.com/${a.login}.png`)}" alt="" />
+          <div class="account-meta">
+            <div class="account-name">${esc(a.name || a.login)}</div>
+            <a class="account-login" href="https://github.com/${esc(a.login)}" target="_blank" rel="noopener noreferrer">@${esc(a.login)}</a>
+            ${a.bio ? `<div class="account-bio">${esc(a.bio)}</div>` : ""}
+            <div class="account-stats">
+              <span><b>${fmtNum(own.length || a.repoCount || 0)}</b> repos</span>
+              <span><b>${fmtNum(stars || a.stars || 0)}</b> stars</span>
+              <span><b>${a.followers != null ? fmtNum(a.followers) : "—"}</b> followers</span>
+              <span>last push ${fmtAgo(a.latestPush || own[0]?.pushedAt)}</span>
+            </div>
+          </div>
+        </div>`;
+      })
+      .join("");
+
+    return `
+      <div class="card" style="margin-bottom:18px">
+        <div class="card-head">
+          <div class="card-title"><span class="stat-icon" style="color:var(--cyan)">${ICONS.layers}</span> Featured Accounts</div>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">click to filter</span>
+        </div>
+        <div class="account-grid">${rows}</div>
+      </div>`;
   }
 
   /* ---- 3. NUMBERS ---- */
@@ -1435,9 +1720,12 @@
 
     return section(
       "Numbers",
-      "The measurable footprint of this account",
-      pill(),
-      `<div class="bento">
+      state.accountFilter === "all"
+        ? `The measurable footprint of ${accountList().length > 1 ? "both accounts" : "this account"}`
+        : `The measurable footprint of @${state.accountFilter}`,
+      `${accountPills()}${pill()}`,
+      `${accountComparisonCard()}
+      <div class="bento">
         ${statCard("Public Repos", fmtNum(repos.length), "on GitHub", "var(--cyan)", ICONS.repos)}
         ${statCard("Stars", fmtNum(stars), "across all repos", "var(--amber)", ICONS.star)}
         ${statCard("Forks", fmtNum(forks), "community copies", "var(--violet)", ICONS.fork)}
@@ -1711,6 +1999,7 @@
         </div>
         <div class="foot">
           <span class="lang-tag" style="background:${langCol}22;color:${langCol}">${esc(r.language || "—")}</span>
+          ${accountList().length > 1 ? `<span class="owner-tag">@${esc(repoOwner(r))}</span>` : ""}
           <span style="font-family:var(--mono);font-size:11px;color:var(--faint)">${fmtAgo(r.pushedAt)}</span>
         </div>
       </div>`;
@@ -1724,9 +2013,9 @@
     return section(
       "Projects",
       state.selectedRepo === "all"
-        ? `Every public repository, grouped by activity · ${all.length} projects`
+        ? `Every public repository, grouped by activity · ${all.length} projects${state.accountFilter === "all" ? "" : " · @" + state.accountFilter}`
         : `Focus · ${state.selectedRepo}`,
-      pill(),
+      `${accountPills()}${pill()}`,
       `<div class="control-bar">
         <div class="search-box">
           <span class="search-icon">${ICONS.search}</span>
@@ -1962,11 +2251,13 @@
     const extras = s.extras || [];
 
     // Real cross-repo events, filtered by global repo selection
-    const events = (s.events || []).filter(
-      (e) =>
+    const events = (s.events || []).filter((e) => {
+      if (state.accountFilter !== "all" && e.repo.split("/")[0] !== state.accountFilter) return false;
+      return (
         state.selectedRepo === "all" ||
         e.repo.split("/").pop() === state.selectedRepo.split("/").pop()
-    );
+      );
+    });
 
     const eventFeed = events
       .slice(0, 25)
@@ -2073,8 +2364,8 @@
 
     return section(
       "Activity Stream",
-      "Real-time activity, running workflows and releases",
-      `${createIssueBtn}${pill()}`,
+      `Union of every featured account's public activity${state.accountFilter === "all" ? "" : " · @" + state.accountFilter}`,
+      `${createIssueBtn}${accountPills()}${pill()}`,
       `<div class="bento">
         <div class="card col2">
           <div class="card-head">
@@ -2136,8 +2427,8 @@
       </div>
 
       <div class="callout-box" style="margin-bottom:16px">
-        Pulse is a read-only public view of this account. Your suggestion opens on
-        <b>github.com</b> where GitHub handles sign-in and posting for you.
+        Pulse is a read-only public view of ${esc(accountList().map((a) => "@" + a).join(" and ") || "this account")}.
+        Your suggestion opens on <b>github.com</b> where GitHub handles sign-in and posting for you.
       </div>
 
       <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--faint);margin-bottom:8px">Repository</div>
@@ -2275,7 +2566,7 @@
     return section(
       "How I Build",
       `Pipeline health, stack and release cadence · last sync ${lastSync}`,
-      `${pill()}`,
+      `${accountPills()}${pill()}`,
       `<div class="bento">
         <div class="card">
           <div class="card-head">
@@ -2362,44 +2653,50 @@
   }
 
   async function fetchLive() {
-    const login = ghAccount();
-    if (!login) {
-      toast("No GitHub account configured — set github.username in js/config.js");
+    const accounts = accountList();
+    if (!accounts.length) {
+      toast("No GitHub account configured — set github.accounts in js/config.js");
       return;
     }
     if (!isLiveEnabled()) {
       toast("Live refresh is disabled in js/config.js");
       return;
     }
-    toast("Refreshing public GitHub data…");
+    toast(accounts.length > 1 ? `Refreshing ${accounts.length} public accounts…` : "Refreshing public GitHub data…");
     try {
       const chip = $('#rateChip');
       const headers = { Accept: "application/vnd.github+json" };
 
       // Public, read-only reads. No credential of any kind is attached.
-      const [reposRes, userRes] = await Promise.all([
-        fetch(`https://api.github.com/users/${encodeURIComponent(login)}/repos?per_page=100&sort=updated&type=owner`, { headers }),
-        fetch(`https://api.github.com/users/${encodeURIComponent(login)}`, { headers }),
-      ]);
+      const results = await Promise.all(
+        accounts.map(async (account) => {
+          const [reposRes, userRes] = await Promise.all([
+            fetch(`https://api.github.com/users/${encodeURIComponent(account)}/repos?per_page=100&sort=updated&type=owner`, { headers }),
+            fetch(`https://api.github.com/users/${encodeURIComponent(account)}`, { headers }),
+          ]);
+          if (reposRes.headers) {
+            const limit = reposRes.headers.get("X-RateLimit-Limit");
+            const remain = reposRes.headers.get("X-RateLimit-Remaining");
+            if (limit) state.api.rateLimit = Number(limit);
+            if (remain) state.api.rateRemaining = Number(remain);
+            if (chip && remain) {
+              chip.style.display = "inline";
+              chip.textContent = `${remain} / ${state.api.rateLimit} reqs`;
+            }
+          }
+          if (!reposRes.ok) throw new Error(`${account}: HTTP ${reposRes.status}`);
+          const rawRepos = await reposRes.json();
+          const profile = userRes.ok ? await userRes.json().catch(() => null) : null;
+          return { account, rawRepos: Array.isArray(rawRepos) ? rawRepos : [], profile };
+        })
+      );
 
-      if (reposRes.headers) {
-        const limit = reposRes.headers.get("X-RateLimit-Limit");
-        const remain = reposRes.headers.get("X-RateLimit-Remaining");
-        if (limit) state.api.rateLimit = Number(limit);
-        if (remain) state.api.rateRemaining = Number(remain);
-        if (chip && remain) {
-          chip.style.display = "inline";
-          chip.textContent = `${remain} / ${state.api.rateLimit} reqs`;
-        }
-      }
-
-      if (!reposRes.ok) throw new Error(`HTTP ${reposRes.status}`);
-      const repos = await reposRes.json();
-
-      if (Array.isArray(repos)) {
-        const enriched = repos
-          .filter((r) => !r.fork)
-          .map((r) => ({
+      {
+        const enriched = results
+          .flatMap(({ account, rawRepos }) =>
+            rawRepos
+              .filter((r) => !r.fork)
+              .map((r) => ({
             name: r.name,
             fullName: r.full_name,
             description: r.description,
@@ -2411,44 +2708,54 @@
             openIssues: r.open_issues_count,
             watchers: r.watchers_count,
             license: r.license?.spdx_id || null,
-            isPrivate: false, // public showroom: only public work is listed
-            archived: r.archived,
-            topics: r.topics || [],
-            defaultBranch: r.default_branch,
-            createdAt: r.created_at,
-            updatedAt: r.updated_at,
-            pushedAt: r.pushed_at,
-          }));
+              isPrivate: false, // public showroom: only public work is listed
+              archived: r.archived,
+              topics: r.topics || [],
+              defaultBranch: r.default_branch,
+              createdAt: r.created_at,
+              updatedAt: r.updated_at,
+              pushedAt: r.pushed_at,
+              owner: account,
+            }))
+          )
+          .sort((a, b) => new Date(b.pushedAt) - new Date(a.pushedAt));
 
-        // Profile block (bio, followers, links) straight from the public API.
-        let userInfo = state.snapshot?.user || { login };
-        if (userRes.ok) {
-          try {
-            const u = await userRes.json();
-            userInfo = {
-              login: u.login,
-              name: u.name,
-              avatar: u.avatar_url,
-              bio: u.bio,
-              company: u.company,
-              blog: u.blog,
-              location: u.location,
-              twitter: u.twitter_username,
-              hireable: u.hireable,
-              publicRepos: u.public_repos,
-              publicGists: u.public_gists,
-              followers: u.followers,
-              following: u.following,
-              createdAt: u.created_at,
-              htmlUrl: u.html_url,
-            };
-          } catch (e) {}
-        }
+        // Account summaries (bio, followers, links) straight from the public API.
+        const summaries = results.map(({ account, profile, rawRepos }) => {
+          const own = enriched.filter((r) => r.owner === account);
+          return {
+            login: account,
+            name: profile?.name || null,
+            avatar: profile?.avatar_url || `https://github.com/${account}.png`,
+            bio: profile?.bio || null,
+            company: profile?.company || null,
+            blog: profile?.blog || null,
+            location: profile?.location || null,
+            followers: profile?.followers ?? null,
+            following: profile?.following ?? null,
+            publicRepos: profile?.public_repos ?? own.length,
+            htmlUrl: `https://github.com/${account}`,
+            createdAt: profile?.created_at || null,
+            repoCount: own.length,
+            stars: own.reduce((a, r) => a + r.stars, 0),
+            latestPush: own[0]?.pushedAt || null,
+          };
+        });
+
+        const primary =
+          summaries.find((s) => s.login === ghAccount()) || summaries[0] || state.snapshot?.user || {};
 
         state.snapshot = {
           ...(state.snapshot || {}),
           generatedAt: new Date().toISOString(),
-          user: userInfo,
+          account: primary.login,
+          accounts: summaries,
+          user: {
+            ...primary,
+            publicRepos: enriched.length,
+            followers: summaries.reduce((a, s) => a + (s.followers || 0), 0),
+            following: summaries.reduce((a, s) => a + (s.following || 0), 0),
+          },
           repos: enriched,
           totalStars: enriched.reduce((a, r) => a + r.stars, 0),
           totalForks: enriched.reduce((a, r) => a + r.forks, 0),
@@ -2458,7 +2765,11 @@
         state.live.error = null;
         render();
         fetchWorkflowLive().catch(() => {});
-        toast(`Showing @${login}'s public repositories`);
+        toast(
+          summaries.length > 1
+            ? `Showing public work from ${summaries.map((s) => "@" + s.login).join(" and ")}`
+            : `Showing @${primary.login}'s public repositories`
+        );
       }
     } catch (e) {
       console.warn("Live sync warning:", e);

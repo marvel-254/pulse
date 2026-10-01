@@ -1,16 +1,21 @@
 /**
  * Pulse — runtime configuration (public / read-only)
  *
- * Pulse is a public showroom for ONE GitHub account. There is no login,
- * no OAuth, no personal access token and nothing secret in this file —
+ * Pulse is a public showroom for one or more GitHub accounts. There is no
+ * login, no OAuth, no personal access token and nothing secret in this file —
  * everything here ships to the browser and is meant to be public.
  *
- * `username` is the GitHub account whose work the site displays.
+ * `username` is the primary account; `accounts` lists every account whose
+ * public work appears on the site.
  */
 window.PULSE_CONFIG = {
   github: {
-    // The account shown on the site. Change this one value to re-point Pulse.
+    // Primary account — the identity shown in the hero, topbar and page meta.
     username: "marvel-254",
+    // Every account featured on the site. Public repos from all of these are
+    // merged into one showcase; visitors can filter down to a single account.
+    // Leave this out to show only `username`.
+    accounts: ["marvel-254", "oliver4441"],
   },
 
   display: {

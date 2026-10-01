@@ -32,8 +32,10 @@ jobs:
       - name: Generate public data snapshot
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          # Optional: set a repo variable PULSE_USERNAME to override the
-          # account shown on the site (otherwise js/config.js is used).
+          # Optional: set repo variables PULSE_ACCOUNTS (comma-separated, e.g.
+          # "marvel-254,oliver4441") and/or PULSE_USERNAME to override which
+          # accounts are published. Without them, js/config.js is used.
+          PULSE_ACCOUNTS: ${{ vars.PULSE_ACCOUNTS }}
           PULSE_USERNAME: ${{ vars.PULSE_USERNAME }}
         run: node build.mjs
 
