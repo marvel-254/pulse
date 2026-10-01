@@ -356,6 +356,7 @@
   }
 
   function toggleTheme() {
+    window.PulseQuests?.action("theme");
     const next = state.theme === "dark" ? "light" : "dark";
     applyTheme(next);
     renderTopbar();
@@ -390,6 +391,12 @@
 
         <span id="rateChip" style="display:none"></span>
 
+        <span id="questChip" class="quest-chip-host"></span>
+
+        <button class="topbar-btn depth-btn" id="depthToggleBtn" title="Toggle the 3D depth layer">
+          ${ICONS.layers}
+        </button>
+
         <a class="topbar-btn" id="githubProfileBtn" href="${esc(state.snapshot?.user?.htmlUrl || (ghAccount() ? "https://github.com/" + ghAccount() : "https://github.com"))}" target="_blank" rel="noopener noreferrer" title="Open GitHub profile">
           ${ICONS.github}
         </a>
@@ -411,6 +418,13 @@
     });
     $('#topbarSearchTrigger')?.addEventListener("click", openCommandPalette);
     $('#themeToggleBtn')?.addEventListener("click", toggleTheme);
+    $('#depthToggleBtn')?.addEventListener("click", () => {
+      const next = !(window.PulseDepth?.isEnabled?.() ?? true);
+      window.PulseDepth?.setEnabled(next);
+      window.PulseQuests?.action("depth");
+      toast(next ? "3D depth layer enabled" : "3D depth layer disabled");
+    });
+    window.PulseQuests?.mount();
   }
 
   /* ---- SIDEBAR RENDERING ---- */
@@ -539,6 +553,13 @@
             <span class="rs">Open @${esc(ghAccount() || "github")} on github.com</span>
           </span>
         </button>
+        <button class="sheet-row" id="moreSheetQuestsBtn" style="width:100%">
+          <span class="ic" style="color:var(--violet)">${ICONS.award}</span>
+          <span class="rmeta">
+            <span class="rt">Pulse Quests</span>
+            <span class="rs">Level, badges and XP for exploring this profile</span>
+          </span>
+        </button>
         <button class="sheet-row" id="moreSheetSuggestBtn" style="width:100%">
           <span class="ic" style="color:var(--green)">${ICONS.issue}</span>
           <span class="rmeta">
@@ -552,6 +573,10 @@
     $('#moreSheetGithubBtn')?.addEventListener("click", () => {
       closeOverlay();
       openGithubProfile();
+    });
+    $('#moreSheetQuestsBtn')?.addEventListener("click", () => {
+      closeOverlay();
+      window.PulseQuests?.open();
     });
     $('#moreSheetSuggestBtn')?.addEventListener("click", () => {
       closeOverlay();
@@ -666,6 +691,7 @@
 
   /* ---- COMMAND PALETTE (CMD+K) ---- */
   function openCommandPalette() {
+    window.PulseQuests?.action("palette");
     const overlay = $('#paletteOverlay');
     const sheet = $('#paletteSheet');
     state.paletteQuery = "";
@@ -692,6 +718,23 @@
 
       // Actions group
       const actions = [
+        {
+          title: "Pulse Quests — levels, badges & XP",
+          sub: "Progress",
+          icon: ICONS.award,
+          action: () => window.PulseQuests?.open(),
+        },
+        {
+          title: `3D depth layer: ${window.PulseDepth?.isEnabled?.() === false ? "off" : "on"}`,
+          sub: "Display",
+          icon: ICONS.layers,
+          action: () => {
+            const next = !(window.PulseDepth?.isEnabled?.() ?? true);
+            window.PulseDepth?.setEnabled(next);
+            window.PulseQuests?.action("depth");
+            toast(next ? "3D depth layer enabled" : "3D depth layer disabled");
+          },
+        },
         {
           title: "Open GitHub Profile",
           sub: "GitHub",
@@ -939,6 +982,7 @@
 
   /* ---- EXPORT MARKDOWN SUMMARY ---- */
   function copyMarkdownSummary() {
+    window.PulseQuests?.action("share");
     const s = state.snapshot;
     const repos = filteredRepos();
     const stars = repos.reduce((a, r) => a + r.stars, 0);
@@ -1307,6 +1351,11 @@
     requestAnimationFrame(() => {
       stage.innerHTML = fn();
       bindStage(stage);
+      // 3D + gamification hooks (both layers are optional and self-contained)
+      window.PulseDepth?.bindTilt(stage);
+      window.PulseDepth?.refresh();
+      window.PulseQuests?.syncSnapshot(state.snapshot);
+      window.PulseQuests?.mount();
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -1345,12 +1394,17 @@
           const repo = repoList().find((r) => r.name === state.selectedRepo);
           if (repo && repoOwner(repo) !== state.accountFilter) state.selectedRepo = "all";
         }
+        if (state.accountFilter !== "all") window.PulseQuests?.action("account");
         render();
         toast(state.accountFilter === "all" ? "Showing every account" : `Showing @${state.accountFilter} only`);
       })
     );
 
     $('#heroSuggestBtn')?.addEventListener("click", () => openSuggestModal());
+    $$('#stage a[href*="omixsystems"], #stage a[href^="https://github.com/"]').forEach((a) =>
+      a.addEventListener("click", () => window.PulseQuests?.action("contact"))
+    );
+
     $$('#stage [data-nav-jump]').forEach((b) =>
       b.addEventListener("click", () => go(b.dataset.navJump))
     );
@@ -1418,6 +1472,7 @@
 
   function go(view, opts = {}) {
     state.view = view;
+    window.PulseQuests?.visit(view);
     // Keep the address bar in sync so any view is directly linkable.
     if (!opts.keepHash) {
       try {
@@ -1499,9 +1554,9 @@
     ].join("");
 
     return `
-      <div class="card hero">
+      <div class="card hero" data-tilt>
         <div class="hero-main">
-          <img class="hero-avatar" src="${esc(u.avatar || "icons/icon.svg")}" alt="${esc(login || "GitHub")}" />
+          <img class="hero-avatar" data-depth="10" src="${esc(u.avatar || "icons/icon.svg")}" alt="${esc(login || "GitHub")}" />
           <div class="hero-id">
             <div class="hero-name">${esc(u.name || login || "GitHub account")}</div>
             <div class="hero-handles">
@@ -1539,7 +1594,7 @@
     const summary = (r.readmeExcerpt || r.description || "No description yet — open the project for the full picture.").slice(0, 240);
     const topics = (r.topics || []).slice(0, 3);
     return `
-      <div class="card hl-card" data-project="${esc(r.name)}" title="Open ${esc(r.name)}">
+      <div class="card hl-card" data-tilt data-project="${esc(r.name)}" title="Open ${esc(r.name)}">
         <div class="hl-head">
           <span class="hl-rank">${String(index + 1).padStart(2, "0")}</span>
           <span class="status ${st === "active" ? "ok" : st === "archived" ? "warn" : "run"}"><span class="sdot"></span>${st.toUpperCase()}</span>
@@ -1562,7 +1617,7 @@
 
   function statCard(label, value, sub, color, icon) {
     return `
-      <div class="card">
+      <div class="card" data-tilt>
         <div class="card-head">
           <div class="card-title"><span class="stat-icon" style="color:${color}">${icon}</span> ${label}</div>
         </div>
@@ -1605,8 +1660,10 @@
          ${statCard("Followers", u.followers != null ? fmtNum(u.followers) : "—", u.following != null ? `following ${fmtNum(u.following)}` : "public profile", "var(--red)", ICONS.community)}
        </div>
        <div style="height:18px"></div>
+       <div class="bento" id="questStrip"></div>
+       <div style="height:18px"></div>
        <div class="bento">
-         <div class="card col2 overview-featured">
+         <div class="card col2 overview-featured" data-tilt>
            <div class="card-head">
              <div class="card-title"><span class="stat-icon" style="color:var(--cyan)">${ICONS.zap}</span> What I've Been Building</div>
              <button class="btn btn-sm" data-nav-jump="highlights">All highlights →</button>
@@ -1970,7 +2027,7 @@
     const st = repoStatus(r);
     const topics = (r.topics || []).slice(0, 3);
     return `
-      <div class="card repo-card" data-project="${esc(r.name)}" title="Open ${esc(r.name)}">
+      <div class="card repo-card" data-tilt data-project="${esc(r.name)}" title="Open ${esc(r.name)}">
         <div class="card-head">
           <div class="name">
             <span class="dot" style="background:${st === "archived" ? "var(--amber)" : st === "active" ? "var(--green)" : "var(--faint)"}"></span>
@@ -2142,6 +2199,7 @@
     }
 
     state.selectedProject = repo.name;
+    window.PulseQuests?.openProject(repo.name);
     const extras = extrasFor(repo.fullName) || {};
     const runs = (extras.runs || []).slice(0, 5);
     const releases = (extras.releases || []).slice(0, 4);
@@ -2411,6 +2469,7 @@
      builds a prefilled GitHub "new issue" URL and opens it in a new tab.
      Nothing is stored and nothing is sent anywhere by Pulse itself. */
   function openSuggestModal(preRepo) {
+    window.PulseQuests?.action("suggest");
     const overlay = $("#issueOverlay");
     const sheet = $("#issueSheet");
     const repos = repoList().filter((r) => !r.isPrivate && !r.archived);
@@ -2887,6 +2946,7 @@
 
   function goProject(name) {
     state.selectedProject = name;
+    window.PulseQuests?.openProject(name);
     try {
       const target = `#/project/${encodeURIComponent(name)}`;
       if (location.hash !== target) history.replaceState(null, "", target);

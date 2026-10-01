@@ -2,9 +2,10 @@
 
 **A structured, visitor-first way to view one GitHub account.**
 
-Status: **Phases 0, 1 and 4 shipped** (login/OAuth removed, visitor-first IA,
-multi-account showcase). Phase 2 (data depth: contribution heatmap, authored
-PR/issue counts, language bytes) is next.
+Status: **Phases 0, 1, 3, 4 and 5 shipped** (login/OAuth removed, visitor-first
+IA, multi-account showcase, 3D depth layer, gamified exploration, mobile pass).
+Phase 2 (data depth: contribution heatmap, authored PR/issue counts, language
+bytes) is next.
 Owner: `@marvel-254` · Data source: public GitHub only · No login, ever.
 
 ---
@@ -196,11 +197,15 @@ Visitor sees fresh data even if the snapshot is hours old
 - README excerpt + cover image per featured repo.
 - "This week" digest computed in `build.mjs` (not in the browser).
 
-### Phase 3 — share & polish
-- Open Graph/Twitter card image generated at build time (`og.png`) + meta tags.
-- Print/PDF-friendly "About" (a one-page résumé view).
-- Per-project "case study" layout for the featured 3–5.
-- Motion/accessibility pass (respect `prefers-reduced-motion`, focus states).
+### Phase 3 — 3D + motion — ✅ SHIPPED
+- [x] `js/depth.js`: dependency-free perspective starfield in a real 3D volume,
+      pointer parallax, scroll drift, celebration bursts.
+- [x] Card tilt in a shared perspective (`data-tilt`) plus a pointer-tracked
+      glass sheen, hero avatar/name depth planes (`data-depth`), view rise-in.
+- [x] Visitor control: 3D toggle in the topbar and in the badge sheet
+      (`pulse-3d`), reduced-motion respect, pause when the tab is hidden,
+      particle budget scaled to viewport size and device class.
+- [x] Tilt/sheen off on touch-only devices; motion cost reduced on phones.
 
 ### Phase 4 — multi-account — ✅ SHIPPED
 - [x] `github.accounts` lists every featured account; the build merges their
@@ -214,6 +219,23 @@ Visitor sees fresh data even if the snapshot is hours old
       repos, so neither account dominates and non-projects stay out.
 - [x] README rendering hardened: HTML comments stripped and a sanitised HTML
       subset (badges, banners, centred blocks) now renders instead of raw markup.
+
+### Phase 3b — gamification — ✅ SHIPPED
+- [x] `js/game.js` (Pulse Quests): 27 badges, XP, levels and 7 ranks stored
+      entirely in `localStorage` — no account, no server, no tracking.
+- [x] Exploration badges (sections visited, projects opened, ⌘K, account filter,
+      theme, refresh, suggest, share, 3D toggle, contact links) and showcase
+      badges derived from the public data (Polyglot, Prolific, Shipper,
+      Release Train, Documented, Veteran, Traction, Vault).
+- [x] HUD level ring in the topbar, progress strip on the Overview, achievement
+      toasts with a depth burst on level-up, full badge sheet, reset control.
+
+### Phase 3c — mobile — ✅ SHIPPED
+- [x] Phones-first responsive pass (980/720/640/520/420/380/360 breakpoints):
+      stacked hero, two-up metric cards, scrolling account/filter chips,
+      full-width bottom sheets (`dvh`), safe-area padding, 40px+ tap targets.
+- [x] `npm run audit`: static check for fixed widths, unshrinkable grid minimums,
+      nowrap without scroll containers and vh/chrome collisions.
 
 ### Phase 5 — optional
 - Embeddable widget (`<iframe src="…/#/project/stor1">`).

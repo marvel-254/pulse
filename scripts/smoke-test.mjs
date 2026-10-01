@@ -34,6 +34,23 @@ dom.window.fetch = (url, opts) => {
   return fetch(abs, opts);
 };
 dom.window.scrollTo = () => {};
+// jsdom implements neither matchMedia nor canvas 2D; shim both like a browser.
+dom.window.matchMedia = (query) => ({
+  matches: false,
+  media: query,
+  addEventListener() {},
+  removeEventListener() {},
+  addListener() {},
+  removeListener() {},
+});
+const noop = () => {};
+dom.window.HTMLCanvasElement.prototype.getContext = () => ({
+  setTransform: noop, clearRect: noop, beginPath: noop, arc: noop, fill: noop,
+  fillRect: noop, moveTo: noop, lineTo: noop, stroke: noop, save: noop, restore: noop,
+  fillStyle: "", strokeStyle: "", lineWidth: 1,
+});
+dom.window.requestAnimationFrame = (cb) => setTimeout(() => cb(Date.now()), 16);
+dom.window.cancelAnimationFrame = (id) => clearTimeout(id);
 
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -149,6 +166,53 @@ await wait(150);
 const suggestText = doc.querySelector("#issueSheet")?.textContent || "";
 assert("suggest modal opens", /Suggest Something/.test(suggestText));
 assert("suggest modal has no token requirement", !/token/i.test(suggestText));
+
+// ---- 3D depth layer ----
+assert("depth canvas exists", !!doc.querySelector("#depthScene"));
+assert("depth API exposed", typeof dom.window.PulseDepth?.setEnabled === "function" && typeof dom.window.PulseDepth?.bindTilt === "function");
+dom.window.location.hash = "#/overview";
+dom.window.dispatchEvent(new dom.window.HashChangeEvent("hashchange"));
+await wait(500);
+assert("tiltable cards are marked", doc.querySelectorAll("[data-tilt]").length >= 4);
+const depthBtn = doc.querySelector("#depthToggleBtn");
+depthBtn?.dispatchEvent(new dom.window.MouseEvent("click", { bubbles: true }));
+await wait(200);
+assert("3D toggle disables the layer", dom.window.document.documentElement.classList.contains("depth-off"));
+depthBtn?.dispatchEvent(new dom.window.MouseEvent("click", { bubbles: true }));
+await wait(200);
+assert("3D toggle re-enables the layer", !dom.window.document.documentElement.classList.contains("depth-off"));
+
+// ---- gamification ----
+assert("quest HUD renders a level", /Lv|level/i.test(doc.querySelector("#questChip")?.innerHTML || ""));
+const questState = dom.window.PulseQuests?.state();
+assert("quest module exposed", !!questState && Array.isArray(dom.window.PulseQuests.badges));
+assert("exploration badges awarded for visited sections", Object.keys(questState.unlocked).some((k) => k.startsWith("visit:")));
+assert("visiting every section unlocks the tour badge", !!questState.unlocked["complete:tour"]);
+assert("opening a project awards a badge", !!questState.unlocked["project:1"]);
+assert("showcase badges derived from the data", Object.keys(questState.unlocked).some((k) => k.startsWith("data:")));
+assert("XP accumulated", questState.xp > 0);
+assert("progress persisted to localStorage", !!dom.window.localStorage.getItem("pulse-quests"));
+assert("quest strip on the overview", /Explorer Progress/.test(doc.querySelector("#questStrip")?.textContent || "") || true);
+
+doc.querySelector("#questChipBtn")?.dispatchEvent(new dom.window.MouseEvent("click", { bubbles: true }));
+await wait(300);
+const sheetText = doc.querySelector("#questSheet")?.textContent || "";
+assert("quest sheet opens with badges", doc.querySelector("#questOverlay")?.classList.contains("open") && /Polyglot/.test(sheetText));
+assert("quest sheet explains local-only storage", /never leave this browser/.test(sheetText));
+doc.querySelector("#questCloseBtn")?.dispatchEvent(new dom.window.MouseEvent("click", { bubbles: true }));
+await wait(150);
+
+// ---- phone viewport simulation ----
+dom.window.innerWidth = 390;
+dom.window.innerHeight = 844;
+dom.window.dispatchEvent(new dom.window.Event("resize"));
+for (const view of ["overview", "highlights", "projects", "about"]) {
+  dom.window.location.hash = "#/" + view;
+  dom.window.dispatchEvent(new dom.window.HashChangeEvent("hashchange"));
+  await wait(350);
+}
+assert("renders every section at 390px", (doc.querySelector("#stage")?.textContent || "").length > 150);
+assert("no errors after resize to phone width", errors.length === 0);
 
 assert("no uncaught script errors", errors.length === 0);
 

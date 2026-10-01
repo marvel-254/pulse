@@ -1051,7 +1051,7 @@ input:focus, select:focus, textarea:focus {
 .repos-grid {
   display: grid;
   gap: 16px;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
 }
 .repo-card {
   display: flex;
@@ -1095,6 +1095,8 @@ input:focus, select:focus, textarea:focus {
 .repo-card .foot {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
   justify-content: space-between;
   margin-top: auto;
   padding-top: 10px;
@@ -1982,3 +1984,313 @@ html, body { overflow-x: hidden; max-width: 100vw; }
 .md-html details { border: 1px solid var(--stroke); border-radius: 12px; padding: 10px 14px; margin: 0 0 0.9em; }
 .md-html summary { cursor: pointer; font-weight: 700; color: var(--text-bright); }
 .md-code .md-html, .md-pre .md-html { display: none; }
+
+/* ============================================================
+   3D DEPTH LAYER
+   ============================================================ */
+.depth-scene {
+  position: fixed; inset: 0; width: 100%; height: 100%;
+  z-index: 0; pointer-events: none; opacity: 0.9;
+}
+.depth-vignette {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(120% 80% at 50% 0%, transparent 35%, color-mix(in srgb, var(--bg) 72%, transparent) 100%),
+    radial-gradient(80% 60% at 50% 110%, color-mix(in srgb, var(--violet) 12%, transparent), transparent 70%);
+}
+html.depth-off .depth-scene,
+html.depth-off .depth-vignette { display: none; }
+
+/* Keep the UI above the depth field without disturbing existing positioning.
+   (.app is static, so it needs relative; the rest are already sticky/fixed.) */
+/* Original stacking is preserved — the canvas sits at z-index 0 and the
+   existing sticky/fixed chrome (topbar 50, mobile nav 60, overlays 100,
+   toasts 120) already paints above it. Only the toast stack is new. */
+.quest-toasts { z-index: 120; }
+
+/* 3D scene: cards participate in a shared perspective */
+.stage { perspective: 1400px; perspective-origin: 50% 0%; }
+.bento, .hl-grid, .repos-grid, .control-bar { transform-style: preserve-3d; }
+
+.card { position: relative; transform-style: preserve-3d; will-change: transform; }
+.card::after {
+  /* glass sheen that follows the pointer while tilting */
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(220px circle at var(--tilt-x, 50%) var(--tilt-y, 0%), rgba(255,255,255,0.10), transparent 60%);
+  opacity: 0; transition: opacity 0.25s ease;
+}
+.card.tilting::after { opacity: 1; }
+@media (hover: hover) and (pointer: fine) {
+  .card[data-tilt]:hover { z-index: 3; box-shadow: 0 26px 50px -22px rgba(0,0,0,0.75); }
+}
+@media (prefers-reduced-motion: reduce), (hover: none) {
+  .card[data-tilt]:hover { box-shadow: var(--shadow-card); }
+}
+
+/* Depth accents */
+.hero-avatar { transform: translateZ(28px); box-shadow: 0 30px 60px -28px color-mix(in srgb, var(--cyan) 45%, transparent); }
+.hero-name { transform: translateZ(14px); }
+.stat-icon svg { transform: translateZ(6px); }
+
+/* Cards rise in as a view renders */
+.stage .card { animation: pulse-rise 0.5s cubic-bezier(0.22, 0.8, 0.3, 1) both; }
+.stage .card:nth-child(2) { animation-delay: 0.04s; }
+.stage .card:nth-child(3) { animation-delay: 0.08s; }
+.stage .card:nth-child(4) { animation-delay: 0.12s; }
+.stage .card:nth-child(5) { animation-delay: 0.16s; }
+.stage .card:nth-child(6) { animation-delay: 0.2s; }
+@keyframes pulse-rise {
+  from { opacity: 0; transform: translate3d(0, 18px, -40px) rotateX(6deg); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stage .card { animation: none; }
+  .depth-scene { display: none; }
+}
+
+/* ============================================================
+   PULSE QUESTS (levels, badges, toasts)
+   ============================================================ */
+.quest-chip-host { display: inline-flex; }
+.quest-chip {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 5px 12px 5px 6px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--stroke); background: var(--glass); color: var(--text);
+  transition: border-color 0.18s ease, transform 0.18s ease;
+}
+.quest-chip:hover { border-color: color-mix(in srgb, var(--violet) 55%, var(--stroke)); transform: translateY(-1px); }
+.qc-ring {
+  width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+  background: conic-gradient(var(--violet) calc(var(--pct, 0) * 1%), color-mix(in srgb, var(--stroke) 80%, transparent) 0);
+  position: relative;
+}
+.qc-ring::before { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--bg2); }
+.qc-level { position: relative; font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--text-bright); }
+.qc-meta { display: flex; flex-direction: column; gap: 3px; min-width: 52px; }
+.qc-xp { font-family: var(--mono); font-size: 10.5px; color: var(--muted); letter-spacing: 0.04em; }
+.qc-bar { display: block; height: 3px; border-radius: 999px; background: var(--stroke); overflow: hidden; }
+.qc-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--violet), var(--cyan)); }
+
+.quest-strip { overflow: hidden; }
+.quest-level-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; margin: 6px 0 12px; flex-wrap: wrap; }
+.quest-level { display: flex; align-items: baseline; gap: 10px; }
+.ql-num { font-size: 30px; font-weight: 800; color: var(--text-bright); letter-spacing: -0.02em; }
+.ql-rank { font-family: var(--mono); font-size: 12px; color: var(--violet); text-transform: uppercase; letter-spacing: 0.1em; }
+.quest-level-meta { display: flex; gap: 14px; flex-wrap: wrap; font-family: var(--mono); font-size: 11px; color: var(--faint); }
+.quest-level-meta b { color: var(--text-bright); }
+.quest-bar { height: 8px; border-radius: 999px; background: var(--stroke); overflow: hidden; }
+.quest-bar.big { height: 12px; margin-bottom: 10px; }
+.quest-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--violet), var(--cyan)); transition: width 0.5s cubic-bezier(0.22,0.8,0.3,1); }
+.quest-goals { display: grid; gap: 8px; margin-top: 14px; }
+.quest-goal {
+  display: flex; align-items: center; gap: 10px; padding: 9px 12px;
+  border: 1px dashed var(--stroke); border-radius: 12px; background: var(--glass);
+}
+.qg-ic { width: 26px; height: 26px; display: grid; place-items: center; border-radius: 8px; background: color-mix(in srgb, var(--violet) 14%, transparent); color: var(--violet); flex-shrink: 0; }
+.qg-ic svg { width: 15px; height: 15px; }
+.qg-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.qg-label { font-weight: 700; font-size: 13px; color: var(--text-bright); }
+.qg-desc { font-size: 11.5px; color: var(--faint); }
+.qg-xp { margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--cyan); }
+.quest-foot { margin-top: 12px; font-size: 11.5px; color: var(--faint); }
+
+.quest-sheet-level { margin-bottom: 16px; }
+.badge-group { margin-bottom: 20px; }
+.badge-group-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.badge-group-head h3 { margin: 0; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-bright); }
+.badge-group-head span { font-size: 11.5px; color: var(--faint); }
+.badge-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; }
+.badge {
+  display: flex; align-items: center; gap: 11px; padding: 11px 12px;
+  border: 1px solid var(--stroke); border-radius: 14px; background: var(--glass);
+  transition: transform 0.16s ease, border-color 0.16s ease;
+}
+.badge.unlocked { border-color: color-mix(in srgb, var(--violet) 45%, var(--stroke)); }
+.badge.unlocked:hover { transform: translateY(-2px); }
+.badge.locked { opacity: 0.5; }
+.badge-ic { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 10px; flex-shrink: 0; }
+.badge-ic svg { width: 17px; height: 17px; }
+.badge.unlocked .badge-ic { background: color-mix(in srgb, var(--violet) 18%, transparent); color: var(--violet); }
+.badge.locked .badge-ic { background: var(--glass-input); color: var(--faint); }
+.badge-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.badge-label { font-weight: 700; font-size: 13px; color: var(--text-bright); }
+.badge-desc { font-size: 11.5px; color: var(--faint); line-height: 1.4; }
+.badge-xp { margin-left: auto; font-family: var(--mono); font-size: 11.5px; color: var(--cyan); }
+.quest-sheet-foot { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+.quest-note { margin-top: 12px; font-size: 11px; color: var(--faint); line-height: 1.6; }
+
+.quest-toasts {
+  position: fixed; top: calc(env(safe-area-inset-top, 0px) + 68px); right: 16px;
+  display: flex; flex-direction: column; gap: 10px; pointer-events: none; max-width: min(340px, calc(100vw - 32px));
+}
+.quest-toast {
+  display: flex; align-items: center; gap: 11px; padding: 12px 14px;
+  border-radius: 14px; border: 1px solid color-mix(in srgb, var(--violet) 45%, var(--stroke));
+  background: color-mix(in srgb, var(--bg2) 88%, transparent);
+  backdrop-filter: blur(14px); box-shadow: var(--shadow-main);
+  transform: translate3d(24px, -8px, 0) scale(0.96); opacity: 0;
+  transition: transform 0.35s cubic-bezier(0.22,0.8,0.3,1), opacity 0.35s ease;
+}
+.quest-toast.show { transform: none; opacity: 1; }
+.quest-toast.level { border-color: color-mix(in srgb, var(--cyan) 55%, var(--stroke)); }
+.qt-ic { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 10px; background: color-mix(in srgb, var(--violet) 18%, transparent); color: var(--violet); flex-shrink: 0; }
+.quest-toast.level .qt-ic { background: color-mix(in srgb, var(--cyan) 18%, transparent); color: var(--cyan); }
+.qt-ic svg { width: 17px; height: 17px; }
+.qt-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.qt-label { font-weight: 800; font-size: 13px; color: var(--text-bright); }
+.qt-desc { font-size: 11.5px; color: var(--muted); }
+.qt-desc b { color: var(--cyan); }
+
+/* ============================================================
+   RESPONSIVE / MOBILE PASS
+   Phones first: 720 / 640 / 520 / 420 / 380 breakpoints.
+   Goal: no horizontal overflow at 320px, 44px touch targets,
+   compact HUD, full-width sheets, comfortable reading measure.
+   ============================================================ */
+
+/* Touch ergonomics everywhere (harmless on desktop) */
+button, a, .nav-item, .mnav-item, .sheet-row, .palette-item, .account-card,
+.account-pill, .filter-pill, .quest-chip, .badge, .hl-card, .repo-card {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn { min-height: 40px; display: inline-flex; align-items: center; justify-content: center; }
+
+/* Tables and READMEs never force horizontal scroll */
+.md-body table { display: block; overflow-x: auto; max-width: 100%; }
+.md-body pre { overflow-x: auto; }
+.clone-box code { overflow-wrap: anywhere; word-break: break-word; }
+
+/* ---------- ≤ 900px: layout collapses ---------- */
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; gap: 18px; }
+  .hl-grid.compact { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .quest-toasts { right: 12px; left: 12px; max-width: none; }
+}
+
+/* ---------- ≤ 720px: phones ---------- */
+@media (max-width: 720px) {
+  /* Hero: stack, smaller avatar, full-width actions */
+  .hero { padding: 18px; }
+  .hero-main { flex-direction: column; gap: 14px; }
+  .hero-avatar { width: 68px; height: 68px; border-radius: 20px; transform: none; }
+  .hero-name { font-size: 26px; }
+  .hero-bio { font-size: 14px; margin: 8px 0 12px; }
+  .hero-actions { width: 100%; }
+  .hero-actions .btn { flex: 1 1 auto; }
+  .hero-live { padding: 14px; }
+  .hero-momentum { gap: 14px; }
+
+  /* Highlights: single column, tighter type */
+  .hl-grid, .hl-grid.compact { grid-template-columns: 1fr; }
+  .hl-title { font-size: 17px; }
+  .hl-foot { flex-wrap: wrap; gap: 10px; }
+
+  /* Account + filter chips scroll horizontally instead of wrapping */
+  .account-pills, .filter-pills {
+    flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    padding-bottom: 4px; margin-bottom: -4px; max-width: 100%;
+  }
+  .account-pills::-webkit-scrollbar, .filter-pills::-webkit-scrollbar { display: none; }
+  .account-pill, .filter-pill { flex-shrink: 0; white-space: nowrap; }
+
+  /* Section headers stack */
+  .section-head { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .section-head .actions { width: 100%; flex-wrap: wrap; }
+  .section-head h1 { font-size: 23px; }
+
+  /* Compact quest HUD: ring only in the topbar */
+  .qc-meta { display: none; }
+  .quest-chip { padding: 4px; }
+  .quest-toasts { top: calc(env(safe-area-inset-top, 0px) + 62px); }
+  .qt-label { font-size: 12.5px; }
+
+  /* Quest strip reflows */
+  .quest-level-row { align-items: flex-start; }
+  .quest-level-meta { gap: 10px; }
+  .quest-goals { gap: 6px; }
+  .quest-goal { align-items: flex-start; }
+
+  /* Sheets: full-height bottom sheets */
+  .sheet {
+    max-width: none;
+    border-radius: 20px 20px 0 0;
+    padding: 20px 16px calc(20px + env(safe-area-inset-bottom, 0px));
+    max-height: 92vh;
+    max-height: 92dvh; /* survives the mobile URL bar appearing */
+  }
+  .sheet-head { position: sticky; top: -20px; z-index: 2; background: var(--bg2); padding-top: 4px; margin-top: -4px; }
+  .palette { max-width: none; border-radius: 16px; }
+
+  /* Badges: single column, larger tap area */
+  .badge-grid { grid-template-columns: 1fr; }
+  .badge { padding: 12px; }
+
+  /* Project page */
+  .clone-box { flex-direction: column; align-items: stretch; gap: 8px; }
+  .clone-box .btn { width: 100%; }
+  .project-pitch { font-size: 14.5px; }
+  .about-facts { grid-template-columns: 1fr; }
+
+  /* Fewer "rise" layers keeps scrolling smooth on phones */
+  .stage .card:nth-child(n + 5) { animation-delay: 0.04s; }
+}
+
+/* ---------- ≤ 640px: app-like density ---------- */
+@media (max-width: 640px) {
+  /* Two-up metric cards read better than one long column */
+  .bento { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 10px; }
+  .col2, .col3, .col4 { grid-column: span 2 !important; }
+  .card { padding: 14px; }
+  .card-title { font-size: 11px; }
+  .metric { font-size: 26px; }
+  .metric small { font-size: 12px; }
+  .overview-featured { grid-column: span 2 !important; }
+}
+
+/* ---------- ≤ 520px: trim the topbar ---------- */
+@media (max-width: 520px) {
+  .live-ind, #rateChip { display: none !important; }
+  .topbar { gap: 10px; padding-left: calc(12px + env(safe-area-inset-left, 0px)); padding-right: calc(12px + env(safe-area-inset-right, 0px)); }
+  .brand .name { font-size: 18px; }
+  .brand .name span { display: none; }
+  .search-trigger { padding: 9px 10px; }
+  .search-trigger span:not(.kbd) { display: none; }
+  .search-trigger .kbd { display: none; }
+  .topstatus { gap: 6px; }
+}
+
+/* ---------- ≤ 420px: small phones ---------- */
+@media (max-width: 420px) {
+  .bento { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8px; }
+  .metric { font-size: 22px; }
+  .topbar-btn { width: 34px; height: 34px; }
+  .depth-btn { display: none; } /* still available from the Quests sheet */
+  .quest-chip .qc-ring { width: 28px; height: 28px; }
+  .qg-desc, .badge-desc { font-size: 11px; }
+  .hl-pitch { font-size: 13px; }
+  .quest-goals .quest-goal { padding: 8px 10px; }
+}
+
+/* ---------- ≤ 360px: very small phones ---------- */
+@media (max-width: 360px) {
+  .bento { grid-template-columns: 1fr !important; }
+  .col2, .col3, .col4 { grid-column: span 1 !important; }
+  .hero-name { font-size: 22px; }
+  .metric { font-size: 26px; }
+  .card { padding: 13px; }
+}
+
+/* ---------- Landscape phones: reclaim vertical space ---------- */
+@media (max-height: 520px) and (orientation: landscape) {
+  .hero { grid-template-columns: 1.4fr 1fr; }
+  .quest-toasts { top: 8px; }
+}
+
+/* ---------- Pointer-less devices: no tilt/sheen, cheaper visuals ---------- */
+@media (hover: none) {
+  .card::after { display: none; }
+  .card[data-tilt] { transform: none !important; }
+  .depth-scene { opacity: 0.7; }
+}
