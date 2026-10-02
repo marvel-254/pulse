@@ -1,7 +1,9 @@
 # Pulse — Public GitHub Showcase
 
-A public, mobile-first web app that presents one GitHub account as a structured
-story: who they are, what they build, and what they have been doing lately.
+A public, mobile-first web app that presents two GitHub accounts as a structured
+story: who they are, what they build, and what they have been doing lately —
+dressed in a faithful Windows 95 / GeoCities-era interface, with a dark scheme
+for anyone who remembers 1997 at 2am.
 
 **GitHub is the data source. Pulse is the interface. No login. No OAuth. No tokens.**
 
@@ -82,9 +84,15 @@ Add or remove accounts in `accounts` and the whole site re-points.
 ```bash
 npm run build     # regenerate data/snapshot.json from PUBLIC GitHub data
 npm run start     # serve the static site
-npm run smoke     # jsdom smoke test: 57 checks incl. 3D, quests, phone width
-npm run audit     # static mobile/overflow audit of the CSS
+npm run verify    # check + audit + axe-core, all offline  ← run before a PR
+npm run smoke     # jsdom smoke test: walks every view and sheet (needs a server)
+npm run og        # re-render icons/og.png from the design system
+npm run sweep     # screenshot every view at 2 widths × 2 schemes (needs a browser)
 ```
+
+`npm run smoke` expects the site on `http://localhost:8080`; `npm run sweep`
+and `npm run og` need a headless browser, which is deliberately not a project
+dependency — the exact install command is in each script's header.
 
 `npm run build` uses the public API and needs no credentials. `PULSE_ACCOUNTS`
 (comma-separated) or `PULSE_USERNAME` override the configured accounts;
@@ -97,50 +105,55 @@ private data.
 site on every push to `main`. If a run is rate-limited, `build.mjs` keeps the
 existing snapshot rather than publishing an empty one.
 
-## Roadmap
+## Design system
 
-Phases 1–4 have shipped. Still open — Open Graph share cards, a sitemap/feed,
-an accessibility pass and CI checks — is tracked in
-[`SHOWCASE-PLAN.md`](SHOWCASE-PLAN.md).
+The interface is a deliberate 1997 pastiche, implemented as one token layer
+plus a small set of component rules.
 
-## Smoke test
+- **Two schemes, one vocabulary.** `:root` is the canonical Windows 95 silver
+  desktop; `[data-theme="dark"]` is a period-correct dark mode — black desktop,
+  neon 256-colour accents. Every token name (`--surface`, `--stroke`, `--cyan`,
+  `--faint`, …) is shared, so no component knows which scheme is active.
+- **The bevel is the signature.** `--bevel-hi` / `--bevel-lo` / `--bevel-inner-*`
+  drive the 3D border syntax (`border-color: hi lo lo hi`) on buttons, cards,
+  fields, sheets and window frames. Pressed state reverses the bevel and
+  translates 1px — see `.btn:active`.
+- **Typography uses system fonts.** MS Sans Serif / Tahoma for body, Arial Black
+  for headings, Courier New for numbers. No webfonts ship at all, so the page
+  makes zero font requests.
+- **Depth is hard-edged.** No border-radius anywhere (enforced globally), no
+  blur, no translucent surfaces, no soft shadows — only inset bevel shadows and
+  hard offset shadows.
+- **Motion is decorative or absent.** State changes are instant; only the
+  marquee, rainbow heading, blink and pulse badges animate, and all four stop
+  under `prefers-reduced-motion`.
+- **Colour is accessible.** Every token pair used as text-on-background is
+  checked against WCAG AA (4.5:1) in both schemes — the accents are darkened in
+  the light scheme and brightened in the dark one to keep that true.
 
-`npm run smoke` boots the real page in jsdom against the real snapshot, walks
-every section, opens the project page, palette and suggest modal, and asserts
-that no login/token UI exists and no uncaught errors occur.
+## Checks
 
-## 3D layer
+`npm run verify` is the fast local gate — it runs offline and covers:
 
-`js/depth.js` adds a perspective starfield that sits behind the UI: particles
-live in a real 3D volume, react to the pointer and drift as you scroll, while
-cards tilt in a shared perspective (`data-tilt`) and the hero avatar floats on
-its own depth plane (`data-depth`). It is dependency-free, pauses in hidden
-tabs, scales its particle count down on phones and low-power devices, respects
-`prefers-reduced-motion`, and can be switched off from the topbar (persisted as
-`pulse-3d`).
+| Step | What it proves |
+| --- | --- |
+| `npm run check` | Every JS/JSON file parses, every asset referenced by `index.html` and `sw.js` exists, the social card is a real 1200×630 PNG, robots/sitemap are present, no login/token/analytics has crept back in, the retro system is intact (bevels, marquee, hit counter) and **no `border-radius` exists anywhere**. |
+| `npm run audit` | Static CSS audit: mobile overflow risk, touch targets, reduced-motion, zero blur/soft shadows, both schemes present. |
+| `npm run a11y` | axe-core across every view, the project/account pages, the repository sheet and the command palette — in **both** colour schemes. |
 
-## Pulse Quests (gamification)
-
-`js/game.js` turns exploring the showcase into progress. XP, levels and badges
-are stored **only in the visitor's browser** (`pulse-quests`) — no account, no
-server, nothing tracked.
-
-- **Exploration badges** — earned by actually using the site: visiting each
-  section, opening project pages, using ⌘K, filtering by account, toggling 3D…
-- **Showcase badges** — derived from the real public GitHub data on screen
-  (Polyglot, Prolific, Shipper, Release Train, Veteran…).
-- **HUD** — a level ring in the topbar, a progress strip on the Overview, an
-  achievement toast, and a full badge sheet (32 badges, 7 ranks, 615 XP).
-- Reset any time from the badge sheet.
+`npm run smoke` additionally boots the real page in jsdom and asserts the
+gamified layer can never come back (no `PulseMusic`/`PulseQuests`/`PulseDepth`,
+no sound button, no quest HUD, no 3D canvas).
 
 ## Mobile
 
-The layout is tuned phones-first: two-up metric cards, stacked hero with icon
-columns, horizontally scrollable account/filter chips, full-width bottom sheets
-with `dvh` sizing, safe-area padding top and bottom, 40px+ touch targets, and
-tilt/3D effects disabled on touch-only devices. `npm run audit` statically
-checks the CSS for mobile overflow risks.
+The layout is tuned phones-first: two-up metric cards, stacked hero, horizontally
+scrollable account/filter chips, full-width bottom sheets with `dvh` sizing,
+safe-area padding, and 40px+ touch targets. The marquee keeps scrolling on
+phones — that is authentic — while decorative animation drops out entirely
+under `prefers-reduced-motion`.
 
+## Views
 ## Views
 
 Seven sections plus two kinds of deep-linkable detail page:
@@ -182,14 +195,16 @@ reachable from the command palette (`⌘K`).
   focus returns to the control that opened it. `aria-hidden` tracks open state.
 - **Landmarks & state** — `main`/`aside` landmarks, `aria-current="page"` on the
   active nav item, labels on icon-only buttons, `role="status"` for toasts.
-- **Reduced motion** — the 3D layer, tilt and transitions respect
-  `prefers-reduced-motion`.
-- **Self-hosted fonts** — Inter + JetBrains Mono (variable, latin/latin-ext,
-  OFL) ship in `fonts/`, so the site makes **zero third-party requests**.
+- **Reduced motion** — the marquee, rainbow heading, blink and pulsing badges
+  all stop, and state changes were already instant.
+- **No webfonts** — the page uses fonts already on the machine, so there are no
+  font requests and no FOIT/FOUT.
+- **Colour contrast** — every text/background token pair is verified at WCAG AA
+  (4.5:1) or better in both schemes.
 - **Verified with axe-core** — `npm run a11y` boots the site in JSDOM and audits
-  every view, the project page and two sheets; it fails on serious/critical
-  violations. Currently: 0 violations across 10 surfaces. The same check runs in
-  CI.
+  every view, both detail pages, the repository sheet and the command palette, in
+  light and dark. Currently: 0 violations across 15 surfaces. The same check runs
+  in CI.
 
 ## Checks (CI)
 
@@ -199,7 +214,7 @@ reachable from the command palette (`⌘K`).
 | --- | --- |
 | `npm run check` | Every JS/JSON file parses, every asset referenced by `index.html` and `sw.js` exists, the social card is a real 1200×630 PNG, robots/sitemap are present, and no login/token/analytics/third-party script has crept back in. Offline and deterministic. |
 | `npm run audit` | Static CSS audit for mobile overflow risks. |
-| `npm run a11y` | axe-core across every view, a project page and the sheets; fails on serious/critical violations. |
+| `npm run a11y` | axe-core across every view, both detail pages and the sheets, in both colour schemes; fails on serious/critical violations. |
 | `npm run smoke` | Informational only (needs the public GitHub API, so shared-runner rate limits would make it flaky). Run it locally before opening a PR. |
 
 ## Data depth
@@ -226,36 +241,30 @@ Every number on the page is real and public — nothing is typed in by hand.
 All of it lands in `data/snapshot.json` at build time; the browser only ever
 reads that file. No visitor analytics, ever.
 
-## Soundtrack
+## The 90s layer
 
-Pulse ships a soundtrack that is **generated in your browser** (Web Audio API)
-— there are no `.mp3`/`.wav` files in this repo, so nothing here can infringe a
-copyright. Two moods:
+Everything that gives the page its period character lives in one additive block
+at the end of `css/styles.css` and one helper block in `js/app.js`:
 
-- **Cinematic** — 84 BPM, Dm–Bb–F–C, felt piano + string pad (Einaudi-ish
-  atmosphere).
-- **Phonk** — 132 BPM, Am–F–C–G, 808 glide, cowbell, hat rolls, vinyl noise.
+- **Marquee** — a colour-cycling announcement bar above every view, built from
+  real snapshot numbers and marked `aria-hidden` (it is decoration, not content).
+- **Hit counter** — black box, green monospace digits, counting real public
+  contributions rather than fictional visitors.
+- **Colour palette** — the 16-colour VGA set as beveled swatches, which is
+  genuinely the palette this page is drawn from.
+- **Under construction** — yellow/black hazard stripes closing the Overview,
+  with a working call to action rather than a dead GIF.
+- **Window chrome** — navy-to-blue title bars on cards and sheets, with the
+  classic minimise/maximise/close furniture on the social card.
 
-It never autoplays: the engine stays silent until you press the speaker button
-(topbar, sidebar, More sheet or `⌘/Ctrl-K` → "soundtrack"). The choice, mood,
-volume and hint state persist in `localStorage` under `pulse-audio`; playback
-pauses on tab hide and only resumes after a gesture.
-
-Play a track you own instead: put a file in `assets/` and point config at it.
-
-```js
-audio: {
-  enabled: false,          // true = try to start with the first gesture
-  mood: "cinematic",       // "cinematic" | "phonk"
-  volume: 0.35,
-  track: "assets/your-licensed-track.mp3",  // optional, replaces the synth
-}
-```
+All of it is derived from the same public snapshot as the rest of the page, and
+none of it is required to read the data.
 
 ## Tech
 
 - Pure static frontend (HTML / CSS / JS) — no framework, no backend, no runtime
-  dependencies (the 3D and quest layers are hand-written and ~20 KB total).
+  dependencies at all.
 - PWA-ready: `manifest.webmanifest` + `sw.js`.
-- Dark-first bento UI with glass surfaces, large metrics and state-communicating
-  animation.
+- One stylesheet: a token layer (two schemes) + component rules + the additive
+  90s furniture block.
+- Zero third-party requests: system fonts, no CDN, no analytics.

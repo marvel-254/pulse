@@ -51,31 +51,6 @@
     key: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/></svg>`,
   };
 
-  // Default widget configuration for Command Center
-  const DEFAULT_WIDGETS = {
-    stars: true,
-    forks: true,
-    issues: true,
-    active: true,
-    primaryLang: true,
-    privateCount: true,
-    pulseChart: true,
-    heatmap: true,
-    langDistribution: true,
-    recentActivity: true,
-    topRepos: true,
-    highlights: true,
-  };
-
-  const getSavedWidgets = () => {
-    try {
-      const saved = localStorage.getItem("pulse-widgets");
-      return saved ? { ...DEFAULT_WIDGETS, ...JSON.parse(saved) } : { ...DEFAULT_WIDGETS };
-    } catch {
-      return { ...DEFAULT_WIDGETS };
-    }
-  };
-
   const state = {
     snapshot: null,
     selectedRepo: "all",
@@ -87,7 +62,6 @@
     repoLangFilter: "all",
     repoSortBy: "pushed",
     pulseTimeframe: 14,
-    widgets: getSavedWidgets(),
     paletteQuery: "",
     paletteSelectedIndex: 0,
     filteredPaletteItems: [],
@@ -462,7 +436,6 @@
     try {
       if (navigator.share) {
         await navigator.share({ title: meta.title, text: meta.description, url });
-        window.PulseQuests?.action("share");
         return;
       }
     } catch (err) {
@@ -471,7 +444,6 @@
     try {
       await navigator.clipboard.writeText(url);
       toast("Link copied to clipboard");
-      window.PulseQuests?.action("share");
     } catch {
       window.prompt("Copy this link:", url);
     }
@@ -484,12 +456,11 @@
     localStorage.setItem("pulse-theme", theme);
     const metaColor = $('#metaThemeColor');
     if (metaColor) {
-      metaColor.setAttribute("content", theme === "dark" ? "#07090e" : "#f8fafc");
+      metaColor.setAttribute("content", theme === "dark" ? "#000000" : "#000080");
     }
   }
 
   function toggleTheme() {
-    window.PulseQuests?.action("theme");
     const next = state.theme === "dark" ? "light" : "dark";
     applyTheme(next);
     renderTopbar();
@@ -524,18 +495,8 @@
 
         <span id="rateChip" style="display:none"></span>
 
-        <span id="questChip" class="quest-chip-host"></span>
-
-        <button class="topbar-btn sound-btn" id="soundToggleBtn" title="Background soundtrack" aria-label="Background soundtrack" aria-pressed="false">
-          ${ICONS.music}
-        </button>
-
         <button class="topbar-btn" id="shareBtn" title="Share this view" aria-label="Share this view">
           ${ICONS.share}
-        </button>
-
-        <button class="topbar-btn depth-btn" id="depthToggleBtn" title="Toggle the 3D depth layer" aria-label="Toggle the 3D depth layer" aria-pressed="true">
-          ${ICONS.layers}
         </button>
 
         <a class="topbar-btn" id="githubProfileBtn" href="${esc(state.snapshot?.user?.htmlUrl || (ghAccount() ? "https://github.com/" + ghAccount() : "https://github.com"))}" target="_blank" rel="noopener noreferrer" title="Open GitHub profile" aria-label="Open GitHub profile (new tab)">
@@ -560,21 +521,6 @@
     $('#topbarSearchTrigger')?.addEventListener("click", openCommandPalette);
     $('#shareBtn')?.addEventListener("click", shareCurrent);
     $('#themeToggleBtn')?.addEventListener("click", toggleTheme);
-    $('#soundToggleBtn')?.addEventListener("click", (e) => {
-      if (e.shiftKey) return openSoundSheet();
-      toggleSoundtrack();
-    });
-    $('#soundToggleBtn')?.addEventListener("contextmenu", (e) => {
-      e.preventDefault();
-      openSoundSheet();
-    });
-    $('#depthToggleBtn')?.addEventListener("click", () => {
-      const next = !(window.PulseDepth?.isEnabled?.() ?? true);
-      window.PulseDepth?.setEnabled(next);
-      window.PulseQuests?.action("depth");
-      toast(next ? "3D depth layer enabled" : "3D depth layer disabled");
-    });
-    window.PulseQuests?.mount();
   }
 
   /* ---- SIDEBAR RENDERING ---- */
@@ -611,17 +557,12 @@
         <span class="ic">${ICONS.refresh}</span>
         <span>Refresh Data</span>
       </button>
-      <button class="nav-item" id="sidebarSoundBtn">
-        <span class="ic">${ICONS.music}</span>
-        <span>Soundtrack</span>
-        <span class="nav-badge">${window.PulseMusic?.isPlaying?.() ? "ON" : "OFF"}</span>
-      </button>
-      <button class="nav-item" id="sidebarWidgetsBtn">
-        <span class="ic">${ICONS.settings}</span>
-        <span>Customize View</span>
-      </button>
 
       <div class="sidebar-foot" id="footMeta">
+        <div class="retro-counter" style="width:100%;justify-content:space-between">
+          <span class="rc-label">REPOS</span>
+          <span class="rc-digits">${pad(state.snapshot?.repos?.length || 0, 3)}</span>
+        </div>
         <div class="foot-row">
           <span>SNAPSHOT</span>
           <span>${fmtAgo(state.snapshot?.generatedAt)}</span>
@@ -645,8 +586,6 @@
     $('#sidebarCmdPaletteBtn')?.addEventListener("click", openCommandPalette);
     $('#sidebarGithubBtn')?.addEventListener("click", openGithubProfile);
     $('#sidebarRefreshBtn')?.addEventListener("click", fetchLive);
-    $('#sidebarSoundBtn')?.addEventListener("click", openSoundSheet);
-    $('#sidebarWidgetsBtn')?.addEventListener("click", openWidgetModal);
   }
 
   /* ---- MOBILE BOTTOM NAV ---- */
@@ -711,20 +650,6 @@
             <span class="rs">Open @${esc(ghAccount() || "github")} on github.com</span>
           </span>
         </button>
-        <button class="sheet-row" id="moreSheetSoundBtn" style="width:100%">
-          <span class="ic" style="color:var(--cyan)">${ICONS.music}</span>
-          <span class="rmeta">
-            <span class="rt">Soundtrack</span>
-            <span class="rs">${window.PulseMusic?.isPlaying?.() ? "Playing — tap for mood & volume" : "Background music, generated live"}</span>
-          </span>
-        </button>
-        <button class="sheet-row" id="moreSheetQuestsBtn" style="width:100%">
-          <span class="ic" style="color:var(--violet)">${ICONS.award}</span>
-          <span class="rmeta">
-            <span class="rt">Pulse Quests</span>
-            <span class="rs">Level, badges and XP for exploring this profile</span>
-          </span>
-        </button>
         <button class="sheet-row" id="moreSheetSuggestBtn" style="width:100%">
           <span class="ic" style="color:var(--green)">${ICONS.issue}</span>
           <span class="rmeta">
@@ -738,14 +663,6 @@
     $('#moreSheetGithubBtn')?.addEventListener("click", () => {
       closeOverlay();
       openGithubProfile();
-    });
-    $('#moreSheetSoundBtn')?.addEventListener("click", () => {
-      closeOverlay();
-      openSoundSheet();
-    });
-    $('#moreSheetQuestsBtn')?.addEventListener("click", () => {
-      closeOverlay();
-      window.PulseQuests?.open();
     });
     $('#moreSheetSuggestBtn')?.addEventListener("click", () => {
       closeOverlay();
@@ -875,167 +792,6 @@
     restoreFocus();
   }
 
-  /* ---- SOUNDTRACK (background music) ----
-     All audio is synthesised in the browser — see js/music.js. Nothing is
-     bundled, nothing is downloaded, and it never autoplays. */
-  function syncSoundUI() {
-    const btn = $('#soundToggleBtn');
-    if (!btn) return;
-    const playing = window.PulseMusic?.isPlaying?.() ?? false;
-    btn.innerHTML = playing ? ICONS.music : ICONS.musicOff;
-    btn.classList.toggle("playing", playing);
-    btn.setAttribute("aria-pressed", playing ? "true" : "false");
-    btn.title = playing
-      ? `Soundtrack playing (${window.PulseMusic?.mood?.() || "cinematic"}) — click to mute`
-      : "Play background soundtrack";
-    $('#soundHint')?.classList.toggle("hidden", playing || soundHintDismissed());
-    window.PulseQuests?.mount();
-  }
-
-  const soundHintDismissed = () => {
-    try {
-      return JSON.parse(localStorage.getItem("pulse-audio") || "{}").hintDismissed === true;
-    } catch {
-      return false;
-    }
-  };
-
-  function dismissSoundHint() {
-    try {
-      const s = JSON.parse(localStorage.getItem("pulse-audio") || "{}");
-      s.hintDismissed = true;
-      localStorage.setItem("pulse-audio", JSON.stringify(s));
-    } catch {}
-    $('#soundHint')?.classList.add("hidden");
-  }
-
-  function toggleSoundtrack() {
-    const music = window.PulseMusic;
-    if (!music) return;
-    const btn = $('#soundToggleBtn');
-    if (btn && !music.isPlaying()) {
-      // brief "starting" affordance while the context resumes
-      btn.classList.add("starting");
-      setTimeout(() => btn.classList.remove("starting"), 900);
-    }
-    const playing = music.toggle();
-    toast(playing ? "Soundtrack on — enjoy" : "Soundtrack muted");
-    if (playing) {
-      window.PulseQuests?.action("music");
-      if ((music.triedMoods?.() || []).length >= 2) window.PulseQuests?.unlock("action:moods");
-    }
-    syncSoundUI();
-  }
-
-  function openSoundSheet() {
-    const overlay = $('#audioOverlay');
-    const sheet = $('#audioSheet');
-    if (!overlay || !sheet) return;
-    const music = window.PulseMusic;
-    const playing = music?.isPlaying?.() ?? false;
-    const mood = music?.mood?.() || "cinematic";
-    const volume = Math.round((music?.volume?.() ?? 0.35) * 100);
-    const custom = music?.hasCustomTrack?.() ?? false;
-    const owner = displayConfig().owner || "this site";
-
-    const moodBtn = (id, label, desc) => `
-      <button class="mood-card ${mood === id ? "active" : ""}" data-mood="${id}" ${custom && id !== "custom" ? "disabled" : ""}>
-        <span class="mood-label">${label}</span>
-        <span class="mood-desc">${desc}</span>
-      </button>`;
-
-    sheet.innerHTML = `
-      <div class="sheet-head">
-        <div>
-          <div class="sheet-title">Soundtrack</div>
-          <div class="sheet-sub">Background music for the showcase · ${playing ? "playing" : "paused"}</div>
-        </div>
-        <button class="sheet-close" id="closeSoundSheet">✕</button>
-      </div>
-
-      <div class="sound-moods">
-        ${moodBtn("cinematic", "Cinematic", "Piano & strings ostinato that builds")}
-        ${moodBtn("phonk", "Phonk", "Half-time drums, 808s, cowbell, vinyl")}
-        ${custom ? moodBtn("custom", "Your track", "Playing the file configured in js/config.js") : ""}
-      </div>
-
-      <div class="sound-controls">
-        <button class="btn ${playing ? "" : "btn-primary"}" id="soundPlayBtn">
-          ${playing ? ICONS.musicOff + " Pause" : ICONS.music + " Play"}
-        </button>
-        <div class="sound-volume">
-          <span class="stat-icon" style="color:var(--cyan)">${ICONS.volume}</span>
-          <input type="range" id="soundVolume" min="0" max="100" value="${volume}" aria-label="Volume" />
-          <span class="sound-vol-value">${volume}%</span>
-        </div>
-      </div>
-
-      <div class="callout-box" style="margin-top:14px">
-        <b>Every note is generated in your browser.</b> Pulse ships no audio files,
-        so there is no third-party music to license and nothing extra to download —
-        the Web Audio API builds the chords, drums and reverb live.
-        <br /><br />
-        Owner note: to use your own licensed track instead, set
-        <code>audio.track</code> in <code>js/config.js</code>.
-      </div>
-
-      <div class="quest-note">Muted by default, pauses when this tab is hidden, and your
-      choice + volume are remembered only in this browser.</div>`;
-
-    overlay.classList.add("open");
-    focusSheet(overlay);
-
-    $('#closeSoundSheet')?.addEventListener("click", () => {
-      overlay.classList.remove("open");
-      overlay.setAttribute("aria-hidden", "true");
-      restoreFocus();
-    });
-    $('#soundPlayBtn')?.addEventListener("click", () => {
-      toggleSoundtrack();
-      openSoundSheet();
-    });
-    $$('[data-mood]', sheet).forEach((b) =>
-      b.addEventListener("click", () => {
-        music?.setMood(b.dataset.mood);
-        window.PulseQuests?.unlock("action:sound");
-        if ((music?.triedMoods?.() || []).length >= 2) window.PulseQuests?.unlock("action:moods");
-        if (!music?.isPlaying?.()) music?.play();
-        window.PulseQuests?.action("music");
-        toast(`Soundtrack: ${b.dataset.mood === "custom" ? "your track" : b.dataset.mood}`);
-        syncSoundUI();
-        openSoundSheet();
-      })
-    );
-    $('#soundVolume')?.addEventListener("input", (e) => {
-      const v = Number(e.target.value) / 100;
-      music?.setVolume(v);
-      const label = $(".sound-vol-value", sheet);
-      if (label) label.textContent = `${e.target.value}%`;
-    });
-  }
-
-  function renderSoundHint() {
-    if (window.PulseMusic?.isPlaying?.() || soundHintDismissed()) return;
-    if (navigator.connection?.saveData) return; // respect data saver
-    const hint = document.createElement("div");
-    hint.id = "soundHint";
-    hint.className = "sound-hint";
-    hint.innerHTML = `
-      <button class="sh-play" id="soundHintPlay" aria-label="Play background soundtrack">
-        ${ICONS.music}
-      </button>
-      <span class="sh-text">Tap for a soundtrack</span>
-      <button class="sh-close" id="soundHintClose" aria-label="Dismiss">✕</button>`;
-    document.body.appendChild(hint);
-    requestAnimationFrame(() => hint.classList.add("show"));
-    $('#soundHintPlay')?.addEventListener("click", () => {
-      window.PulseMusic?.play();
-      window.PulseQuests?.action("music");
-      syncSoundUI();
-    });
-    $('#soundHintClose')?.addEventListener("click", dismissSoundHint);
-  }
-
   /* ---- PUBLIC PROFILE HELPERS ---- */
   function openGithubProfile() {
     const login = ghAccount();
@@ -1048,7 +804,6 @@
 
   /* ---- COMMAND PALETTE (CMD+K) ---- */
   function openCommandPalette() {
-    window.PulseQuests?.action("palette");
     const overlay = $('#paletteOverlay');
     const sheet = $('#paletteSheet');
     state.paletteQuery = "";
@@ -1076,35 +831,6 @@
       // Actions group
       const actions = [
         {
-          title: window.PulseMusic?.isPlaying?.() ? "Pause soundtrack" : "Play soundtrack",
-          sub: "Audio",
-          icon: ICONS.music,
-          action: toggleSoundtrack,
-        },
-        {
-          title: "Soundtrack settings — mood & volume",
-          sub: "Audio",
-          icon: ICONS.volume,
-          action: openSoundSheet,
-        },
-        {
-          title: "Pulse Quests — levels, badges & XP",
-          sub: "Progress",
-          icon: ICONS.award,
-          action: () => window.PulseQuests?.open(),
-        },
-        {
-          title: `3D depth layer: ${window.PulseDepth?.isEnabled?.() === false ? "off" : "on"}`,
-          sub: "Display",
-          icon: ICONS.layers,
-          action: () => {
-            const next = !(window.PulseDepth?.isEnabled?.() ?? true);
-            window.PulseDepth?.setEnabled(next);
-            window.PulseQuests?.action("depth");
-            toast(next ? "3D depth layer enabled" : "3D depth layer disabled");
-          },
-        },
-        {
           title: "Open GitHub Profile",
           sub: "GitHub",
           icon: ICONS.github,
@@ -1127,12 +853,6 @@
           sub: "Public API",
           icon: ICONS.refresh,
           action: fetchLive,
-        },
-        {
-          title: "Customize Command Center Widgets",
-          sub: "Layout",
-          icon: ICONS.settings,
-          action: openWidgetModal,
         },
         {
           title: "Focus All Repositories",
@@ -1283,82 +1003,6 @@
     restoreFocus();
   }
 
-  /* ---- WIDGET CUSTOMIZER MODAL ---- */
-  function openWidgetModal() {
-    const overlay = $('#widgetOverlay');
-    const sheet = $('#widgetSheet');
-
-    const widgetDefs = [
-      { key: "stars", label: "Total Stars Metric" },
-      { key: "forks", label: "Forks Metric" },
-      { key: "issues", label: "Open Issues Metric" },
-      { key: "active", label: "Active Repositories (7d)" },
-      { key: "primaryLang", label: "Primary Language Card" },
-      { key: "privateCount", label: "Followers Metric" },
-      { key: "pulseChart", label: "Commit Pulse Bar Chart" },
-      { key: "heatmap", label: "12-Week Activity Heatmap" },
-      { key: "langDistribution", label: "Language Breakdown Stack" },
-      { key: "recentActivity", label: "Recent Activity Feed" },
-      { key: "topRepos", label: "Top Repositories Leaderboard" },
-      { key: "highlights", label: "Auto Highlights (Overview)" },
-    ];
-
-    sheet.innerHTML = `
-      <div class="sheet-head">
-        <div>
-          <div class="sheet-title">Customize Dashboard</div>
-          <div class="sheet-sub">Toggle cards visible on your Command Center</div>
-        </div>
-        <button class="sheet-close" id="closeWidgetModalBtn">✕</button>
-      </div>
-
-      <div class="widget-toggle-list">
-        ${widgetDefs.map((w) => `
-          <div class="widget-toggle-item">
-            <label for="w_${w.key}">
-              <span>${w.label}</span>
-            </label>
-            <input type="checkbox" id="w_${w.key}" data-widget="${w.key}" ${state.widgets[w.key] !== false ? "checked" : ""} />
-          </div>`).join("")}
-      </div>
-
-      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px">
-        <button class="btn btn-sm" id="resetWidgetsBtn">Reset Defaults</button>
-        <button class="btn btn-primary btn-sm" id="saveWidgetsBtn">${ICONS.check} Done</button>
-      </div>`;
-
-    $('#closeWidgetModalBtn')?.addEventListener("click", () => {
-      overlay.classList.remove("open");
-      overlay.setAttribute("aria-hidden", "true");
-      restoreFocus();
-    });
-
-    $('#saveWidgetsBtn')?.addEventListener("click", () => {
-      $$('[data-widget]', sheet).forEach((chk) => {
-        state.widgets[chk.dataset.widget] = chk.checked;
-      });
-      localStorage.setItem("pulse-widgets", JSON.stringify(state.widgets));
-      overlay.classList.remove("open");
-      overlay.setAttribute("aria-hidden", "true");
-      restoreFocus();
-      render();
-      toast("Layout preferences updated");
-    });
-
-    $('#resetWidgetsBtn')?.addEventListener("click", () => {
-      state.widgets = { ...DEFAULT_WIDGETS };
-      localStorage.removeItem("pulse-widgets");
-      overlay.classList.remove("open");
-      overlay.setAttribute("aria-hidden", "true");
-      restoreFocus();
-      render();
-      toast("Reset widgets to defaults");
-    });
-
-    overlay.classList.add("open");
-    focusSheet(overlay);
-  }
-
   /* ---- PER-ACCOUNT PAGES (deep-linkable: #/account/<login>) ---- */
   function accountFor(login) {
     const summaries = accountSummaries();
@@ -1462,7 +1106,7 @@
     const lastRun = runs.slice().sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))[0];
 
     const chip = (icon, value, label, color) => `
-      <div class="now-chip" data-tilt>
+      <div class="now-chip">
         <span class="stat-icon" style="color:${color}">${icon}</span>
         <span class="now-value">${value}</span>
         <span class="now-label">${label}</span>
@@ -1483,7 +1127,6 @@
 
   /* ---- EXPORT MARKDOWN SUMMARY ---- */
   function copyMarkdownSummary() {
-    window.PulseQuests?.action("share");
     const s = state.snapshot;
     const repos = filteredRepos();
     const stars = repos.reduce((a, r) => a + r.stars, 0);
@@ -1850,15 +1493,10 @@
     };
 
     const fn = views[state.view] || renderOverview;
-    stage.innerHTML = '<div class="loading"><div class="pulse-ring"></div><span>SYNCHRONIZING</span></div>';
+    stage.innerHTML = '<div class="loading"><div class="pulse-ring"></div><span>LOADING…</span></div>';
     requestAnimationFrame(() => {
-      stage.innerHTML = fn();
+      stage.innerHTML = marqueeBar() + fn();
       bindStage(stage);
-      // 3D + gamification hooks (both layers are optional and self-contained)
-      window.PulseDepth?.bindTilt(stage);
-      window.PulseDepth?.refresh();
-      window.PulseQuests?.syncSnapshot(state.snapshot);
-      window.PulseQuests?.mount();
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -1897,17 +1535,12 @@
           const repo = repoList().find((r) => r.name === state.selectedRepo);
           if (repo && repoOwner(repo) !== state.accountFilter) state.selectedRepo = "all";
         }
-        if (state.accountFilter !== "all") window.PulseQuests?.action("account");
         render();
         toast(state.accountFilter === "all" ? "Showing every account" : `Showing @${state.accountFilter} only`);
       })
     );
 
     $('#heroSuggestBtn')?.addEventListener("click", () => openSuggestModal());
-    $$('#stage a[href*="omixsystems"], #stage a[href^="https://github.com/"]').forEach((a) =>
-      a.addEventListener("click", () => window.PulseQuests?.action("contact"))
-    );
-
     $$('#stage [data-nav-jump]').forEach((b) =>
       b.addEventListener("click", () => go(b.dataset.navJump))
     );
@@ -1917,7 +1550,6 @@
     $('#accountShareBtn')?.addEventListener("click", shareCurrent);
     $('#accountFilterBtn')?.addEventListener("click", () => {
       state.accountFilter = state.selectedAccount;
-      window.PulseQuests?.action("focus-account");
       go("overview");
       toast(`Dashboard filtered to @${state.selectedAccount}`);
     });
@@ -1940,7 +1572,6 @@
       toast("Copied SSH clone URL");
     });
 
-    $('#customizeWidgetsTrigger')?.addEventListener("click", openWidgetModal);
     $('#exportSummaryTrigger')?.addEventListener("click", copyMarkdownSummary);
 
     $('#createIssueBtn')?.addEventListener("click", () => openSuggestModal());
@@ -1990,7 +1621,6 @@
 
   function go(view, opts = {}) {
     state.view = view;
-    window.PulseQuests?.visit(view);
     // Keep the address bar in sync so any view is directly linkable.
     if (!opts.keepHash) {
       try {
@@ -2039,6 +1669,98 @@
       <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </button>`;
 
+
+  /* ---- 90s FURNITURE ----
+     The decorative layer every period page had: a scrolling marquee, a hit
+     counter, a swatch strip and an "under construction" sign. Built from
+     real snapshot numbers so nothing here is fabricated, and marked
+     aria-hidden where it is purely ornamental. */
+
+  const pad = (n, len = 6) => String(Math.max(0, Math.round(n || 0))).padStart(len, "0");
+
+  function marqueeBar() {
+    const repos = repoList();
+    const u = state.snapshot?.user || {};
+    const m = state.snapshot?.metrics || {};
+    const accounts = accountList();
+    const bits = [
+      `<b>★ WELCOME TO PULSE ★</b>`,
+      `<i>${repos.length} PUBLIC REPOSITORIES</i>`,
+      `<u>${fmtNum(m.contributionsLastYear || 0)} CONTRIBUTIONS IN THE LAST YEAR</u>`,
+      `<s>${accounts.length ? accounts.map((a) => "@" + a).join(" + ") : "@github"}</s>`,
+      `<em>${fmtNum(u.followers || 0)} FOLLOWERS · ${fmtNum(state.snapshot?.totalStars || 0)} STARS</em>`,
+      `<b>BEST VIEWED WITH ANY BROWSER</b>`,
+      `<i>NO LOGIN · NO TRACKING · PUBLIC DATA ONLY</i>`,
+    ];
+    return `
+      <div class="retro-marquee" aria-hidden="true">
+        <span>${bits.join(' &nbsp;◆&nbsp; ')} &nbsp;◆&nbsp; </span>
+      </div>`;
+  }
+
+  /* Hit counter — the single most 90s object on the page. Counts real
+     public contributions, not fictional visitors. */
+  function hitCounterPanel() {
+    const m = state.snapshot?.metrics || {};
+    const u = state.snapshot?.user || {};
+    const since = u.createdAt ? new Date(u.createdAt).getFullYear() : null;
+    const hits = m.contributionsLastYear || 0;
+    const days = m.activeDays || 0;
+    return `
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title"><span class="stat-icon" style="color:var(--amber)">${ICONS.pulse}</span> Hit Counter</div>
+          ${since ? `<span>since ${since}</span>` : ""}
+        </div>
+        <div class="retro-counter">
+          <span class="rc-label">HITS</span>
+          <span class="rc-digits">${pad(hits)}</span>
+        </div>
+        <div class="metric-sub" style="margin-top:10px">
+          Public contributions in the last 12 months · ${fmtNum(days)} active days
+        </div>
+      </div>`;
+  }
+
+  /* Pure decoration: the 16-colour palette, beveled. */
+  function swatchPanel() {
+    const colours = ["#000000","#808080","#c0c0c0","#ffffff","#ff0000","#00ff00","#0000ff","#ffff00",
+                     "#ff00ff","#00ffff","#800000","#008000","#000080","#808000","#800080","#008080"];
+    return `
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title"><span class="stat-icon" style="color:var(--violet)">${ICONS.layers}</span> Colour Palette</div>
+          <span>16 / 256</span>
+        </div>
+        <div class="retro-swatches" role="img" aria-label="The sixteen colour VGA palette used by this page">
+          ${colours.map((c) => `<span class="retro-swatch" style="background:${c}"></span>`).join("")}
+        </div>
+        <div class="metric-sub" style="margin-top:10px">Every colour on this page comes from this palette.</div>
+      </div>`;
+  }
+
+  /* Construction stripes — used as the closing call to action. */
+  function underConstructionBanner() {
+    const login = ghAccount();
+    return `
+      <section class="retro-construction" style="margin-top:18px">
+        <div class="strip-inner">
+          <div class="retro-construction-title">*** This showcase is under construction ***</div>
+          <p style="margin:8px 0 12px;max-width:70ch">
+            Pulse is regenerated from ${login ? "@" + esc(login) + "'s" : "the"} public GitHub data on every
+            push, so new repositories, releases and CI runs appear here on their own. Nothing is
+            hand-maintained and nothing goes stale.
+          </p>
+          <div class="retro-uc" style="margin-bottom:12px">
+            <span class="uc-sign" aria-hidden="true">⚠</span>
+            <span>Best viewed at 800×600</span>
+            <span class="retro-pulse">NEW!</span>
+          </div>
+          <button class="btn btn-primary" data-nav-jump="projects">Browse all projects →</button>
+        </div>
+      </section>`;
+  }
+
   /* ---- HERO: identity, links and live public status ---- */
   function heroPanel() {
     const u = state.snapshot?.user || {};
@@ -2072,9 +1794,9 @@
     ].join("");
 
     return `
-      <div class="card hero" data-tilt>
+      <div class="card hero">
         <div class="hero-main">
-          <img class="hero-avatar" data-depth="10" src="${esc(u.avatar || "icons/icon.svg")}" alt="${esc(login || "GitHub")}" />
+          <img class="hero-avatar" src="${esc(u.avatar || "icons/icon.svg")}" alt="${esc(login || "GitHub")}" />
           <div class="hero-id">
             <div class="hero-name">${esc(u.name || login || "GitHub account")}</div>
             <div class="hero-handles">
@@ -2112,7 +1834,7 @@
     const summary = (r.readmeExcerpt || r.description || "No description yet — open the project for the full picture.").slice(0, 240);
     const topics = (r.topics || []).slice(0, 3);
     return `
-      <div class="card hl-card" data-tilt data-project="${esc(r.name)}" title="Open ${esc(r.name)}">
+      <div class="card hl-card" data-project="${esc(r.name)}" title="Open ${esc(r.name)}">
         <div class="hl-head">
           <span class="hl-rank">${String(index + 1).padStart(2, "0")}</span>
           <span class="status ${st === "active" ? "ok" : st === "archived" ? "warn" : "run"}"><span class="sdot"></span>${st.toUpperCase()}</span>
@@ -2120,7 +1842,7 @@
         <div class="hl-title">${esc(r.name)}</div>
         <p class="hl-pitch">${esc(summary)}</p>
         <div class="hl-stack">
-          ${r.language ? `<span class="lang-tag" style="background:${langCol}22;color:${langCol}">${esc(r.language)}</span>` : ""}
+          ${r.language ? `<span class="lang-tag" style="--lang:${langCol}">${esc(r.language)}</span>` : ""}
           ${topics.map((t) => `<span class="priv-tag">${esc(t)}</span>`).join("")}
         </div>
         <div class="hl-foot">
@@ -2135,7 +1857,7 @@
 
   function statCard(label, value, sub, color, icon) {
     return `
-      <div class="card" data-tilt>
+      <div class="card">
         <div class="card-head">
           <div class="card-title"><span class="stat-icon" style="color:${color}">${icon}</span> ${label}</div>
         </div>
@@ -2155,13 +1877,11 @@
     const topLang = Object.entries(
       repos.reduce((acc, r) => (r.language ? { ...acc, [r.language]: (acc[r.language] || 0) + 1 } : acc), {})
     ).sort((a, b) => b[1] - a[1])[0]?.[0];
-    const w = state.widgets;
     const featured = featuredRepos(3);
 
     const actions = `
       ${accountPills()}
       ${pill()}
-      <button class="btn btn-sm" id="customizeWidgetsTrigger" title="Customize cards">${ICONS.settings} Widgets</button>
       <button class="btn btn-sm" id="exportSummaryTrigger" title="Copy a markdown summary">${ICONS.share} Share</button>`;
 
     return section(
@@ -2178,22 +1898,24 @@
          ${statCard("Primary Stack", esc(topLang || "—"), "most used language", "var(--blue)", ICONS.code)}
          ${statCard("Followers", u.followers != null ? fmtNum(u.followers) : "—", u.following != null ? `following ${fmtNum(u.following)}` : "public profile", "var(--red)", ICONS.community)}
        </div>
-       <div style="height:18px"></div>
-       <div class="bento" id="questStrip"></div>
-       <div style="height:18px"></div>
+       <div class="bento" style="margin-top:18px">
+         ${hitCounterPanel()}
+         ${swatchPanel()}
+       </div>
        <div class="bento">
-         <div class="card col2 overview-featured" data-tilt>
+         <div class="card col2 overview-featured">
            <div class="card-head">
              <div class="card-title"><span class="stat-icon" style="color:var(--cyan)">${ICONS.zap}</span> What I've Been Building</div>
              <button class="btn btn-sm" data-nav-jump="highlights">All highlights →</button>
            </div>
            <div class="hl-grid compact">${featured.map((r, i) => highlightCard(r, i)).join("")}</div>
          </div>
-         ${w.recentActivity ? recentActivityWidget() : ""}
-         ${w.pulseChart ? commitPulseWidget() : ""}
-         ${w.heatmap ? contributionHeatmapWidget() : ""}
-         ${w.topRepos ? topRepositoriesWidget() : ""}
-       </div>`
+         ${recentActivityWidget()}
+         ${commitPulseWidget()}
+         ${contributionHeatmapWidget()}
+         ${topRepositoriesWidget()}
+       </div>
+       ${underConstructionBanner()}`
     );
   }
 
@@ -2204,7 +1926,12 @@
       "Highlights",
       `The work that best represents what I build${state.accountFilter === "all" ? "" : " · @" + state.accountFilter}`,
       `${accountPills()}${pill()}`,
-      `<div class="callout-box" style="margin-bottom:16px">
+      `<div class="retro-uc" style="margin-bottom:16px">
+        <span class="uc-sign" aria-hidden="true">★</span>
+        <span>Editor's picks — ranked automatically from public signals</span>
+        <span class="retro-pulse">HOT!</span>
+      </div>
+      <div class="callout-box" style="margin-bottom:16px">
         These are derived automatically from public GitHub signals — recency of work,
         reach (stars/forks) and how complete each repository looks (description, live
         site, topics, license). No hand-curated list to go stale.
@@ -2288,6 +2015,21 @@
       )
       .join("");
 
+    // Trend cards need at least two history points; with one point they
+    // render as an empty stub, so the whole row is withheld until it can
+    // actually say something.
+    const trendBlock = (() => {
+      const ready = ["stars", "followers", "repos"].some((f) => historySeries(f, "totals").length >= 2);
+      if (!ready) return "";
+      return `
+      <div class="bento">
+        ${trendCard("stars", "Stars", "var(--amber)", ICONS.star)}
+        ${trendCard("followers", "Followers", "var(--red)", ICONS.community)}
+        ${trendCard("repos", "Repos", "var(--cyan)", ICONS.repos)}
+      </div>
+      <div style="height:18px"></div>`;
+    })();
+
     const milestones = [
       u.createdAt ? ["Joined GitHub", new Date(u.createdAt).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })] : null,
       years != null ? ["Account age", `${years} years`] : null,
@@ -2312,12 +2054,7 @@
         ${statCard("Best Streak", `${fmtNum(m.longestStreak)}d`, "consecutive active days", "var(--red)", ICONS.zap)}
       </div>
       <div style="height:18px"></div>
-      <div class="bento">
-        ${trendCard("stars", "Stars", "var(--amber)", ICONS.star)}
-        ${trendCard("followers", "Followers", "var(--red)", ICONS.community)}
-        ${trendCard("repos", "Repos", "var(--cyan)", ICONS.repos)}
-      </div>
-      <div style="height:18px"></div>
+      ${trendBlock}
       <div class="bento">
         ${statCard("Public Repos", fmtNum(repos.length), "on GitHub", "var(--cyan)", ICONS.repos)}
         ${statCard("Stars", fmtNum(stars), "across all repos", "var(--amber)", ICONS.star)}
@@ -2522,7 +2259,7 @@
       .join("");
 
     return `
-      <div class="card col2" data-tilt>
+      <div class="card col2">
         <div class="card-head">
           <div class="card-title"><span class="stat-icon" style="color:var(--violet)">${ICONS.layers}</span> Code by Language</div>
           <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">${formatBytes(sum)} · ${entries.length} languages</span>
@@ -2587,7 +2324,7 @@
     })() : "";
 
     return `
-      <div class="card" data-tilt>
+      <div class="card">
         <div class="card-head">
           <div class="card-title"><span class="stat-icon" style="color:${color}">${icon}</span> ${label}</div>
           <span style="font-family:var(--mono);font-size:10.5px;color:var(--muted)">${series.length}d tracked</span>
@@ -2763,7 +2500,7 @@
     const st = repoStatus(r);
     const topics = (r.topics || []).slice(0, 3);
     return `
-      <div class="card repo-card" data-tilt data-project="${esc(r.name)}" title="Open ${esc(r.name)}">
+      <div class="card repo-card" data-project="${esc(r.name)}" title="Open ${esc(r.name)}">
         <div class="card-head">
           <div class="name">
             <span class="dot" style="background:${st === "archived" ? "var(--amber)" : st === "active" ? "var(--green)" : "var(--faint)"}"></span>
@@ -2791,7 +2528,7 @@
           </span>
         </div>
         <div class="foot">
-          <span class="lang-tag" style="background:${langCol}22;color:${langCol}">${esc(r.language || "—")}</span>
+          <span class="lang-tag" style="--lang:${langCol}">${esc(r.language || "—")}</span>
           ${accountList().length > 1 ? `<span class="owner-tag">@${esc(repoOwner(r))}</span>` : ""}
           <span style="font-family:var(--mono);font-size:11px;color:var(--faint)">${fmtAgo(r.pushedAt)}</span>
         </div>
@@ -2935,7 +2672,6 @@
     }
 
     state.selectedProject = repo.name;
-    window.PulseQuests?.openProject(repo.name);
     const extras = extrasFor(repo.fullName) || {};
     const runs = (extras.runs || []).slice(0, 5);
     const releases = (extras.releases || []).slice(0, 4);
@@ -2975,7 +2711,7 @@
       `<div class="card">
         <div class="hl-head">
           <span class="status ${st === "active" ? "ok" : st === "archived" ? "warn" : "run"}"><span class="sdot"></span>${st.toUpperCase()}</span>
-          ${repo.language ? `<span class="lang-tag" style="background:${langCol}22;color:${langCol}">${esc(repo.language)}</span>` : ""}
+          ${repo.language ? `<span class="lang-tag" style="--lang:${langCol}">${esc(repo.language)}</span>` : ""}
           ${repo.license ? `<span class="priv-tag">${esc(repo.license)}</span>` : ""}
           <span class="priv-tag">${esc(repo.defaultBranch || "main")}</span>
         </div>
@@ -2991,9 +2727,9 @@
         ${statCard("Size", repo.size ? `${fmtNum(Math.round((repo.size || 0) / 1024 * 10) / 10)} MB` : "—", "repository size", "var(--blue)", ICONS.layers)}
       </div>
 
-      ${repo.activity ? `<div class="card" data-tilt>${activitySparkline(repo.activity, { label: `${repo.name} commit activity` })}</div>` : ""}
+      ${repo.activity ? `<div class="card">${activitySparkline(repo.activity, { label: `${repo.name} commit activity` })}</div>` : ""}
       ${repo.languages ? `
-        <div class="card col2" data-tilt>
+        <div class="card col2">
           <div class="card-head">
             <div class="card-title"><span class="stat-icon" style="color:var(--violet)">${ICONS.code}</span> Code Composition</div>
             <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">${formatBytes(repo.languageBytes || 0)} · by bytes</span>
@@ -3230,7 +2966,6 @@
      builds a prefilled GitHub "new issue" URL and opens it in a new tab.
      Nothing is stored and nothing is sent anywhere by Pulse itself. */
   function openSuggestModal(preRepo) {
-    window.PulseQuests?.action("suggest");
     const overlay = $("#issueOverlay");
     const sheet = $("#issueSheet");
     const repos = repoList().filter((r) => !r.isPrivate && !r.archived);
@@ -3719,7 +3454,6 @@
   function goAccount(login) {
     if (!login) return;
     state.selectedAccount = login;
-    window.PulseQuests?.visit("account");
     try {
       const target = `#/account/${encodeURIComponent(login)}`;
       if (location.hash !== target) history.replaceState(null, "", target);
@@ -3729,7 +3463,6 @@
 
   function goProject(name) {
     state.selectedProject = name;
-    window.PulseQuests?.openProject(name);
     try {
       const target = `#/project/${encodeURIComponent(name)}`;
       if (location.hash !== target) history.replaceState(null, "", target);
@@ -3741,12 +3474,6 @@
   let _wfVisibilityWired = false;
   async function boot() {
     applyTheme(state.theme);
-
-    // Soundtrack: sync the HUD, offer the hint once, follow playback events.
-    syncSoundUI();
-    setTimeout(renderSoundHint, 2600);
-    document.addEventListener("pulse:music", syncSoundUI);
-    document.addEventListener("pulse:mood", syncSoundUI);
 
     // No login, no gate: the snapshot renders immediately for every visitor.
     const ok = await loadSnapshot();
@@ -3779,20 +3506,6 @@
     });
     $('#paletteOverlay')?.addEventListener("click", (e) => {
       if (e.target.id === "paletteOverlay") closeCommandPalette();
-    });
-    $('#audioOverlay')?.addEventListener("click", (e) => {
-      if (e.target.id === "audioOverlay") {
-        e.target.classList.remove("open");
-        e.target.setAttribute("aria-hidden", "true");
-        closeSheets();
-        e.target.setAttribute("aria-hidden", "true");
-      }
-    });
-    $('#widgetOverlay')?.addEventListener("click", (e) => {
-      if (e.target.id === "widgetOverlay") {
-        $('#widgetOverlay').classList.remove("open");
-        $('#widgetOverlay').setAttribute("aria-hidden", "true");
-      }
     });
     // Global keyboard shortcuts
     window.addEventListener("keydown", (e) => {

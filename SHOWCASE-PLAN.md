@@ -2,10 +2,10 @@
 
 **A structured, visitor-first way to view one GitHub account.**
 
-Status: **Phases 0, 1, 3, 4 and 5 shipped** (login/OAuth removed, visitor-first
-IA, multi-account showcase, 3D depth layer, gamified exploration, mobile pass).
-Phase 2 (data depth: contribution heatmap, authored PR/issue counts, language
-bytes) is next.
+Status: **All phases shipped, then reworked.** The login gate, the 3D depth
+layer, the gamified-exploration layer and the browser soundtrack have since been
+removed, and the whole interface was rebuilt as a Windows 95 / GeoCities pastiche
+with a dark scheme. See [`README.md`](README.md#design-system).
 Owner: `@marvel-254` · Data source: public GitHub only · No login, ever.
 
 ---

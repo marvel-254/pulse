@@ -1,5 +1,10 @@
 # Pulse — Next Features & Product Roadmap
 
+> **Status update (2026-10-01):** the gamified (XP/quests), 3D-depth and
+> soundtrack features have since been **removed** — the interface is now a
+> Windows 95 / GeoCities pastiche. Any suggestion below that depends on those
+> layers is out of scope.
+>
 > **Status update (2026-10-01):** the "Connect GitHub / authenticated mode"
 > described below has been **removed**. Pulse is deliberately public and
 > read-only — no OAuth, no tokens, no private data. Everything in this document

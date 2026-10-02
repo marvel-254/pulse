@@ -170,39 +170,29 @@ const suggestText = doc.querySelector("#issueSheet")?.textContent || "";
 assert("suggest modal opens", /Suggest Something/.test(suggestText));
 assert("suggest modal has no token requirement", !/token/i.test(suggestText));
 
-// ---- 3D depth layer ----
-assert("depth canvas exists", !!doc.querySelector("#depthScene"));
-assert("depth API exposed", typeof dom.window.PulseDepth?.setEnabled === "function" && typeof dom.window.PulseDepth?.bindTilt === "function");
+// ---- retro design system ----
+assert("tiled cross-hatch desktop exists", !!doc.querySelector(".grid-bg"));
+const css = dom.window.document.querySelector('link[href="css/styles.css"]');
+assert("stylesheet is linked", !!css);
 dom.window.location.hash = "#/overview";
 dom.window.dispatchEvent(new dom.window.HashChangeEvent("hashchange"));
 await wait(500);
-assert("tiltable cards are marked", doc.querySelectorAll("[data-tilt]").length >= 4);
-const depthBtn = doc.querySelector("#depthToggleBtn");
-depthBtn?.dispatchEvent(new dom.window.MouseEvent("click", { bubbles: true }));
-await wait(200);
-assert("3D toggle disables the layer", dom.window.document.documentElement.classList.contains("depth-off"));
-depthBtn?.dispatchEvent(new dom.window.MouseEvent("click", { bubbles: true }));
-await wait(200);
-assert("3D toggle re-enables the layer", !dom.window.document.documentElement.classList.contains("depth-off"));
 
-// ---- gamification ----
-assert("quest HUD renders a level", /Lv|level/i.test(doc.querySelector("#questChip")?.innerHTML || ""));
-const questState = dom.window.PulseQuests?.state();
-assert("quest module exposed", !!questState && Array.isArray(dom.window.PulseQuests.badges));
-assert("exploration badges awarded for visited sections", Object.keys(questState.unlocked).some((k) => k.startsWith("visit:")));
-assert("visiting every section unlocks the tour badge", !!questState.unlocked["complete:tour"]);
-assert("opening a project awards a badge", !!questState.unlocked["project:1"]);
-assert("showcase badges derived from the data", Object.keys(questState.unlocked).some((k) => k.startsWith("data:")));
-assert("XP accumulated", questState.xp > 0);
-assert("progress persisted to localStorage", !!dom.window.localStorage.getItem("pulse-quests"));
-assert("quest strip on the overview", /Explorer Progress/.test(doc.querySelector("#questStrip")?.textContent || "") || true);
+assert("marquee renders on every view", !!doc.querySelector(".retro-marquee"));
+assert("hit counter renders real data", /HITS/.test(doc.querySelector("#stage .retro-counter")?.textContent || ""));
+assert("decorative colour palette renders", doc.querySelectorAll(".retro-swatch").length === 16);
+assert("under-construction banner renders", !!doc.querySelector(".retro-construction"));
 
-doc.querySelector("#questChipBtn")?.dispatchEvent(new dom.window.MouseEvent("click", { bubbles: true }));
-await wait(300);
-const sheetText = doc.querySelector("#questSheet")?.textContent || "";
-assert("quest sheet opens with badges", doc.querySelector("#questOverlay")?.classList.contains("open") && /Polyglot/.test(sheetText));
-assert("quest sheet explains local-only storage", /never leave this browser/.test(sheetText));
-doc.querySelector("#questCloseBtn")?.dispatchEvent(new dom.window.MouseEvent("click", { bubbles: true }));
+// ---- theme switch still works (light ⇄ dark) ----
+const themeBtn = doc.querySelector("#themeToggleBtn");
+const before = doc.documentElement.getAttribute("data-theme");
+themeBtn?.dispatchEvent(new dom.window.MouseEvent("click", { bubbles: true }));
+await wait(200);
+const after = doc.documentElement.getAttribute("data-theme");
+assert("theme toggle flips the scheme", before !== after && !!after);
+themeBtn?.dispatchEvent(new dom.window.MouseEvent("click", { bubbles: true }));
+await wait(200);
+assert("theme toggle returns to the original scheme", doc.documentElement.getAttribute("data-theme") === before);
 await wait(150);
 
 // ---- real data upgrades (contributions, bytes, trends) ----
@@ -228,23 +218,13 @@ await wait(1200);
 const projectText = doc.querySelector("#stage")?.textContent || "";
 assert("project page shows code composition", /Code Composition/.test(projectText) || /README/.test(projectText));
 
-// ---- soundtrack ----
-assert("music module exposed", typeof dom.window.PulseMusic?.toggle === "function" && typeof dom.window.PulseMusic?.setMood === "function");
-assert("music is off until asked", dom.window.PulseMusic.isPlaying() === false);
-assert("sound toggle button rendered", !!doc.querySelector("#soundToggleBtn"));
-doc.querySelector("#soundToggleBtn")?.dispatchEvent(new dom.window.MouseEvent("click", { bubbles: true }));
-await wait(150);
-assert("toggling sound never throws without an AudioContext", true);
-dom.window.PulseMusic.setMood("phonk");
-dom.window.PulseMusic.setVolume(0.5);
-assert("mood selection recorded", dom.window.PulseMusic.mood() === "phonk" || dom.window.PulseMusic.hasCustomTrack());
-assert("volume applied", dom.window.PulseMusic.volume() === 0.5);
-doc.querySelector("#soundToggleBtn")?.dispatchEvent(new dom.window.MouseEvent("contextmenu", { bubbles: true }));
-await wait(250);
-const soundSheet = doc.querySelector("#audioSheet")?.textContent || "";
-assert("sound sheet opens with both moods", /Cinematic/.test(soundSheet) && /Phonk/.test(soundSheet));
-assert("sound sheet explains the synth approach", /generated in your browser/i.test(soundSheet));
-assert("no copyrighted audio is bundled", !/\.mp3|\.wav/i.test(doc.documentElement.innerHTML));
+// ---- the gamer layer is gone for good ----
+assert("no sound toggle in the UI", !doc.querySelector("#soundToggleBtn"));
+assert("no quest HUD in the UI", !doc.querySelector("#questChip"));
+assert("no 3D canvas in the UI", !doc.querySelector("#depthScene"));
+assert("no audio module shipped", typeof dom.window.PulseMusic === "undefined");
+assert("no quest module shipped", typeof dom.window.PulseQuests === "undefined");
+assert("no depth module shipped", typeof dom.window.PulseDepth === "undefined");
 
 // ---- "Right now" strip + per-account pages ----
 dom.window.location.hash = "#/overview";
@@ -290,14 +270,16 @@ assert(
   [...doc.querySelectorAll('.overlay[role="dialog"]')].every((o) => o.getAttribute("aria-label") && o.getAttribute("aria-modal") === "true")
 );
 assert("icon-only topbar buttons have labels", !!doc.querySelector("#themeToggleBtn")?.getAttribute("aria-label"));
-const questChip = doc.querySelector("#questChipBtn");
-questChip?.click();
+// The repo selector is the sheet every visitor can reach.
+const repoPill = doc.querySelector('[data-repo-selector], #repoSelectorBtn, .repo-pill, [data-open-repos]');
+assert("a control opens the repository sheet", !!repoPill);
+repoPill?.click();
 await wait(350);
-assert("opening a sheet sets aria-hidden=false", doc.querySelector("#questOverlay")?.getAttribute("aria-hidden") === "false");
-assert("opening a sheet moves focus into it", doc.activeElement?.closest("#questOverlay") !== null);
+assert("opening a sheet sets aria-hidden=false", doc.querySelector("#repoOverlay")?.getAttribute("aria-hidden") === "false");
+assert("opening a sheet moves focus into it", doc.activeElement?.closest("#repoOverlay") !== null);
 doc.dispatchEvent(new dom.window.KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
 await wait(250);
-assert("Escape closes the sheet again", doc.querySelector("#questOverlay")?.getAttribute("aria-hidden") === "true");
+assert("Escape closes the sheet again", doc.querySelector("#repoOverlay")?.getAttribute("aria-hidden") === "true");
 
 // ---- phone viewport simulation ----
 dom.window.innerWidth = 390;
